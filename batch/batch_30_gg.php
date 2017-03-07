@@ -55,11 +55,16 @@
         printf("%s\n",$ex->getMessage());
         exit;
     }
-    
+	 
+			
     /* set logger */
     Logger::configure($configuration_log, new BatchLogConfigurator($service->makePathLogBatch(),$name_log_file));
     $log = Logger::getLogger($name_log_file);
     $bt->setLogger($log);
+    $service->setLogger($log);
+    
+    /* Cancello old log */
+    $service->clearLog();
 
     /* start Batch */
     $bt->init();

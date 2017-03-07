@@ -50,7 +50,25 @@
 
 		public function clearLog()
 		{
-			$this->log->info("Cancello i log più vecchi di ".getenv('SCHEDULER_LOG_CLEAR_GG')." giorni in ".SchedulerService::makePathLog());
+			$path = SchedulerService::makePathLogScheduler();
+			$gg=getenv('SCHEDULER_LOG_CLEAR_GG');
+			$this->log->info("Cancello i log più vecchi di ".$gg." giorni in ".$path);
+			
+			if ($handle = opendir($path)) 
+			{
+			  while (false !== ($file = readdir($handle))) 
+			  {
+			      if($file!="." && $file!="..")
+			      {
+				if ((time()-filemtime($path.'/'.$file)) > $gg*(60*60*24) ) 
+				{ 
+				    $str=sprintf("unlink %s/%s\n",$path,$file);
+				    $this->log->info($str);
+				    unlink($path.'/'.$file);
+				}
+			      }
+			  }
+			}    
 		}
 		
 		

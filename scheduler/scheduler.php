@@ -100,9 +100,7 @@
 	/* iniziamo a scrivere il codice */
 
 	try
-	{
-		//$configuration_sched = $service->loadConfig();
-		    
+	{ 
 		/* sincronizazione al minuto successivo */
 		$log->info("Syncronizazione Scheduler");
 		do
@@ -133,6 +131,7 @@
 			      $service->clearLog();
 			      $dt_start=date('Ymd');
 			} 
+	
 		
 			/* Load Config*/
 			$log->info("Loading configuration....");

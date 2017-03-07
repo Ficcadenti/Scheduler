@@ -40,6 +40,20 @@
         {
             $this->dbh=null;
         }
+        
+        private function connect()
+	{
+		$this->name_file=basename(__FILE__, ".php");
+		try 
+		{
+		    $this->dbh = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME'), getenv('DB_USER') , getenv('DB_PASS'));
+		} 
+		catch (\PDOException $ex) 
+		{
+		    $this->log->info("ERROR(".$this->name_file."): ".$ex->getMessage());
+		    $this->dbh=null;
+		}
+	}
 
         public function setLogger($log)
         {
@@ -49,6 +63,7 @@
         public function init()
         {
 	     $this->log->info("init()");
+	     Batch30gg::connect();
         }
 
         public function getParam($argv)
