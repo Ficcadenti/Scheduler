@@ -203,7 +203,7 @@
 				
 			}
 			
-			sleep(5);
+			sleep(SCHEDULER_SLEEP);
 			
 		} /* end while */
 	}

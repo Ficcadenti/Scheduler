@@ -37,4 +37,5 @@
   define("BATCH_PERIODICO",7);
   
   define("ROUND_TIME",60);
+  define("SCHEDULER_SLEEP",10);
   

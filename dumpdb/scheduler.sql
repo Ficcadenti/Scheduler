@@ -30,10 +30,11 @@ CREATE TABLE `sc_config` (
   `phpname_batch` varchar(45) DEFAULT NULL,
   `descr_batch` varchar(45) DEFAULT NULL,
   `id_type` int(11) DEFAULT NULL,
+  `periodo` int(11) DEFAULT NULL,
   `time_start` datetime DEFAULT NULL,
+  `last_time_start` datetime DEFAULT NULL COMMENT 'i tempi sono in formato unix',
   `status` int(11) DEFAULT NULL,
   `pid` int(11) DEFAULT NULL,
-  `last_time_start` datetime DEFAULT NULL COMMENT 'i tempi sono in formato unix',
   `creation_time` datetime DEFAULT NULL,
   `id_error` varchar(45) DEFAULT NULL,
   `descr_error` varchar(45) DEFAULT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE `sc_config` (
 
 LOCK TABLES `sc_config` WRITE;
 /*!40000 ALTER TABLE `sc_config` DISABLE KEYS */;
-INSERT INTO `sc_config` VALUES (3,1,'batch_test.php','BATCH Test Raffo',0,'2017-03-06 15:42:00',7,NULL,'2017-03-05 15:42:00','2017-03-03 00:00:00','0',NULL),(4,2,'batch_test.php','BATCH Test Giampiero',0,NULL,7,NULL,NULL,'2017-03-03 00:00:00','0',NULL),(5,3,'batch_test.php','BATCH Test Francesco',0,NULL,7,NULL,NULL,'2017-03-03 00:00:00','0',NULL);
+INSERT INTO `sc_config` VALUES (3,1,'batch_30_gg.php','BATCH Test Raffo',1,0,'2017-03-07 14:30:00','2017-03-07 13:38:00',7,NULL,'2017-03-03 00:00:00','0',NULL),(4,2,'batch_30_gg.php','BATCH Test Giampiero',1,0,'2017-03-07 14:30:00','2017-03-07 13:38:00',7,NULL,'2017-03-03 00:00:00','0',NULL),(5,3,'batch_30_gg.php','BATCH Test Francesco',7,10800,'2017-03-07 16:40:00','2017-03-07 13:40:00',7,NULL,'2017-03-03 00:00:00','0',NULL);
 /*!40000 ALTER TABLE `sc_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +89,7 @@ CREATE TABLE `sc_type_lib` (
   `id_type` varchar(45) DEFAULT NULL,
   `descr_type` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +98,7 @@ CREATE TABLE `sc_type_lib` (
 
 LOCK TABLES `sc_type_lib` WRITE;
 /*!40000 ALTER TABLE `sc_type_lib` DISABLE KEYS */;
-INSERT INTO `sc_type_lib` VALUES (1,'1','ORARIO'),(2,'2','GIORNALIERO'),(3,'3','SETTIMANALE'),(4,'4','MENSILE'),(5,'5','ANNUALE'),(6,'6','UNA TANTUM'),(7,'0','MINUTI');
+INSERT INTO `sc_type_lib` VALUES (1,'1','ORARIO'),(2,'2','GIORNALIERO'),(3,'3','SETTIMANALE'),(4,'4','MENSILE'),(5,'5','ANNUALE'),(6,'6','UNA TANTUM'),(8,'7','PERIODICO');
 /*!40000 ALTER TABLE `sc_type_lib` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,4 +119,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-06 17:11:49
+-- Dump completed on 2017-03-07 14:04:06
