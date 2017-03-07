@@ -7,7 +7,7 @@
     | Author email      raffaele.ficcadenti@gmail.com
     |
     | FILE
-    | batch_test.php
+    | batch_30_gg.php
     |
     | HISTORY:
     | -[Date]-      -[Who]-               -[What]-
@@ -67,12 +67,13 @@
     $service->clearLog();
 
     /* start Batch */
-    $bt->init();
+   if($bt->init())
+   {
     if($bt->getParam($argv)==true)
     {
-	$bt->info();
-	$bt->run();
-	$bt->refreshStatus();
+    	$bt->info();
+    	$bt->run();
+    	$bt->refreshStatus();
     }
 
-    
+}

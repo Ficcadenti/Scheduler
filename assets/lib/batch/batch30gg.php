@@ -64,6 +64,13 @@
         {
 	     $this->log->info("init()");
 	     Batch30gg::connect();
+         if($this->dbh==null)
+         {
+            return false;
+         }else
+         {
+            return true;
+         }
         }
 
         public function getParam($argv)
