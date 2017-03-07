@@ -1,0 +1,18 @@
+#   |--------------------------------------------------------------------------
+#   | Application Scheduler
+#   | AUTHORS:
+#	| Author Name		Raffaele Ficcadenti
+#	| Author email		raffaele.ficcadenti@gmail.com
+#   |
+#   | FILE
+#   | scheduler.php
+#   |
+#	| HISTORY:
+#	| -[Date]-      -[Who]-               -[What]-
+#	| 01-03-2017    Ficcadenti Raffaele   Versione 1.0 
+#   |--------------------------------------------------------------------------
+#   |
+#   | 
+
+*.log
+*.lock

@@ -184,7 +184,7 @@
 
 						/* aggiorna parametri batch */
 						$st_config->setStatus($id_batch,SUBMITTED);
-						$st_config->setNextStartTime($id_batch,$common->calcolaNextStartTime($run_time_unix,$batch['id_type'],$periodo));
+						$st_config->setNextStartTime($id_batch,$common->calcolaNextStartTime($ts_batch_unix,$batch['id_type'],$periodo));
 						$st_config->setLastStartTime($id_batch,$run_time_unix);
 
 						$log->info("	Submitted");
