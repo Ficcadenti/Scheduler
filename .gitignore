@@ -16,3 +16,6 @@
 
 *.log
 *.lock
+.settings
+.project
+.buildpath
