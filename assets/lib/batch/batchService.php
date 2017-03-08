@@ -53,7 +53,7 @@
 		{
 			$path = BatchService::makePathLogBatch();
 			$gg=getenv('BATCH_LOG_CLEAR_GG');
-			$this->log->info("Cancello i log piÃ¹ vecchi di ".$gg." giorni in ".$path);
+			$this->log->info("Cancello i log più vecchi di ".$gg." giorni in ".$path);
 			
 			if ($handle = opendir($path)) 
 			{

@@ -97,13 +97,13 @@ $st_config->connect ();
 
 try {
 	/* sincronizazione al minuto successivo */
-	$log->info ( "Syncronizazione Scheduler" );
+	/*$log->info ( "Syncronizazione Scheduler" );
 	do {
 		$run_time_unix = time ();
 		$resto = ($run_time_unix % ROUND_TIME);
 		$log->info ( "Wait... " . (ROUND_TIME - $resto) );
 		sleep ( 1 );
-	} while ( (ROUND_TIME - $resto) != 1 );
+	} while ( (ROUND_TIME - $resto) != 1 );*/
 	
 	$log->info ( "START Scheduler" );
 	$dt_start = date ( 'Ymd' ); /* data utilizzata per cambio giorno */
@@ -158,9 +158,15 @@ try {
 				/* controllo se è ora di far partire il batch */
 				if ($run_time_unix >= $ts_batch_unix) {
 					
-					$cmd = "	php " . getenv ( "BATCH_DIR" ) . "/" . $batch ['phpname_batch'] . " --id_batch=" . $id_batch . " --run_time=" . $run_time_unix . " &";
+					$cmd = "	php \"" . getenv ( "BATCH_DIR" ) . 
+						"\\" . $batch ['phpname_batch'] .
+						"\" --id_batch=" . $id_batch . 
+						" --type=" . $batch ['id_type'] . 
+						" --run_time=" . $run_time_unix . 
+						" &";
+					
 					$log->info ( $cmd );
-					exec ( escapeshellcmd ( $cmd ), $return );
+					//exec ( escapeshellcmd ( $cmd ), $return );
 					
 					/* aggiorna parametri batch */
 					$st_config->setStatus ( $id_batch, SUBMITTED );

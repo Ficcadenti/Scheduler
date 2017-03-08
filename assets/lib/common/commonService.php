@@ -1,8 +1,6 @@
 <?php
     namespace Common\lib;
     
-
-    
     /*
     |--------------------------------------------------------------------------
     | Application Scheduler
@@ -38,6 +36,7 @@
 		
 		public function calcolaNextStartTime($run_time_unix,$id_type,$periodo)
 		{
+			
 		      $t=0;
 		      switch($id_type)
 		      {
@@ -52,6 +51,7 @@
 			      }break;
 		      }
 
+		      printf("%d %d %d\n",$run_time_unix,$id_type,$periodo);
 		      return $t;
 
 		}

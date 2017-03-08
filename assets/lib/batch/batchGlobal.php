@@ -27,5 +27,5 @@
         public function  getParam($argv);
         public function  info();
         public function  run();
-        public function  refreshStatus();
+        public function  refreshStatus($status);
     }

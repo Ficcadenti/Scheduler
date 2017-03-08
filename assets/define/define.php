@@ -24,6 +24,7 @@
   define("UNDEFINED",5);
   define("TO_BE_SUBMITTED",6);
   define("SUBMITTED",7);
+ 
   
   define("BATCH_WITHOUT_ERROR",0);
   define("BATCH_STALLED",1);
