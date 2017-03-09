@@ -54,6 +54,7 @@ try {
 	exit ();
 }
 
+$slash="/";
 $name_log_file = basename ( __FILE__, ".php" );
 $log = null;
 $dt_old = "";
@@ -89,6 +90,12 @@ $st_config->setLogger ( $log );
 $st_status_lib->connect ();
 $st_type_lib->connect ();
 $st_config->connect ();
+
+if($common->isWindows())
+{
+	$slash="\\";
+}
+
 
 
 /* iniziamo a scrivere il codice */
@@ -158,7 +165,7 @@ try {
 				if ($run_time_unix >= $ts_batch_unix) {
 					
 					$cmd = "	php \"" . getenv ( "BATCH_DIR" ) . 
-						"\\" . $batch ['phpname_batch'] .
+						$slash . $batch ['phpname_batch'] .
 						"\" --id_schedulazione=" . $id_schedulazione . 
 						" --type=" . $batch ['type_schedulazione'] . 
 						" --run_time=" . $run_time_unix . 

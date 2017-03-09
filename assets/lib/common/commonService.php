@@ -34,6 +34,17 @@
 		    return date("Y/m/d H:i:s",$t);
 		}
 		
+		public function isWindows()
+		{
+			$this->log->info( "Sistema operativo: ".substr(php_uname(), 0, 7) );
+			if (substr(php_uname(), 0, 7) == "Windows"){
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		
 		public function calcolaNextStartTime($run_time_unix,$id_type,$periodo)
 		{
 		      $t=0;
@@ -51,7 +62,6 @@
 		      }
 
 		      return $t;
-
 		}
 	
     }
