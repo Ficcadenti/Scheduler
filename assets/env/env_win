@@ -19,13 +19,26 @@
 
 /* Cestino standard output  */
 DEV_NULL               = pippo.txt   
- 
+
+
+
 /* Sezione per parametri Scheduler */
 SCHEDULER_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\scheduler
 
 /* Sezione per parametri Scheduler Log */
 SCHEDULER_LOG_DIR      = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\scheduler
 SCHEDULER_LOG_CLEAR_GG = 30
+
+
+
+/* Sezione per parametri SchedulerManager */
+SCHEDULER_MANAGER_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\schedulerer
+
+/* Sezione per parametri SchedulerManager Log */
+SCHEDULER_MANAGER_LOG_DIR      = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\schedulermanager
+SCHEDULER_MANAGER_LOG_CLEAR_GG = 30
+
+
 
 /* Sezione per parametri Batch */
 BATCH_DIR              = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\batch
@@ -34,12 +47,15 @@ BATCH_DIR              = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\batch
 BATCH_LOG_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\batch
 BATCH_LOG_CLEAR_GG     = 15
 
+
+
 /* Refresh token */
 REFRESH_TOKEN_CMD      = D:\Sviluppo\Apache2.4\htdocs\Exolab\adplify_be\batch_refresh_tokens_by_user_id.sh
 
 
+
 /* Sezione per parametri MySql DB */
 DB_HOST                = localhost
-DB_NAME                = scheduler
+DB_NAME                = adplify_scheduler
 DB_USER                = root
 DB_PASS                = raffo

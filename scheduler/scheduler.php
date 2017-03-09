@@ -72,10 +72,10 @@ $configuration_log = array (
 		'LOG_DAILYFILE' => 2 
 );
 
-printf ( "SCHEDULER Log path: %s\n", $service->makePathLogScheduler () );
+printf ( "SCHEDULER Log path: %s\n", $service->makePathLog () );
 printf ( "SCHEDULER Log file: <yyyy-mm-dd>.%s.log\n", $name_log_file );
 
-Logger::configure ( $configuration_log, new SchedulerLogConfigurator ( $service->makePathLogScheduler (), $name_log_file ) );
+Logger::configure ( $configuration_log, new SchedulerLogConfigurator ( $service->makePathLog (), $name_log_file ) );
 $log = Logger::getLogger ( "schedulerLogger" );
 
 /* set logger */

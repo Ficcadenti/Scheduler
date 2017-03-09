@@ -46,13 +46,13 @@ class SchedulerService {
 		return true;
 	}
 	
-	public function makePathLogScheduler() {
+	public function makePathLog() {
 		$LOG_DIR = getenv ( 'SCHEDULER_LOG_DIR' );
 		return $LOG_DIR . '/';
 	}
 	
 	public function clearLog() {
-		$path = SchedulerService::makePathLogScheduler ();
+		$path = SchedulerService::makePathLog ();
 		$gg = getenv ( 'SCHEDULER_LOG_CLEAR_GG' );
 		$this->log->info ( "Cancello i log più vecchi di " . $gg . " giorni in " . $path );
 		

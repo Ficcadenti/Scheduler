@@ -60,11 +60,11 @@ $id_schedulazione = $bt->getIdSchedulazione ( $argv );
 if ($id_schedulazione != - 1) {
 	$name_log_file = $id_schedulazione . '.' . $name_log_file;
 	
-	printf ( "BATCH Log path: %s\n", $service->makePathLogBatch () );
+	printf ( "BATCH Log path: %s\n", $service->makePathLog () );
 	printf ( "BATCH Log file: <yyyy-mm-dd>.%s.log\n", $name_log_file );
 	
 	/* set logger */
-	Logger::configure ( $configuration_log, new BatchLogConfigurator ( $service->makePathLogBatch (), $name_log_file ) );
+	Logger::configure ( $configuration_log, new BatchLogConfigurator ( $service->makePathLog (), $name_log_file ) );
 	$log = Logger::getLogger ( $name_log_file );
 	$bt->setLogger ( $log );
 	$service->setLogger ( $log );

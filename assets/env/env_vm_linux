@@ -16,15 +16,30 @@
 | Schedulatore per avviare batch di download dati AdWords
 | File per il settaggio dell'environment
 */
+
 /* Cestino standard output */
 DEV_NULL               = /dev/null
-    
+   
+
+
 /* Sezione per parametri Scheduler */
 SCHEDULER_DIR          = /home/raffo/Scheduler/scheduler
 
 /* Sezione per parametri Scheduler Log */
 SCHEDULER_LOG_DIR      = /home/raffo/Scheduler/logs/scheduler
 SCHEDULER_LOG_CLEAR_GG = 30
+
+
+
+/* Sezione per parametri SchedulerManager */
+SCHEDULER_MANAGER_DIR          = /home/raffo/Scheduler/scheduler
+
+/* Sezione per parametri SchedulerManager Log */
+SCHEDULER_MANAGER_LOG_DIR      = /home/raffo/Scheduler/logs/schedulermanager
+SCHEDULER_MANAGER_LOG_CLEAR_GG = 30
+
+
+
 
 /* Sezione per parametri Batch */
 BATCH_DIR              = /home/raffo/Scheduler/batch/
@@ -33,12 +48,15 @@ BATCH_DIR              = /home/raffo/Scheduler/batch/
 BATCH_LOG_DIR          = /home/raffo/Scheduler/logs/batch
 BATCH_LOG_CLEAR_GG     = 30
 
+
+
 /* Refresh token */
 REFRESH_TOKEN_CMD      = /home/raffo/Scheduler/adplify_be/batch_refresh_tokens_by_user_id.sh
 
 
+
 /* Sezione per parametri MySql DB */
 DB_HOST                = 10.10.10.151
-DB_NAME                = scheduler
+DB_NAME                = adplify_scheduler
 DB_USER                = root
 DB_PASS                = raffo

@@ -31,12 +31,12 @@ class BatchService {
 	public function chekStatus() {
 		return true;
 	}
-	public function makePathLogBatch() {
+	public function makePathLog() {
 		$LOG_DIR = getenv ( 'BATCH_LOG_DIR' );
 		return $LOG_DIR . '/';
 	}
 	public function clearLog() {
-		$path = BatchService::makePathLogBatch ();
+		$path = BatchService::makePathLog ();
 		$gg = getenv ( 'BATCH_LOG_CLEAR_GG' );
 		$this->log->info ( "Cancello i log più vecchi di " . $gg . " giorni in " . $path );
 		
