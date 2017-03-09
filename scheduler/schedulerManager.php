@@ -74,8 +74,14 @@ class SchedulerManager {
 	}
 	
 	public function setBatch($parameter) {
-		$this->log->info ( "setBatch()" );
-		return true;
+		if(!$this->dbh = null)
+		{
+			$this->log->info ( "setBatch()" );
+			return true;
+		}else
+		{
+			return false;
+		}
 	}
 	
 	public function unsetBatch() {

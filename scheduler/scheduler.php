@@ -94,13 +94,13 @@ $st_config->connect ();
 /* iniziamo a scrivere il codice */
 try {
 	/* sincronizazione al minuto successivo */
-	/*$log->info ( "Syncronizazione Scheduler" );
+	$log->info ( "Syncronizazione Scheduler" );
 	do {
 		$run_time_unix = time ();
 		$resto = ($run_time_unix % ROUND_TIME);
 		$log->info ( "Wait... " . (ROUND_TIME - $resto) );
 		sleep ( 1 );
-	} while ( (ROUND_TIME - $resto) != 1 );*/
+	} while ( (ROUND_TIME - $resto) != 1 );
 	
 	$log->info ( "START Scheduler" );
 	$dt_start = date ( 'Ymd' ); /* data utilizzata per cambio giorno */
@@ -111,7 +111,8 @@ try {
 		$val = ( int ) ($run_time_unix / (ROUND_TIME));
 		$run_time_unix = (ROUND_TIME) * $val;
 		
-		$log->info ( "Running....(" . $run_time_unix . ": " . $common->strDade ( $run_time_unix ) . ")" );
+		$log->info ( "" );
+		$log->info ( "Running....(" . $common->strDade ( $run_time_unix ) . ")" );
 		
 		/* Controllo cambio giorno */
 		if ($service->dayIsChanged ( $dt_start ) == true) {
@@ -148,7 +149,7 @@ try {
 			$ts_batch_unix = strtotime ( $batch ['time_start'] );
 			$lts_batch_unix = strtotime ( $batch ['last_time_start'] );
 			
-			$str = sprintf ( "	%s(%d): %s - %s (START time=%d:%s, LAST start time=%d:%s)", $batch ['descr_batch'], $id_schedulazione, $type, $status, $ts_batch_unix, $common->strDade ( $ts_batch_unix ), $lts_batch_unix, $common->strDade ( $lts_batch_unix ) );
+			$str = sprintf ( "	%s(%d): %s - %s (START time=%s, LAST start time=%s)", $batch ['descr_batch'], $id_schedulazione, $type, $status, $common->strDade ( $ts_batch_unix ), $common->strDade ( $lts_batch_unix ) );
 			$log->info ( $str );
 			
 			/* controllo lo stato dei batch */
