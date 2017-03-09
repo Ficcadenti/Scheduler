@@ -28,4 +28,5 @@
         public function  info();
         public function  run();
         public function  refreshStatus($status);
+        public function  finish();
     }

@@ -92,9 +92,6 @@ $st_config->connect ();
 
 
 /* iniziamo a scrivere il codice */
-
-
-
 try {
 	/* sincronizazione al minuto successivo */
 	/*$log->info ( "Syncronizazione Scheduler" );
@@ -142,26 +139,27 @@ try {
 		}
 		
 		foreach ( $st_config->getAllconfig () as $batch ) {
-			$status = $st_status_lib->getStatus ( $batch ['status'] );
-			$type = $st_type_lib->getType ( $batch ['id_type'] );
-			$periodo = $batch ['periodo'];
-			$id_batch = $batch ['id_batch'];
+
+			$status = $st_status_lib->getStatus ( $batch ['stato_schedulazione'] );
+			$type = $st_type_lib->getType ( $batch ['type_schedulazione'] );
+			$frequenza = $batch ['frequenza'];
+			$id_schedulazione = $batch ['id_schedulazione'];
 			
 			$ts_batch_unix = strtotime ( $batch ['time_start'] );
 			$lts_batch_unix = strtotime ( $batch ['last_time_start'] );
 			
-			$str = sprintf ( "	%s(%d): %s - %s (START time=%d:%s, LAST start time=%d:%s)", $batch ['descr_batch'], $id_batch, $type, $status, $ts_batch_unix, $common->strDade ( $ts_batch_unix ), $lts_batch_unix, $common->strDade ( $lts_batch_unix ) );
+			$str = sprintf ( "	%s(%d): %s - %s (START time=%d:%s, LAST start time=%d:%s)", $batch ['descr_batch'], $id_schedulazione, $type, $status, $ts_batch_unix, $common->strDade ( $ts_batch_unix ), $lts_batch_unix, $common->strDade ( $lts_batch_unix ) );
 			$log->info ( $str );
 			
 			/* controllo lo stato dei batch */
-			if (($batch ['status'] == TO_BE_SUBMITTED) && ($batch ['id_error'] == BATCH_WITHOUT_ERROR)) {
+			if (($batch ['stato_schedulazione'] == TO_BE_SUBMITTED) && ($batch ['id_error'] == BATCH_WITHOUT_ERROR)) {
 				/* controllo se è ora di far partire il batch */
 				if ($run_time_unix >= $ts_batch_unix) {
 					
 					$cmd = "	php \"" . getenv ( "BATCH_DIR" ) . 
 						"\\" . $batch ['phpname_batch'] .
-						"\" --id_batch=" . $id_batch . 
-						" --type=" . $batch ['id_type'] . 
+						"\" --id_schedulazione=" . $id_schedulazione . 
+						" --type=" . $batch ['type_schedulazione'] . 
 						" --run_time=" . $run_time_unix . 
 						" &";
 					
@@ -169,9 +167,9 @@ try {
 					//exec ( escapeshellcmd ( $cmd ), $return );
 					
 					/* aggiorna parametri batch */
-					$st_config->setStatus ( $id_batch, SUBMITTED );
-					$st_config->setNextStartTime ( $id_batch, $common->calcolaNextStartTime ( $ts_batch_unix, $batch ['id_type'], $periodo ) );
-					$st_config->setLastStartTime ( $id_batch, $run_time_unix );
+					$st_config->setStatus ( $id_schedulazione, SUBMITTED );
+					$st_config->setNextStartTime ( $id_schedulazione, $common->calcolaNextStartTime ( $ts_batch_unix, $batch ['id_schedulazione'], $frequenza ) );
+					$st_config->setLastStartTime ( $id_schedulazione, $run_time_unix );
 					
 					$log->info ( "	Submitted" );
 				} else {

@@ -51,7 +51,6 @@
 			      }break;
 		      }
 
-		      printf("%d %d %d\n",$run_time_unix,$id_type,$periodo);
 		      return $t;
 
 		}

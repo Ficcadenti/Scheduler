@@ -24,6 +24,7 @@ class SchedulerDBstatus {
 	private $log = null;
 	private $dbh = null;
 	private $name_file = "";
+	private $name_tabella = "sc_stato_schedulazione_lib";
 	
 	function __construct() {
 	}
@@ -55,10 +56,10 @@ class SchedulerDBstatus {
 			
 			try {
 				
-				$statement = $this->dbh->query ( 'SELECT * from sc_status_lib' );
+				$statement = $this->dbh->query ( 'SELECT * FROM '.$this->name_tabella );
 				
 				foreach ( $statement as $row ) {
-					$this->sc_status_lib [$row ['id_status']] = $row ['descr_status'];
+					$this->sc_status_lib [$row ['id_stato_schedulazione']] = $row ['descrizione'];
 				}
 				return true;
 			} catch ( \PDOException $ex ) {

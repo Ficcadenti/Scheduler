@@ -29,13 +29,21 @@ class Batch30gg implements BatchGlobal {
 	private $dbh = null;
 	private $name_file = "";
 	private $lista_parametri = array ();
-	private $id_error=-1;
+	private $id_error=BATCH_WITHOUT_ERROR;
+	private $descr_error="";
 	
 	function __construct() {
 	}
+	
 	function __destruct() {
 		$this->dbh = null;
 	}
+	
+	private function boolToStr($b)
+	{
+		return ($b) ? 'true' : 'false';
+	}
+	
 	private function connect() {
 		$this->name_file = basename ( __FILE__, ".php" );
 		try {
@@ -45,98 +53,187 @@ class Batch30gg implements BatchGlobal {
 			$this->dbh = null;
 		}
 	}
+	
 	public function setLogger($log) {
 		$this->log = $log;
 	}
+	
 	public function init() {
 		$this->log->info ( "init()" );
 		Batch30gg::connect ();
 		if ($this->dbh == null) {
+			$this->id_error=ERROR;
+			$this->descr_error="Errore 1";
 			return false;
 		} else {
 			return true;
 		}
 	}
+	
 	public function getParam($argv) {
-
+		$this->log->info ( "getParam()" );
 		array_shift ( $argv );
 		
 		if (count ( $argv ) == 0) {
 			$msg="Il Batch è stato invocato senza parametri.";
 			$this->log->info ( $msg );
+			$this->id_error=ERROR;
+			$this->descr_error="Errore 1";
 			return false;
 		}
 		
 		Batch30gg::getInputParameter ( $argv );
 		
-		if (array_key_exists ( strtolower ( "--id_batch" ), $this->lista_parametri )) {
+		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			if (array_key_exists ( strtolower ( "--run_time" ), $this->lista_parametri )) {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
-					Batch30gg::setStatus($this->lista_parametri['--id_batch'],WORKING,BATCH_WITHOUT_ERROR,"dsad");
+					Batch30gg::setStatus($this->lista_parametri['--id_schedulazione'],WORKING,BATCH_WITHOUT_ERROR,"dsad");
 					return true;
 				}else {
 					$msg="Il Batch è stato invocato senza parametro --type";
 					$this->log->info ( $msg );
-					Batch30gg::setStatus($this->lista_parametri['--id_batch'],ERROR,1,$msg);
+					Batch30gg::setStatus($this->lista_parametri['--id_schedulazione'],ERROR,1,$msg);
+					$this->id_error=ERROR;
+					$this->descr_error=$msg;
 					return false;
 				}
 			} else {
-				$msg="Il Batch è stato invocato senza parametro --run_time";
-				$this->log->info ( $msg );
-				Batch30gg::setStatus($this->lista_parametri['--id_batch'],ERROR,1,$msg);
+				
+				$this->id_error=ERROR;
+				$this->descr_error="Il Batch è stato invocato senza parametro --run_time";
+				
+				$this->log->info ( $this->descr_error );
+				Batch30gg::setStatus($this->lista_parametri['--id_batch'],ERROR,$this->id_error,$this->descr_error);
+				
 				return false;
 			}
 		} else {
-			$msg="Il Batch è stato invocato senza parametro --id_batch";
-			$this->log->info ( $msg );
+			$this->id_error=ERROR;
+			$this->descr_error="Il Batch è stato invocato senza parametro --id_batch";
+			
+			$this->log->info ( $this->descr_error );
+			Batch30gg::setStatus($this->lista_parametri['--id_batch'],ERROR,$this->id_error,$this->descr_error);
 			return false;
 		}
 	}
 	
+	public function getIdSchedulazione($argv) /* chiamata prima del log */
+	{
+		array_shift ( $argv );
+	
+		if (count ( $argv ) == 0) {
+			$msg="-Il Batch è stato invocato senza parametri.";
+			printf("%s\n", $msg );
+			return -1;
+		}
+	
+		Batch30gg::getInputParameter ( $argv );
+	
+		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) 
+		{
+			printf("id_schedulazione=%d\n",$this->lista_parametri['--id_schedulazione']);
+			return $this->lista_parametri['--id_batch'];
+		} else {
+			$msg="-Il Batch è stato invocato senza parametro --id_schedulazione";
+			printf("%s\n", $msg );
+			return -1;
+		}
+	}
+	
+	
 	public function info() {
 		$this->log->info ( "info()" );
+		$msg=sprintf("------------------------------------------------");
+		$this->log->info( $msg );
+		$msg=sprintf("Batch Name: %s",$this->name_file);
+		$this->log->info( $msg );
+		$msg=sprintf("Input param: ");
+		$this->log->info( $msg );
+		foreach ($this->lista_parametri as $key => $value)
+		{
+			$msg=sprintf("	%s: %s",$key,$value);
+			$this->log->info ( $msg );
+		}
+		
+		$msg=sprintf("------------------------------------------------");
+		$this->log->info( $msg );
 		
 	}
 	
 	public function run() {
-		$this->log->info ( "START Batch Test(" . $this->lista_parametri ['--id_batch'] . "," . $this->lista_parametri ['--run_time'] . ")." );
-		Batch30gg::setStatus($this->lista_parametri ['--id_batch'],WORKING,BATCH_WITHOUT_ERROR,"");
+		$this->log->info ( "run()" );
+		$command="sh \"".getenv("REFRESH_TOKEN_CMD")."\" 13";
+
+		$this->log->info($command);
+		exec(escapeshellcmd($command),$output);
+		
+		foreach ($output as $key => $value)
+		{
+			$obj=json_decode($value);
+			$ret=$obj->failed;
+			if($ret==1)
+			{
+				$this->id_error=1;
+				
+				if(isset($obj->errors->general))
+				{
+					$this->log->info($obj->errors->general);
+					$this->descr_error=$obj->errors->general;
+				}
+				else if(isset($obj->errors->google_accounts))
+				{
+					$this->log->info($obj->errors->google_accounts);
+				}
+				
+				
+				return false;
+			}
+		}
+		return true;
+		
 	}
 	
-	private function setStatus($id_batch,$status,$id_error,$descr_error)
+	public function  finish()
+	{
+		$this->log->info ( "finish()" );
+		Batch30gg::setStatus($this->lista_parametri ['--id_schedulazione'],TO_BE_SUBMITTED,BATCH_WITHOUT_ERROR,"");
+	}
+	
+	private function setStatus($id_schedulazione,$status,$id_error,$descr_error)
 	{
 		if($this->dbh!=null)
 		{
-			$sql = "UPDATE sc_config SET status = :status, id_error = :id_error, descr_error = :descr_error WHERE id_batch = :id_batch";
+			$sql = "UPDATE sc_config SET status = :status, id_error = :id_error, descr_error = :descr_error WHERE id_schedulazione = :id_schedulazione";
+			printf("id_error=%s\n",$id_error);
+			printf("descr_error=%s\n",$descr_error);
 			$stmt = $this->dbh->prepare($sql);
 			$stmt->bindParam(':status',$status, \PDO::PARAM_INT);
 			$stmt->bindParam(':id_error',$id_error, \PDO::PARAM_INT);
 			$stmt->bindParam(':descr_error',$descr_error, \PDO::PARAM_STR);
-			$stmt->bindParam(':id_batch',$id_batch, \PDO::PARAM_INT);
+			$stmt->bindParam(':id_schedulazione',$id_schedulazione, \PDO::PARAM_INT);
 			$stmt->execute();
 		}
 		else
 		{
 			$this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
-			$this->dbh=null;
 		}
 	}
 	
 	public function refreshStatus($status) {
-		$this->log->info ( "refreshStatus()" );
+		$this->log->info ( "refreshStatus(".Batch30gg::boolToStr($status).")" );
 		if($status==false)
 		{
-			Batch30gg::setStatus($this->lista_parametri ['--id_batch'],WORKING,BATCH_WITHOUT_ERROR,"");
+			Batch30gg::setStatus($this->lista_parametri ['--id_schedulazione'],ERROR,$this->id_error,$this->descr_error);
 		}
 		else
 		{
 			if($this->lista_parametri ['--type']==BATCH_UNA_TANTUM)
 			{
-				Batch30gg::setStatus($this->lista_parametri ['--id_batch'],FINISCHED,BATCH_WITHOUT_ERROR,"");
+				Batch30gg::setStatus($this->lista_parametri ['--id_schedulazione'],FINISCHED,BATCH_WITHOUT_ERROR,"");
 			}
 			else
 			{
-				Batch30gg::setStatus($this->lista_parametri ['--id_batch'],TO_BE_SUBMITTED,BATCH_WITHOUT_ERROR,"");
+				Batch30gg::setStatus($this->lista_parametri ['--id_schedulazione'],TO_BE_SUBMITTED,BATCH_WITHOUT_ERROR,"");
 			}
 		}
 	}

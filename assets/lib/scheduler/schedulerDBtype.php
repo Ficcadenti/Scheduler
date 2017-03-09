@@ -27,6 +27,7 @@
 	private $log		= null;
 	private $dbh		= null;
 	private $name_file	= "";
+	private $name_tabella = "sc_type_schedulazione_lib";
 
 
 	function __construct()
@@ -71,12 +72,12 @@
 				try 
 				{
 				    
-				    $statement=$this->dbh->query('SELECT * from sc_type_lib');
+				    $statement=$this->dbh->query('SELECT * FROM '.$this->name_tabella);
 				    
 				    foreach($statement as $row) 
 				    {
 					  
-						$this->sc_type_lib[$row['id_type']]=$row['descr_type'];
+						$this->sc_type_lib[$row['id_type_schedulazione']]=$row['descrizione'];
 				    }
 				    
 				    return true;

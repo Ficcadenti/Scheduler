@@ -35,7 +35,7 @@ date_default_timezone_set ( 'Europe/Rome' );
 $bt = new Batch30gg ();
 $service = new BatchService ();
 $name_log_file = basename ( __FILE__, ".php" );
-$id_batch = 0;
+$id_schedulazione = 0;
 $configuration_log = array (
 		'LOG_ECHO' => 1,
 		'LOG_DAILYFILE' => 2 
@@ -54,24 +54,36 @@ try {
 	exit ();
 }
 
-/* set logger */
-Logger::configure ( $configuration_log, new BatchLogConfigurator ( $service->makePathLogBatch (), $name_log_file ) );
-$log = Logger::getLogger ( $name_log_file );
-$bt->setLogger ( $log );
-$service->setLogger ( $log );
 
-/* Cancello old log */
-$service->clearLog ();
+$id_schedulazione = $bt->getIdSchedulazione ( $argv );
 
-/* start Batch */
-if ($bt->init ()) {
-	if ($bt->getParam ( $argv ) == true) {
-		$bt->info ();
-		$bt->run ();
-		$bt->refreshStatus(true);
+if ($id_schedulazione != - 1) {
+	$name_log_file = $id_schedulazione . '.' . $name_log_file;
+	
+	printf ( "BATCH Log path: %s\n", $service->makePathLogBatch () );
+	printf ( "BATCH Log file: <yyyy-mm-dd>.%s.log\n", $name_log_file );
+	
+	/* set logger */
+	Logger::configure ( $configuration_log, new BatchLogConfigurator ( $service->makePathLogBatch (), $name_log_file ) );
+	$log = Logger::getLogger ( $name_log_file );
+	$bt->setLogger ( $log );
+	$service->setLogger ( $log );
+	
+	/* Cancello old log */
+	$service->clearLog ();
+	
+	/* start Batch */
+	if ($bt->init ()) {
+		if ($bt->getParam ( $argv ) == true) {
+			$bt->info ();
+			
+			if ($bt->run () == true) {
+				$bt->refreshStatus ( true );
+			} else {
+				$bt->refreshStatus ( false );
+			}
+		}
+	} else {
+		$bt->refreshStatus ( false );
 	}
-}
-else 
-{
-	$bt->refreshStatus (false);
 }
