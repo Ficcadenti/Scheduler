@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `adplify_scheduler` /*!40100 DEFAULT CHARACTER SE
 USE `adplify_scheduler`;
 -- MySQL dump 10.13  Distrib 5.7.9, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: scheduler
+-- Host: 127.0.0.1    Database: adplify_scheduler
 -- ------------------------------------------------------
 -- Server version	5.7.10-log
 
@@ -40,7 +40,7 @@ CREATE TABLE `batch_lib` (
 
 LOCK TABLES `batch_lib` WRITE;
 /*!40000 ALTER TABLE `batch_lib` DISABLE KEYS */;
-INSERT INTO `batch_lib` VALUES (1,1,'batch_30_gg','BATCH a 30 giorni','batch_30_gg.php'),(2,2,'batch_rt','BATCH RealTime','batch_rt.php');
+INSERT INTO `batch_lib` VALUES (1,1,'batch30gg','BATCH a 30 giorni','batch30gg.php'),(2,2,'batchrt','BATCH RealTime','batchrt.php');
 /*!40000 ALTER TABLE `batch_lib` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS `sc_config`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sc_config` (
   `id_schedulazione` int(11) NOT NULL,
+  `hostname` varchar(45) DEFAULT NULL,
   `id_user` int(11) DEFAULT NULL,
   `id_batch` int(11) DEFAULT NULL COMMENT 'Chiave univoca che lega la tabella scheduler a la tabella dei batch',
   `descr_schedulazione` varchar(45) DEFAULT NULL,
@@ -76,7 +77,7 @@ CREATE TABLE `sc_config` (
 
 LOCK TABLES `sc_config` WRITE;
 /*!40000 ALTER TABLE `sc_config` DISABLE KEYS */;
-INSERT INTO `sc_config` VALUES (5,13,1,'Schedulazione Utente Raffaele','{\"userGoogle\": 1,\"userAdw\": 2,\"tipoBatch\": 1,\"tipoReport\": 1,\"tipoSchedulazione\": 1,\"periodo\": 10800,\"dal\": \"2016-01-01 00:00:00\",\"al\": \"2017-01-01 00:00:00\"}',7,10800,'1970-01-01 01:00:00','2017-03-09 09:03:00',7,NULL,'2017-03-03 00:00:00','0',NULL);
+INSERT INTO `sc_config` VALUES (5,NULL,13,1,'Schedulazione Utente Raffaele','{\"userGoogle\": 1,\"userAdw\": 2,\"tipoBatch\": 1,\"tipoReport\": 1,\"tipoSchedulazione\": 1,\"periodo\": 10800,\"dal\": \"2016-01-01 00:00:00\",\"al\": \"2017-01-01 00:00:00\"}',7,10800,'2017-03-09 17:26:00','2017-03-09 14:43:00',6,NULL,'2017-03-03 00:00:00','0','');
 /*!40000 ALTER TABLE `sc_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,11 +132,11 @@ INSERT INTO `sc_type_schedulazione_lib` VALUES (1,1,'ORARIO'),(2,2,'GIORNALIERO'
 UNLOCK TABLES;
 
 --
--- Dumping events for database 'scheduler'
+-- Dumping events for database 'adplify_scheduler'
 --
 
 --
--- Dumping routines for database 'scheduler'
+-- Dumping routines for database 'adplify_scheduler'
 --
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -147,4 +148,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-09  9:36:47
+-- Dump completed on 2017-03-09 14:45:00

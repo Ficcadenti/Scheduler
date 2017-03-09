@@ -103,7 +103,7 @@ class Batch30gg_work implements BatchGlobal {
 				$this->descr_error="Il Batch è stato invocato senza parametro --run_time";
 				
 				$this->log->info ( $this->descr_error );
-				Batch30gg_work::setStatus($this->lista_parametri['--id_batch'],ERROR,$this->id_error,$this->descr_error);
+				Batch30gg_work::setStatus($this->lista_parametri['--id_schedulazione'],ERROR,$this->id_error,$this->descr_error);
 				
 				return false;
 			}
@@ -184,11 +184,11 @@ class Batch30gg_work implements BatchGlobal {
 				{
 					$this->log->info($obj->errors->google_accounts);
 				}
-				
-				
+
 				return false;
 			}
 		}
+		
 		return true;
 		
 	}

@@ -70,6 +70,7 @@
 				{
 				    
 				    $statement=$this->dbh->query('SELECT a.id_schedulazione,
+				    										a.hostname,
 				    										a.descr_schedulazione,
 				    										a.id_user,
 				    										b.id_batch,
@@ -85,13 +86,14 @@
 												    		a.creation_time,
 												    		a.id_error,
 												    		a.descr_error
-				    								FROM scheduler.sc_config a, batch_lib b 
+				    								FROM sc_config a, batch_lib b 
 				    								WHERE a.id_batch=b.id_batch');
 				    
 				    foreach($statement as $row) 
 				    {
 						$a=array();
 						$a['id_schedulazione']=$row['id_schedulazione'];
+						$a['hostname']=$row['hostname']; /* attualmente non gestito */
 						$a['descr_schedulazione']=$row['descr_schedulazione'];
 						$a['id_user']=$row['id_user'];
 						$a['id_batch']=$row['id_batch'];
