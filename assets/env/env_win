@@ -17,45 +17,47 @@
 | File per il settaggio dell'environment
 */
 
+ 
 /* Cestino standard output  */
-DEV_NULL               = pippo.txt   
+DEV_NULL                       = pippo.log   
 
-
+/* Dir di base del progetto  */
+BASE_DIR                       = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler
 
 /* Sezione per parametri Scheduler */
-SCHEDULER_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\scheduler
+SCHEDULER_DIR                  = ${BASE_DIR}\scheduler
 
 /* Sezione per parametri Scheduler Log */
-SCHEDULER_LOG_DIR      = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\scheduler
-SCHEDULER_LOG_CLEAR_GG = 30
+SCHEDULER_LOG_DIR              = ${BASE_DIR}\logs\scheduler
+SCHEDULER_LOG_CLEAR_GG         = 30
 
 
 
 /* Sezione per parametri SchedulerManager */
-SCHEDULER_MANAGER_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\schedulerer
+SCHEDULER_MANAGER_DIR          = ${BASE_DIR}\schedulerer
 
 /* Sezione per parametri SchedulerManager Log */
-SCHEDULER_MANAGER_LOG_DIR      = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\schedulermanager
+SCHEDULER_MANAGER_LOG_DIR      = ${BASE_DIR}\logs\schedulermanager
 SCHEDULER_MANAGER_LOG_CLEAR_GG = 30
 
 
 
 /* Sezione per parametri Batch */
-BATCH_DIR              = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\batch
+BATCH_DIR                      = ${BASE_DIR}\batch
 
 /* Sezione per parametri Batch Log */
-BATCH_LOG_DIR          = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler\logs\batch
-BATCH_LOG_CLEAR_GG     = 15
+BATCH_LOG_DIR                  = ${BASE_DIR}\logs\batch
+BATCH_LOG_CLEAR_GG             = 15
 
 
 
 /* Refresh token */
-REFRESH_TOKEN_CMD      = D:\Sviluppo\Apache2.4\htdocs\Exolab\adplify_be\batch_refresh_tokens_by_user_id.sh
+REFRESH_TOKEN_CMD              = ${BASE_DIR}\adplify_be\batch_refresh_tokens_by_user_id.sh
 
 
 
 /* Sezione per parametri MySql DB */
-DB_HOST                = localhost
-DB_NAME                = adplify_scheduler
-DB_USER                = root
-DB_PASS                = raffo
+DB_HOST                        = localhost
+DB_NAME                        = adplify_scheduler
+DB_USER                        = root
+DB_PASS                        = raffo

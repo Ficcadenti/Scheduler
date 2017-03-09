@@ -180,11 +180,12 @@ try {
 					$st_config->setLastStartTime ( $id_schedulazione, $run_time_unix );
 					
 					$log->info ( "	Submitted" );
-				} else {
-					$log->info ( "	Skipped 1" );
+				} else 
+				{
+					$log->info ( "	Skipped (non è ancora ora)" );
 				}
 			} else {
-				$log->info ( "	Skipped 2" );
+				$log->info ( "	Skipped " );
 			}
 		}
 		
