@@ -1,0 +1,1117 @@
+<!--Entity Relation Diagram Save File: 08/03/2017 23:22:25-->
+<EntityRelationDiagramElement DiagramId="0b5071d0-d5e1-457a-b650-7fa3d0f01534">
+  <DataSetElement>
+    <ter:CriteriaDataSet xmlns:ter="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/">
+  <xs:schema id="CriteriaDataSet" targetNamespace="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" xmlns:mstns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" attributeFormDefault="qualified" elementFormDefault="qualified">
+    <xs:element name="CriteriaDataSet" msdata:IsDataSet="true" msdata:Locale="en-US" msdata:EnforceConstraints="False" msdata:Prefix="ter">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="TrlTable">
+            <xs:complexType>
+              <xs:attribute name="ID" msdata:Prefix="ter" type="xs:string" use="required" />
+              <xs:attribute name="Trl" msdata:Prefix="ter" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="TrlRelation">
+            <xs:complexType>
+              <xs:attribute name="ID" msdata:Prefix="ter" type="xs:string" use="required" />
+              <xs:attribute name="Trl" msdata:Prefix="ter" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="NotesTable">
+            <xs:complexType>
+              <xs:attribute name="ID" msdata:Prefix="ter" type="xs:string" use="required" />
+              <xs:attribute name="Notes" msdata:Prefix="ter" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="LookupInfoTable">
+            <xs:complexType>
+              <xs:attribute name="ID" msdata:Prefix="ter" type="xs:string" use="required" />
+              <xs:attribute name="LookupInfo" msdata:Prefix="ter" type="xs:string" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="TrlTableIdConstraint" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//mstns:TrlTable" />
+        <xs:field xpath="@mstns:ID" />
+      </xs:unique>
+      <xs:unique name="TrlRelationIdConstraint" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//mstns:TrlRelation" />
+        <xs:field xpath="@mstns:ID" />
+      </xs:unique>
+      <xs:unique name="NotesTableIdConstraint" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//mstns:NotesTable" />
+        <xs:field xpath="@mstns:ID" />
+      </xs:unique>
+      <xs:unique name="LookupInfoIdConstraint" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//mstns:LookupInfoTable" />
+        <xs:field xpath="@mstns:ID" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}{5bd0a2a5-8778-4485-8118-09d422b6274c}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib/COLUMNS/id/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}{9ab3919a-77e6-4889-8f6a-1de0b603effb}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib/COLUMNS/id_batch/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}{e2775413-2778-4d85-9d51-327018d50dbb}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib/COLUMNS/name_batch/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}{22bdb593-9328-473b-962c-da5429514aa6}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib/COLUMNS/descr_batch/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{270d9c23-15de-4d7c-9f17-5e17609c5c62}{393798c4-1b80-458b-adc5-489e314cf3cb}" ter:Trl="mysql://root@localhost/TABLE/scheduler/batch_lib/COLUMNS/phpname_batch/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{0c6c6ecd-bdb6-482c-be8b-dfb4aa448b9e}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/id_schedulazione/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{5cdb27ca-9018-4af2-9ffa-7d378934120a}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/id_user/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{cee9779c-00ef-44ce-925b-0861bd3163d4}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/id_batch/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{4f5f9573-bb6d-4a2d-b3f0-58df827c1111}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/descr_schedulazione/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{a2f4e51a-9177-425d-973a-a09c42567c42}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/parametri_batch/varchar(2000)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{162255f5-5b83-4e43-8a5e-3ccb0e08feb4}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/type_schedulazione/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{25802018-4e98-4f15-b79b-a50b924f768d}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/periodo/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{f6b3ff44-6132-4ad1-bf22-6055b91d6d52}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/time_start/datetime" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{734f7238-8a91-4197-aa89-9e2de4b83663}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/last_time_start/datetime" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{cc0512e5-99ed-46db-a3dc-e03336ed0d66}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/stato_schedulazione/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{3462c503-2bd3-4d1c-9df3-4ad1c56fd5a2}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/pid/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{ac0fc307-48c2-4512-ae11-94528e1f5059}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/creation_time/datetime" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{dec4b6ef-7217-4d00-9995-3bc4545e3c18}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/id_error/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{c7aa4249-7364-433b-99d4-09435c9f528d}{66673e29-bbd5-48d9-9910-31085d793a17}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_config/COLUMNS/descr_error/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{677c9aad-9ad9-44f7-bfcd-40195495453a}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_stato_schedulazione_lib" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{677c9aad-9ad9-44f7-bfcd-40195495453a}{de86dca7-59ce-41b4-9513-bdf98ec6d333}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_stato_schedulazione_lib/COLUMNS/id/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{677c9aad-9ad9-44f7-bfcd-40195495453a}{3b818c2a-26ba-44d8-a6bb-66cda822c053}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_stato_schedulazione_lib/COLUMNS/id_stato_schedulazione/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{677c9aad-9ad9-44f7-bfcd-40195495453a}{44fc93de-5093-4c28-ba89-fcfc11bccaea}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_stato_schedulazione_lib/COLUMNS/descr_status/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{3ec0f8e4-58d9-41b5-8270-d0662ba63ab3}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{3ec0f8e4-58d9-41b5-8270-d0662ba63ab3}{8e62fd4d-02ed-4a66-a3c0-5317ab192712}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib/COLUMNS/id/int(11)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{3ec0f8e4-58d9-41b5-8270-d0662ba63ab3}{39b36f8e-6a5e-41ab-97da-484174714320}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib/COLUMNS/id_type_schedulazione/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+  <TrlTable ter:ID="{3ec0f8e4-58d9-41b5-8270-d0662ba63ab3}{01b80ae2-f3f5-4b48-9cd3-be6eacac8d18}" ter:Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib/COLUMNS/descr_type/varchar(45)" xmlns="http://www.quest.com/2005/07/05/ToadEntityRelationDiagram/" />
+</ter:CriteriaDataSet>
+  </DataSetElement>
+  <DiagramElement>
+    <Information>
+      <Version>7.5.0.966</Version>
+    </Information>
+    <Control>
+      <DragBorderOnly>True</DragBorderOnly>
+      <ShowToolTips>True</ShowToolTips>
+      <DrawHighQuality>True</DrawHighQuality>
+      <AutoScroll>True</AutoScroll>
+      <Zoom>80</Zoom>
+      <BackColor>Window</BackColor>
+      <MinimizeToIcon>True</MinimizeToIcon>
+    </Control>
+    <Tables>
+      <Table Type="Quest.Toad.ModelerDrawing.DrawingControls.TableObject" ID="270d9c23-15de-4d7c-9f17-5e17609c5c62">
+        <Properties>
+          <Name>batch_lib</Name>
+          <Alias>batch_lib</Alias>
+          <SupportColumnsCategories>False</SupportColumnsCategories>
+        </Properties>
+        <Control Type="Quest.Toad.ModelerDrawing.Controls.DefaultTableDesignControl" Width="16" Height="16">
+          <ShowColumnDetails>False</ShowColumnDetails>
+          <ShowTableItems>True</ShowTableItems>
+          <ShowTableItemsTitle>True</ShowTableItemsTitle>
+          <ShowTableItemsCloseButton>True</ShowTableItemsCloseButton>
+          <TableItemsTitle><![CDATA[Referenced+objects]]></TableItemsTitle>
+          <TableItemsToolTip><![CDATA[Use+context+menu+to+manage+Referenced+objects]]></TableItemsToolTip>
+          <Bounds>155, 0, 198, 146</Bounds>
+          <Minimized>False</Minimized>
+          <Visible>True</Visible>
+          <BorderStyle>Fixed3D</BorderStyle>
+          <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.batch_lib%0aConnection%c2%a7c+root%c2%a7alocalhost]]></ToolTip>
+          <ShowMinimizeButton>True</ShowMinimizeButton>
+          <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+        </Control>
+        <Columns>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="5bd0a2a5-8778-4485-8118-09d422b6274c" Width="16" Height="16">
+            <Name>id</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Bold</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Icon>00FFFFFF00FFFFFFFFAB6A14FFAA6A13FFA96A12FFA86911FFA76810FFA5670F00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA4660E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFE4C9A6FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFE4C9A6FFFFB740FFED9421FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFC97B0CFFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFED9421FFFFB740FFA2640D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF661FFFFF683FFFFF648FFFFF648FFFFB740FFFFF683FFED9421FFFFB740FFA2640C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF648FFFFF648FFFFF648FFED9421FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FFA0630C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAB6B14FFAA6A13FFA96912FFA86912FFA76810FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9F620B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA5670FFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA4660EFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA3650DFFFFF683FFC97B0CFFFFF683FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA2640CFFFFF683FFFFB740FF9F620AFF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA0630CFFA0620BFF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF</Icon>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>True</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="9ab3919a-77e6-4889-8f6a-1de0b603effb">
+            <Name>id_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="e2775413-2778-4d85-9d51-327018d50dbb">
+            <Name>name_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="22bdb593-9328-473b-962c-da5429514aa6">
+            <Name>descr_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="393798c4-1b80-458b-adc5-489e314cf3cb">
+            <Name>phpname_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+        </Columns>
+        <Items />
+        <Attributes>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>DataType</Name>
+            <Caption>Datatype</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>AllowNull</Name>
+            <Caption>Nullable</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.Boolean</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>Comment</Name>
+            <Caption>Comment</Caption>
+            <Visible>False</Visible>
+            <Editable>True</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+        </Attributes>
+      </Table>
+      <Table Type="Quest.Toad.ModelerDrawing.DrawingControls.TableObject" ID="c7aa4249-7364-433b-99d4-09435c9f528d">
+        <Properties>
+          <Name>sc_config</Name>
+          <Alias>sc_config</Alias>
+          <SupportColumnsCategories>False</SupportColumnsCategories>
+        </Properties>
+        <Control Type="Quest.Toad.ModelerDrawing.Controls.DefaultTableDesignControl" Width="16" Height="16">
+          <ShowColumnDetails>False</ShowColumnDetails>
+          <ShowTableItems>True</ShowTableItems>
+          <ShowTableItemsTitle>True</ShowTableItemsTitle>
+          <ShowTableItemsCloseButton>True</ShowTableItemsCloseButton>
+          <TableItemsTitle><![CDATA[Referenced+objects]]></TableItemsTitle>
+          <TableItemsToolTip><![CDATA[Use+context+menu+to+manage+Referenced+objects]]></TableItemsToolTip>
+          <Bounds>510, 19, 198, 313</Bounds>
+          <Minimized>False</Minimized>
+          <Visible>True</Visible>
+          <BorderStyle>Fixed3D</BorderStyle>
+          <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.sc_config%0aConnection%c2%a7c+root%c2%a7alocalhost%0aComment%c2%a7c+Tabella+di+configurazione+scheduler]]></ToolTip>
+          <ShowMinimizeButton>True</ShowMinimizeButton>
+          <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+        </Control>
+        <Columns>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="0c6c6ecd-bdb6-482c-be8b-dfb4aa448b9e" Width="16" Height="16">
+            <Name>id_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Bold</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Icon>00FFFFFF00FFFFFFFFAB6A14FFAA6A13FFA96A12FFA86911FFA76810FFA5670F00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA4660E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFE4C9A6FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFE4C9A6FFFFB740FFED9421FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFC97B0CFFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFED9421FFFFB740FFA2640D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF661FFFFF683FFFFF648FFFFF648FFFFB740FFFFF683FFED9421FFFFB740FFA2640C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF648FFFFF648FFFFF648FFED9421FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FFA0630C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAB6B14FFAA6A13FFA96912FFA86912FFA76810FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9F620B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA5670FFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA4660EFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA3650DFFFFF683FFC97B0CFFFFF683FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA2640CFFFFF683FFFFB740FF9F620AFF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA0630CFFA0620BFF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF</Icon>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>True</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="5cdb27ca-9018-4af2-9ffa-7d378934120a">
+            <Name>id_user</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="cee9779c-00ef-44ce-925b-0861bd3163d4">
+            <Name>id_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>comment</Name>
+                <Value><![CDATA[Chiave+univoca+che+lega+la+tabella+scheduler+a+la+tabella+dei+batch]]></Value>
+              </Attribute>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="4f5f9573-bb6d-4a2d-b3f0-58df827c1111">
+            <Name>descr_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="a2f4e51a-9177-425d-973a-a09c42567c42">
+            <Name>parametri_batch</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(2000)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="162255f5-5b83-4e43-8a5e-3ccb0e08feb4">
+            <Name>type_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="25802018-4e98-4f15-b79b-a50b924f768d">
+            <Name>periodo</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="f6b3ff44-6132-4ad1-bf22-6055b91d6d52">
+            <Name>time_start</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>datetime</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="734f7238-8a91-4197-aa89-9e2de4b83663">
+            <Name>last_time_start</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>comment</Name>
+                <Value><![CDATA[i+tempi+sono+in+formato+unix]]></Value>
+              </Attribute>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>datetime</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="cc0512e5-99ed-46db-a3dc-e03336ed0d66">
+            <Name>stato_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="3462c503-2bd3-4d1c-9df3-4ad1c56fd5a2">
+            <Name>pid</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="ac0fc307-48c2-4512-ae11-94528e1f5059">
+            <Name>creation_time</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>datetime</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="dec4b6ef-7217-4d00-9995-3bc4545e3c18">
+            <Name>id_error</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="66673e29-bbd5-48d9-9910-31085d793a17">
+            <Name>descr_error</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+        </Columns>
+        <Items>
+          <Item Type="Quest.Toad.ModelerDrawing.DrawingControls.TableItemObject" ID="259f9581-593a-415b-8e09-8ebfab503e38" Width="16" Height="16">
+            <Name>sc_config</Name>
+            <Alias><![CDATA[sc_type_schedulazione_lib+(id_type_schedulazione)]]></Alias>
+            <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.sc_type_schedulazione_lib%0aConnection%c2%a7c+root%c2%a7alocalhost]]></ToolTip>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+          </Item>
+          <Item Type="Quest.Toad.ModelerDrawing.DrawingControls.TableItemObject" ID="946361c7-c5d3-403b-9f2f-3fab69af1c6f" Width="16" Height="16">
+            <Name>sc_config</Name>
+            <Alias><![CDATA[sc_stato_schedulazione_lib+(id_stato_schedulazione)]]></Alias>
+            <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.sc_stato_schedulazione_lib%0aConnection%c2%a7c+root%c2%a7alocalhost]]></ToolTip>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+          </Item>
+        </Items>
+        <Attributes>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>DataType</Name>
+            <Caption>Datatype</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>AllowNull</Name>
+            <Caption>Nullable</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.Boolean</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>Comment</Name>
+            <Caption>Comment</Caption>
+            <Visible>False</Visible>
+            <Editable>True</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+        </Attributes>
+      </Table>
+      <Table Type="Quest.Toad.ModelerDrawing.DrawingControls.TableObject" ID="677c9aad-9ad9-44f7-bfcd-40195495453a">
+        <Properties>
+          <Name>sc_stato_schedulazione_lib</Name>
+          <Alias>sc_stato_schedulazione_lib</Alias>
+          <SupportColumnsCategories>False</SupportColumnsCategories>
+        </Properties>
+        <Control Type="Quest.Toad.ModelerDrawing.Controls.DefaultTableDesignControl" Width="16" Height="16">
+          <ShowColumnDetails>False</ShowColumnDetails>
+          <ShowTableItems>True</ShowTableItems>
+          <ShowTableItemsTitle>True</ShowTableItemsTitle>
+          <ShowTableItemsCloseButton>True</ShowTableItemsCloseButton>
+          <TableItemsTitle><![CDATA[Referenced+objects]]></TableItemsTitle>
+          <TableItemsToolTip><![CDATA[Use+context+menu+to+manage+Referenced+objects]]></TableItemsToolTip>
+          <Bounds>826, 110, 198, 115</Bounds>
+          <Minimized>False</Minimized>
+          <Visible>True</Visible>
+          <BorderStyle>Fixed3D</BorderStyle>
+          <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.sc_stato_schedulazione_lib%0aConnection%c2%a7c+root%c2%a7alocalhost]]></ToolTip>
+          <ShowMinimizeButton>True</ShowMinimizeButton>
+          <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+        </Control>
+        <Columns>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="de86dca7-59ce-41b4-9513-bdf98ec6d333" Width="16" Height="16">
+            <Name>id</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Bold</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Icon>00FFFFFF00FFFFFFFFAB6A14FFAA6A13FFA96A12FFA86911FFA76810FFA5670F00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA4660E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFE4C9A6FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFE4C9A6FFFFB740FFED9421FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFC97B0CFFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFED9421FFFFB740FFA2640D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF661FFFFF683FFFFF648FFFFF648FFFFB740FFFFF683FFED9421FFFFB740FFA2640C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF648FFFFF648FFFFF648FFED9421FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FFA0630C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAB6B14FFAA6A13FFA96912FFA86912FFA76810FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9F620B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA5670FFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA4660EFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA3650DFFFFF683FFC97B0CFFFFF683FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA2640CFFFFF683FFFFB740FF9F620AFF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA0630CFFA0620BFF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF</Icon>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>True</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="3b818c2a-26ba-44d8-a6bb-66cda822c053">
+            <Name>id_stato_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="44fc93de-5093-4c28-ba89-fcfc11bccaea">
+            <Name>descr_status</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+        </Columns>
+        <Items />
+        <Attributes>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>DataType</Name>
+            <Caption>Datatype</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>AllowNull</Name>
+            <Caption>Nullable</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.Boolean</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>Comment</Name>
+            <Caption>Comment</Caption>
+            <Visible>False</Visible>
+            <Editable>True</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+        </Attributes>
+      </Table>
+      <Table Type="Quest.Toad.ModelerDrawing.DrawingControls.TableObject" ID="3ec0f8e4-58d9-41b5-8270-d0662ba63ab3">
+        <Properties>
+          <Name>sc_type_schedulazione_lib</Name>
+          <Alias>sc_type_schedulazione_lib</Alias>
+          <SupportColumnsCategories>False</SupportColumnsCategories>
+        </Properties>
+        <Control Type="Quest.Toad.ModelerDrawing.Controls.DefaultTableDesignControl" Width="16" Height="16">
+          <ShowColumnDetails>False</ShowColumnDetails>
+          <ShowTableItems>True</ShowTableItems>
+          <ShowTableItemsTitle>True</ShowTableItemsTitle>
+          <ShowTableItemsCloseButton>True</ShowTableItemsCloseButton>
+          <TableItemsTitle><![CDATA[Referenced+objects]]></TableItemsTitle>
+          <TableItemsToolTip><![CDATA[Use+context+menu+to+manage+Referenced+objects]]></TableItemsToolTip>
+          <Bounds>501, 406, 198, 115</Bounds>
+          <Minimized>False</Minimized>
+          <Visible>True</Visible>
+          <BorderStyle>Fixed3D</BorderStyle>
+          <ToolTip><![CDATA[Object%c2%a7c+Table+scheduler.sc_type_schedulazione_lib%0aConnection%c2%a7c+root%c2%a7alocalhost]]></ToolTip>
+          <ShowMinimizeButton>True</ShowMinimizeButton>
+          <Icon>0000000000000000FF0065CEFF0065CEFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309CFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF31CFCEFF31309CFF9C9ACEFF982F2FFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF9C9ACEFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF319AFFFF31309CFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF639ACEFF31309CFF9C9ACEFF9C9ACEFFC0BFE0FFC0BFE0FFC0BFE0FFC0BFE0FF982F2FFF9C9ACEFF9C9ACEFF31309C00000000000000000000000000000000FF319ACEFF31309CFFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFFC0BFE0FFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFFFFFFFFFFFFFFFFFF982F2FFF982F2FFF982F2FFF982F2FFFFFFFFFFFFFFFFFFF9C9ACEFF31309C00000000000000000000000000000000FF0065CEFF31309CFF31309CFF982F2FFF7373BCFF7373BCFF7373BCFF7373BCFF982F2FFF31309CFF31309CFF31309C00000000000000000000000000000000000000000000000000000000FF982F2F00000000000000000000000000000000FF982F2F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FF982F2FFF982F2FFF982F2FFF982F2F00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</Icon>
+        </Control>
+        <Columns>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="8e62fd4d-02ed-4a66-a3c0-5317ab192712" Width="16" Height="16">
+            <Name>id</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Bold</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Icon>00FFFFFF00FFFFFFFFAB6A14FFAA6A13FFA96A12FFA86911FFA76810FFA5670F00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA4660E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFE4C9A6FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFE4C9A6FFFFB740FFED9421FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFC97B0CFFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFF661FFFFB740FFA3650D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF683FFFFF683FFFFF683FFFFF683FFFFF661FFFFB740FFED9421FFFFB740FFA2640D00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF661FFFFF661FFFFF683FFFFF648FFFFF648FFFFB740FFFFF683FFED9421FFFFB740FFA2640C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAC6B14FFFFF648FFFFF648FFFFF648FFED9421FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FFA0630C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFAB6B14FFAA6A13FFA96912FFA86912FFA76810FFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9F620B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA5670FFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA4660EFFFFF683FFC97B0CFFFFF683FFED9421FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA3650DFFFFF683FFC97B0CFFFFF683FFFFB740FF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA2640CFFFFF683FFFFB740FF9F620AFF9E610A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFFFFA0630CFFA0620BFF9E620A00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF</Icon>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>int(11)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>True</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="39b36f8e-6a5e-41ab-97da-484174714320">
+            <Name>id_type_schedulazione</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+          <Column Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnObject" ID="01b80ae2-f3f5-4b48-9cd3-be6eacac8d18">
+            <Name>descr_type</Name>
+            <Alias>
+            </Alias>
+            <ToolTip>
+            </ToolTip>
+            <Checked>False</Checked>
+            <Filter>
+            </Filter>
+            <SortOrder>None</SortOrder>
+            <Grouped>False</Grouped>
+            <FontStyle>Regular</FontStyle>
+            <FontColor>
+            </FontColor>
+            <Comment>
+            </Comment>
+            <Attributes>
+              <Attribute>
+                <Name>datatype</Name>
+                <Value>varchar(45)</Value>
+              </Attribute>
+              <Attribute>
+                <Name>allownull</Name>
+                <Value>False</Value>
+              </Attribute>
+            </Attributes>
+          </Column>
+        </Columns>
+        <Items />
+        <Attributes>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>DataType</Name>
+            <Caption>Datatype</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>AllowNull</Name>
+            <Caption>Nullable</Caption>
+            <Visible>False</Visible>
+            <Editable>False</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.Boolean</Type>
+          </Attribute>
+          <Attribute Type="Quest.Toad.ModelerDrawing.DrawingControls.ColumnAttribute">
+            <Name>Comment</Name>
+            <Caption>Comment</Caption>
+            <Visible>False</Visible>
+            <Editable>True</Editable>
+            <TextAlign>Left</TextAlign>
+            <CaptionAlign>Left</CaptionAlign>
+            <Type>System.String</Type>
+          </Attribute>
+        </Attributes>
+      </Table>
+    </Tables>
+    <Relations>
+      <Relation Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationObject" ID="951f63b7-ed0d-4d16-b6ed-219b959a9740">
+        <Properties>
+          <Table1>c7aa4249-7364-433b-99d4-09435c9f528d</Table1>
+          <Table2>270d9c23-15de-4d7c-9f17-5e17609c5c62</Table2>
+          <RelationType>None</RelationType>
+          <ColumnCount>1</ColumnCount>
+        </Properties>
+        <Control>
+          <Visible>True</Visible>
+          <ShowCaption>True</ShowCaption>
+          <ShowJoin>True</ShowJoin>
+          <ToolTip>
+          </ToolTip>
+          <LineWidth>2</LineWidth>
+        </Control>
+        <Lines>
+          <Line Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationLineObject" Width="16" Height="16">
+            <Column1>cee9779c-00ef-44ce-925b-0861bd3163d4</Column1>
+            <Column2>9ab3919a-77e6-4889-8f6a-1de0b603effb</Column2>
+            <Condition>Equal</Condition>
+            <LineWidth>2</LineWidth>
+            <LineStyle>DashDotDot</LineStyle>
+            <PointType1>Many</PointType1>
+            <PointType2>Key</PointType2>
+            <SecondPointImage1>00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFB4D7E4F2C1DCE8F4B0CDDEEE9A92B4D6722C6BAA28175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF5B4D6E4F2AFD0E0F0ACC9DCED9CB1CBE593A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F4B4D6E4F2AFD0E0F09CB7CFE8828CB2D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF5BFDEE9F5BAD8E5F297B0CAE58A98BADD8082ACD5979EBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F13659B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBD78AA4E6C18DAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2C491ADECB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2BB87A6EAB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBCB7D9AE1C08CAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F03558B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF593B4CEE698B4CDE694ABC7E38A98BADD8082ACD5979FBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F485A4C3E17E96BADC8090B5DA818AB1D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF58CADC9E47F96B9DC8090B6DA8895B8DC93A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFA2C6D9EC9AB6CFE795ADC8E38E80A8CF712A6AA928175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF</SecondPointImage1>
+            <LogicalOperator>And</LogicalOperator>
+          </Line>
+        </Lines>
+      </Relation>
+      <Relation Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationObject" ID="3c75d639-5f57-4b24-b99f-e864584b51d4">
+        <Properties>
+          <Table1>c7aa4249-7364-433b-99d4-09435c9f528d</Table1>
+          <Table2>3ec0f8e4-58d9-41b5-8270-d0662ba63ab3</Table2>
+          <RelationType>None</RelationType>
+          <ColumnCount>1</ColumnCount>
+        </Properties>
+        <Control>
+          <Visible>True</Visible>
+          <ShowCaption>True</ShowCaption>
+          <ShowJoin>True</ShowJoin>
+          <ToolTip>
+          </ToolTip>
+          <LineWidth>2</LineWidth>
+        </Control>
+        <Lines>
+          <Line Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationLineObject" Width="16" Height="16">
+            <Column1>162255f5-5b83-4e43-8a5e-3ccb0e08feb4</Column1>
+            <Column2>39b36f8e-6a5e-41ab-97da-484174714320</Column2>
+            <Condition>Equal</Condition>
+            <LineWidth>2</LineWidth>
+            <LineStyle>DashDotDot</LineStyle>
+            <PointType1>Many</PointType1>
+            <PointType2>Key</PointType2>
+            <SecondPointImage1>00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFB4D7E4F2C1DCE8F4B0CDDEEE9A92B4D6722C6BAA28175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF5B4D6E4F2AFD0E0F0ACC9DCED9CB1CBE593A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F4B4D6E4F2AFD0E0F09CB7CFE8828CB2D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF5BFDEE9F5BAD8E5F297B0CAE58A98BADD8082ACD5979EBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F13659B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBD78AA4E6C18DAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2C491ADECB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2BB87A6EAB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBCB7D9AE1C08CAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F03558B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF593B4CEE698B4CDE694ABC7E38A98BADD8082ACD5979FBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F485A4C3E17E96BADC8090B5DA818AB1D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF58CADC9E47F96B9DC8090B6DA8895B8DC93A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFA2C6D9EC9AB6CFE795ADC8E38E80A8CF712A6AA928175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF</SecondPointImage1>
+            <LogicalOperator>And</LogicalOperator>
+          </Line>
+        </Lines>
+      </Relation>
+      <Relation Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationObject" ID="988fe067-94a3-4a48-98ce-5a79d82977be">
+        <Properties>
+          <Table1>c7aa4249-7364-433b-99d4-09435c9f528d</Table1>
+          <Table2>677c9aad-9ad9-44f7-bfcd-40195495453a</Table2>
+          <RelationType>None</RelationType>
+          <ColumnCount>1</ColumnCount>
+        </Properties>
+        <Control>
+          <Visible>True</Visible>
+          <ShowCaption>True</ShowCaption>
+          <ShowJoin>True</ShowJoin>
+          <ToolTip>
+          </ToolTip>
+          <LineWidth>2</LineWidth>
+        </Control>
+        <Lines>
+          <Line Type="Quest.Toad.ModelerDrawing.DrawingControls.RelationLineObject" Width="16" Height="16">
+            <Column1>cc0512e5-99ed-46db-a3dc-e03336ed0d66</Column1>
+            <Column2>3b818c2a-26ba-44d8-a6bb-66cda822c053</Column2>
+            <Condition>Equal</Condition>
+            <LineWidth>2</LineWidth>
+            <LineStyle>DashDotDot</LineStyle>
+            <PointType1>Many</PointType1>
+            <PointType2>Key</PointType2>
+            <SecondPointImage1>00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFB4D7E4F2C1DCE8F4B0CDDEEE9A92B4D6722C6BAA28175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF5B4D6E4F2AFD0E0F0ACC9DCED9CB1CBE593A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F4B4D6E4F2AFD0E0F09CB7CFE8828CB2D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF5BFDEE9F5BAD8E5F297B0CAE58A98BADD8082ACD5979EBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F13659B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBD78AA4E6C18DAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2C491ADECB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4E497ED1F16487EAE195ADEED6A5BBF2BB87A6EAB27B9DE6B3789CE5B77B9EE6D17595E4F33F63E25E265DBA00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBC4A5BCEEF25A7CDCE86F8DDBCB7D9AE1C08CAAEBCA7594DFE25677D3F3395CD1BD7595DC6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF593377BBCEEBF2F9C8C5D4F0DF6F8CD4F03558B7FC2447ABF1284BB0DA5071C7A98DACDCA0ACC8E37B13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF4F3377BBB8E1EBF6BAE0EAF5BCE0EAF593B4CEE698B4CDE694ABC7E38A98BADD8082ACD5979FBEDD6E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF383377BB96A9C6E3BEE2ECF5B7DCE8F485A4C3E17E96BADC8090B5DA818AB1D9878DB3D99277A0C94E13579B00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF0F3276BA5D4884C1ACD5E3F1BBDFEAF58CADC9E47F96B9DC8090B6DA8895B8DC93A1BFDD752666A51414589C00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF003175B91E3175B95F4582BF96A3C2DFA2C6D9EC9AB6CFE795ADC8E38E80A8CF712A6AA928175B9F00165A9E00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF002F73B7002F73B70F2F73B73D2D71B5582A6EB266276BAF5E2367AB461F63A7131B5FA300195DA100195DA100FFFFFF00FFFFFF00FFFFFF</SecondPointImage1>
+            <LogicalOperator>And</LogicalOperator>
+          </Line>
+        </Lines>
+      </Relation>
+    </Relations>
+    <Objects />
+  </DiagramElement>
+  <Settings DefaultTableHeight="200" DefaultTableWidth="250" FollowReferences="1" ShowDependencies="Yes" ShowPrimaryKey="Yes" ShowReferences="Yes" Connection="mysql://root@localhost/">
+    <OriginalTrls Trl="mysql://root@localhost/DATABASE/scheduler" />
+    <OriginalTrls Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib" />
+    <Trls Trl="mysql://root@localhost/TABLE/scheduler/sc_type_schedulazione_lib" />
+  </Settings>
+</EntityRelationDiagramElement>
