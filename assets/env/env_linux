@@ -16,7 +16,10 @@
 | Schedulatore per avviare batch di download dati AdWords
 | File per il settaggio dell'environment
 */
-    
+  
+/* Cestino standard output  */
+DEV_NULL               = pippo.txt   
+  
 /* Sezione per parametri Scheduler */
 SCHEDULER_DIR          = /home/devadplify/Scheduler/scheduler
 

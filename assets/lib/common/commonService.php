@@ -36,7 +36,6 @@
 		
 		public function calcolaNextStartTime($run_time_unix,$id_type,$periodo)
 		{
-			
 		      $t=0;
 		      switch($id_type)
 		      {

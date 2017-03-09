@@ -23,6 +23,17 @@ class SchedulerService {
 	private $log = null;
 	private $batch = array ();
 	
+	public function exec_background($cmd)
+	{
+		$descriptorspec = array(
+				array('pipe', 'r'),               // stdin
+				array('file', getenv ( 'DEV_NULL' ), 'a'),  // stdout
+				array('pipe', 'w'),               // stderr
+		);
+	
+		$proc = proc_open($cmd, $descriptorspec, $pipes);
+	}
+	
 	public function setLogger($log) {
 		$this->log = $log;
 	}

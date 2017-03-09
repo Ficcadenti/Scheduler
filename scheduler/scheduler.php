@@ -164,11 +164,11 @@ try {
 						" &";
 					
 					$log->info ( $cmd );
-					//exec ( escapeshellcmd ( $cmd ), $return );
+					$service->exec_background (  $cmd  );
 					
 					/* aggiorna parametri batch */
 					$st_config->setStatus ( $id_schedulazione, SUBMITTED );
-					$st_config->setNextStartTime ( $id_schedulazione, $common->calcolaNextStartTime ( $ts_batch_unix, $batch ['id_schedulazione'], $frequenza ) );
+					$st_config->setNextStartTime ( $id_schedulazione, $common->calcolaNextStartTime ( $ts_batch_unix, $batch ['type_schedulazione'], $frequenza ) );
 					$st_config->setLastStartTime ( $id_schedulazione, $run_time_unix );
 					
 					$log->info ( "	Submitted" );
