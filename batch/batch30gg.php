@@ -74,7 +74,8 @@ if ($id_schedulazione != - 1) {
 	
 	/* start Batch */
 	if ($bt->init ()) {
-		if ($bt->getParam ( $argv ) == true) {
+		if ($bt->getParam ( $argv ) == true) 
+		{
 			$bt->info ();
 			
 			if ($bt->run () == true) {
@@ -83,7 +84,11 @@ if ($id_schedulazione != - 1) {
 				$bt->refreshStatus ( false );
 			}
 		}
-	} else {
+		else {
+			$bt->refreshStatus ( false );
+		}
+	} 
+	else {
 		$bt->refreshStatus ( false );
 	}
 }
