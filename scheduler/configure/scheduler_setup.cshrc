@@ -18,7 +18,7 @@
 
 # Scheduler Environment
 if ! $?SCHEDULER_DIR then
-    setenv SCHEDULER_DIR /home/raffo/Scheduler/scheduler
+    setenv SCHEDULER_DIR /var/www/html/Scheduler/scheduler
 endif
 
 mkdir $SCHEDULER_DIR/logs

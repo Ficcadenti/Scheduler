@@ -24,6 +24,7 @@ echo $counter
 
 if ( $counter == 0 ) then
     echo "Starting Scheduler Server......";
+    cd $SCHEDULER_DIR
     php $SCHEDULER_DIR/scheduler.php > /dev/null &
 else
     echo "Scheduler Server is running...";
