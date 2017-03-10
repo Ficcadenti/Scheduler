@@ -70,6 +70,31 @@ class Batch30gg_work implements BatchGlobal {
 		}
 	}
 	
+	private function getIdUser($id_schedulazione)
+	{
+		if ($this->dbh != null) {
+			
+			try {
+				$sql = "SELECT id_user FROM sc_config WHERE  id_schedulazione = :id_schedulazione";
+				$stmt = $this->dbh->prepare($sql);
+				$stmt->bindParam(':id_schedulazione',$id_schedulazione, \PDO::PARAM_INT);
+				$stmt->execute();
+				
+				foreach($stmt as $row)
+				{
+					$this->lista_parametri['--id_user']=$row ['id_user'];
+				}
+				return true;
+			} catch ( \PDOException $ex ) {
+				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
+				$this->dbh = null;
+			}
+		} else {
+			$this->log->info ( "ERROR(" . $this->name_file . "): Connessione DB non stabilita." );
+			$this->dbh = null;
+		}
+	}
+	
 	public function getParam($argv) {
 		$this->log->info ( "getParam()" );
 		array_shift ( $argv );
@@ -88,6 +113,7 @@ class Batch30gg_work implements BatchGlobal {
 			if (array_key_exists ( strtolower ( "--run_time" ), $this->lista_parametri )) {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
 					Batch30gg_work::setStatus($this->lista_parametri['--id_schedulazione'],WORKING,BATCH_WITHOUT_ERROR,"dsad");
+					Batch30gg_work::getIdUser($this->lista_parametri['--id_schedulazione']);
 					return true;
 				}else {
 					$msg="Il Batch è stato invocato senza parametro --type";
@@ -162,7 +188,7 @@ class Batch30gg_work implements BatchGlobal {
 	
 	public function run() {
 		$this->log->info ( "run()" );
-		$command="sh \"".getenv("REFRESH_TOKEN_CMD")."\" 13";
+		$command="sh '".getenv("REFRESH_TOKEN_CMD")."' " .$this->lista_parametri['--id_user'];
 
 		$this->log->info($command);
 		exec(escapeshellcmd($command),$output);
