@@ -30,6 +30,8 @@ class Batch30gg_work implements BatchGlobal {
 	private $lista_parametri = array ();
 	private $id_error = BATCH_WITHOUT_ERROR;
 	private $descr_error = "";
+	private $connetion=false;
+	
 	function __construct() {
 	}
 	function __destruct() {
@@ -39,13 +41,16 @@ class Batch30gg_work implements BatchGlobal {
 		return ($b) ? 'true' : 'false';
 	}
 	private function connect() {
+		$this->log->info ( "connect()" );
 		$this->name_file = basename ( __FILE__, ".php" );
 		try {
 			$this->dbh = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
+			$this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$this->connetion=true;
 		} catch ( \PDOException $ex ) {
 			$this->id_error = $ex->getCode();
 			$this->descr_error = $ex->getMessage ();
-			$this->dbh = null;
+			$this->connetion=false;
 		}
 	}
 	public function setLogger($log) {
@@ -54,12 +59,12 @@ class Batch30gg_work implements BatchGlobal {
 	public function init() {
 		$this->log->info ( "init()" );
 		Batch30gg_work::connect ();
-		if ($this->dbh == null) {
-			return false;
+		if ($this->connetion == true) {
+			return $this->connetion;
 		} else {
 			$this->id_error = ERROR;
 			$this->descr_error = "Errore connessione DB null pointer";
-			return true;
+			return $this->connetion;
 		}
 	}
 	private function getIdUser($id_schedulazione) {
@@ -114,7 +119,7 @@ class Batch30gg_work implements BatchGlobal {
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			if (array_key_exists ( strtolower ( "--run_time" ), $this->lista_parametri )) {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
-					//Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
+					Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
 					if (Batch30gg_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
 						return true;
 					} else {
@@ -174,20 +179,23 @@ class Batch30gg_work implements BatchGlobal {
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
 	}
-	public function run() {
-		$this->log->info ( "run()" );
+	
+	private function refreshToken()
+	{
+		$this->log->info ( "refreshToken()" );
 		$command = "sh '" . getenv ( "REFRESH_TOKEN_CMD" ) . "' " . $this->lista_parametri ['--id_user'];
 		
 		$this->log->info ( $command );
 		exec ( escapeshellcmd ( $command ), $output );
 		
-		var_dump($output);
+		$this->log->info($output);
+		
 		foreach ( $output as $key => $value ) {
 			$obj = json_decode ( $value );
 			$ret = $obj->failed;
 			if ($ret == 1) {
 				$this->id_error = 1;
-				
+		
 				if (isset ( $obj->errors->general )) {
 					$this->log->info ( $obj->errors->general );
 					$this->descr_error = $obj->errors->general;
@@ -198,12 +206,31 @@ class Batch30gg_work implements BatchGlobal {
 					$this->descr_error =  $obj->errors->google_accounts;
 					$this->log->info ( $obj->errors->google_accounts );
 				}
-
+		
 				return false;
 			}
 		}
 		
-		return false;
+		return true;
+	}
+	
+	private function getCampagne()
+	{
+		$this->log->info ( "getCampagne()" );
+		return true;
+	}
+	
+	public function run() {
+		$ret=true;
+		$this->log->info ( "run()" );
+		
+		$ret = Batch30gg_work::refreshToken();
+		if($ret==true)
+		{
+			$ret = Batch30gg_work::getCampagne();
+		}
+		
+		return $ret;
 	}
 	public function finish() {
 		$this->log->info ( "finish()" );
