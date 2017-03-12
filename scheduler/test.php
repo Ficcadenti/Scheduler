@@ -84,32 +84,32 @@ $sm=new SchedulerManager();
    */
 
 /* la frequenza è espressa in secondi. */
-$json_str="{
-    'id_schedulazione' : -1,
-	'hostname': 'localhost',
-    'id_user_google': 1,
-    'id_account_adw': 2,
-    'id_batch': 1,
-	'descr_schedulazione': 'descrizione Schedulazione',
-    'type_schedulazione': 7,
-    'frequenza': 10800,
-    'stato_schedulazione': 6, 
-    'tipo_batch': 1
-    'time_start': '2016-01-01 00:00:00',
-    'dal': '2016-01-01 00:00:00',
-    'al': '2017-01-01 00:00:00'
-}";
+$json_str='{
+	"id_schedulazione": -1,
+	"hostname": "localhost",
+	"id_user_google": 20,
+	"id_account_adw": 2,
+	"id_batch": 1,
+	"descr_schedulazione": "BATCH a 30 giorni",
+	"type_schedulazione": 7,
+	"frequenza": 10800,
+	"stato_schedulazione": 6,
+	"tipo_batch": 1,
+	"time_start": "2017-03-13 10:00:00",
+	"dal": "2016-01-01 00:00:00",
+	"al": "2017-01-01 00:00:00"
+}';
 
 if($sm->setBatch($json_str))
 {
 	$sm->showParameter();
-	exit(1);
-	switch($sm->status)
+
+	switch($sm->status())
 	{
 		case NEW_BATCH:
 			{
 				$newid=$sm->insert(); /* per creare un nuovo batch */
-				$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
+				$sm->showParameter(); /* per prendere il nuovo id_schedulazione inserito */
 			}break;
 			
 		case MODIY_BATCH:
@@ -120,10 +120,16 @@ if($sm->setBatch($json_str))
 			
 		case DB_ERROR:
 			{
+				printf("Errore \n");
 				/* gestione errore database */
-			}break;
+			}break;		
 	}
-   $sm->unsetBatch();
+	$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
+	foreach ($id as $key => $value)
+	{
+		printf("id[%d]=%d\n",$key,$value);
+	}
+   	$sm->unsetBatch();
 }
 else
 {
