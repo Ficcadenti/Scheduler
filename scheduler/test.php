@@ -63,7 +63,7 @@ $sm=new SchedulerManager();
   id_batch=2 --> batch Real Time
 */
 
-/* tipo_batch: definiti nella tabella adplify_scheduler.type_batch_lib  
+/* tipo_batch: definiti nella tabella adplify_scheduler.batch_type_lib  
    valori possibili:
    
    1=ALL,
@@ -86,9 +86,11 @@ $sm=new SchedulerManager();
 /* la frequenza è espressa in secondi. */
 $json_str="{
     'id_schedulazione' : -1,
+	'hostname': 'localhost',
     'id_user_google': 1,
     'id_account_adw': 2,
     'id_batch': 1,
+	'descr_schedulazione': 'descrizione Schedulazione',
     'type_schedulazione': 7,
     'frequenza': 10800,
     'stato_schedulazione': 6, 
@@ -100,18 +102,34 @@ $json_str="{
 
 if($sm->setBatch($json_str))
 {
-  if($sm->status()==true) /* creo un nuovo batch */
-  {
-    $sm->insert(); /* per creare un nuovo batch */
-    $sm->getIdSchedulazione();
-  }
-  else  /* il batch  eseiste e lo modifico */
-  {
-    $sm->delete(); /* per cancellare un batch */
-    $sm->update(); /* per aggiornare un batch */
-  }
-  $sm->unsetBatch();
+	$sm->showParameter();
+	exit(1);
+	switch($sm->status)
+	{
+		case NEW_BATCH:
+			{
+				$newid=$sm->insert(); /* per creare un nuovo batch */
+				$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
+			}break;
+			
+		case MODIY_BATCH:
+			{
+				$sm->delete(); /* per cancellare un batch */
+				$sm->update(); /* per aggiornare un batch */
+			}break;
+			
+		case DB_ERROR:
+			{
+				/* gestione errore database */
+			}break;
+	}
+   $sm->unsetBatch();
 }
+else
+{
+	/* gestione errore */
+}
+	
 
 
 /**************************/

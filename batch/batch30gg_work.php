@@ -68,7 +68,7 @@ class Batch30gg_work implements BatchGlobal {
 		}
 	}
 	private function getIdUser($id_schedulazione) {
-		if ($this->dbh != null) {
+		if ($this->connetion==true) {
 			
 			try {
 				$sql = "SELECT id_user FROM sc_config WHERE  id_schedulazione = :id_schedulazione";
@@ -236,7 +236,7 @@ class Batch30gg_work implements BatchGlobal {
 		$this->log->info ( "finish()" );
 	}
 	private function setStatus($id_schedulazione, $stato_schedulazione) {
-		if ($this->dbh != null) {
+		if ($this->connetion==true) {
 			$sql = "UPDATE sc_config SET stato_schedulazione = :stato_schedulazione, id_error = :id_error, descr_error = :descr_error WHERE id_schedulazione = :id_schedulazione";
 			$stmt = $this->dbh->prepare($sql);
 			$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione, \PDO::PARAM_INT );

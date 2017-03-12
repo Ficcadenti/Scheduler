@@ -40,3 +40,12 @@
   define("ROUND_TIME",60);
   define("SCHEDULER_SLEEP",10);
   
+  define("OK",1);
+  define("NOT_OK",-1);
+  
+  define("NEW_BATCH",1);
+  define("MODIY_BATCH",2);
+  define("DB_ERROR",3);
+  define("DB_NO_ERROR",4);
+  
+  

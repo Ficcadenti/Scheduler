@@ -40,6 +40,10 @@ class SchedulerManager {
 			'LOG_ECHO' => 1,
 			'LOG_DAILYFILE' => 2 
 	);
+	private $connetion=false;
+	private $id_error = 0;
+	private $descr_error = "";
+	private $param = null;
 	
 	function __construct() {
 		$this->service = new SchedulerManagerService ();
@@ -74,53 +78,290 @@ class SchedulerManager {
 	}
 	
 	public function setBatch($parameter) {
-		if(!$this->dbh = null)
+		if($this->connetion==true)
 		{
 			$this->log->info ( "setBatch()" );
-			return true;
-		}else
+			$this->param = json_decode ( $parameter );
+
+			/* check parameter */
+			if (! isset ( $this->param->id_schedulazione )) 
+			{
+				$this->log("Non è definito il parametro 'id_schedulazione' !!!");
+				return false;	
+			}
+			if (! isset ( $this->param->hostname ))
+			{
+				$this->log("Non è definito il parametro 'hostname' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->id_user_google ))
+			{
+				$this->log("Non è definito il parametro 'id_user_google' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->id_account_adw ))
+			{
+				$this->log("Non è definito il parametro 'id_account_adw' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->id_batch ))
+			{
+				$this->log("Non è definito il parametro 'id_batch' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->descr_schedulazione ))
+			{
+				$this->log("Non è definito il parametro 'descr_schedulazione' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->type_schedulazione ))
+			{
+				$this->log("Non è definito il parametro 'type_schedulazione' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->frequenza ))
+			{
+				$this->log("Non è definito il parametro 'frequenza' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->stato_schedulazione ))
+			{
+				$this->log("Non è definito il parametro 'stato_schedulazione' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->tipo_batch ))
+			{
+				$this->log("Non è definito il parametro 'tipo_batch' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->time_start ))
+			{
+				$this->log("Non è definito il parametro 'time_start' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->dal ))
+			{
+				$this->log("Non è definito il parametro 'dal' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->al ))
+			{
+				$this->log("Non è definito il parametro 'al' !!!");
+				return false;
+			}
+		}
+		else
 		{
+			$this->log("Errore generico con la connessione al Database !!!");
 			return false;
 		}
+		
+		return true;
 	}
 	
 	public function unsetBatch() {
 		$this->log->info ( "unsetBatch()" );
+		$this->param=null;
 	}
 	
 	public function insert() {
 		$this->log->info ( "insert()" );
+		
+		$ret=DB_ERROR;
+		if($this->connetion)
+		{
+			try {
+				$sql = "INSERT INTO sc_config SET  ('id_schedulazione',
+													'hostname',
+													'id_user',
+													'id_batch',
+													'descr_schedulazione',
+													'parametri_batch',
+													'type_schedulazione',
+													'frequenza',
+													'stato_schedulazione',
+													'time_start',
+													'last_time_start',
+													'creation_time') 
+												VALUES (:id_schedulazione,
+														:hostname,
+														:id_user,
+														:id_batch,
+														:descr_schedulazione,
+														:parametri_batch,
+														:type_schedulazione,
+														:frequenza,
+														:stato_schedulazione,
+														:time_start,
+														:last_time_start,
+														:creation_time) ";
+
+														
+				$str="";
+				$str_time=date("Y/m/d H:i:s",time());
+				
+				$stmt = $this->dbh->prepare ( $sql );
+				
+				$stmt->bindParam ( ':id_schedulazione', $this->param->id_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':hostname', $this->param->hostname, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':id_user', $this->param->id_user_google, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':id_batch', $this->param->id_batch, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':descr_schedulazione', $this->param->descr_schedulazione, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':parametri_batch', json_encode($this->param), \PDO::PARAM_STR );
+				$stmt->bindParam ( ':type_schedulazione', $this->param->type_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':frequenza', $this->param->frequenza, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':stato_schedulazione', $this->param->stato_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':time_start', $this->param->time_start, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':last_time_start', $str, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':creation_time',$str_time, \PDO::PARAM_STR );
+				$stmt->execute ();
+				
+				$ret=DB_NO_ERROR;
+				
+			} catch ( \PDOException $ex ) {
+				$this->id_error = DB_ERROR;
+				$this->descr_error = $ex->getMessage ();
+				$this->log->info ( $this->descr_error );
+				$ret=DB_ERROR;
+			}
+		}
+		else
+		{
+			$ret=DB_ERROR;
+		}
+		return $ret;
 	}
 	
 	public function delete() {
 		$this->log->info ( "delete()" );
+		$ret=DB_ERROR;
+		
+		if($this->connetion)
+		{
+			try {
+					$sql = "DELETE FROM sc_config WHERE  id_schedulazione = :id_schedulazione and id_user=:id_user";
+					$stmt = $this->dbh->prepare ( $sql );
+					$stmt->bindParam ( ':id_schedulazione', $this->param->id_schedulazione, \PDO::PARAM_INT );
+					$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
+					$stmt->execute ();
+					$ret=DB_NO_ERROR;
+				} catch ( \PDOException $ex ) 
+				{
+					$this->id_error = DB_ERROR;
+					$this->descr_error = $ex->getMessage ();
+					$this->log->info ( $this->descr_error );
+				}
+		}
+		else
+		{
+			$ret=DB_ERROR;
+		}
+		
+		return $ret;
 	}
 	
 	public function update() {
 		$this->log->info ( "update()" );
 	}
 	
+	
 	public function status() {
 		$this->log->info ( "status()" );
-		return true;
+		$ret=DB_ERROR;
+		if($this->connetion)
+		{
+			try {
+				$sql = "SELECT count(1) FROM sc_config WHERE  id_schedulazione = :id_schedulazione";
+				$stmt = $this->dbh->prepare ( $sql );
+				$stmt->bindParam ( ':id_schedulazione', $this->param->id_schedulazione, \PDO::PARAM_INT );
+				$stmt->execute ();
+				$count = $stmt->rowCount ();
+				
+				if ($count == 0) {
+					$ret=NEW_BATCH;
+				}
+				else if ($count == 1) 
+				{
+					$ret=MODIY_BATCH;
+				}
+				else
+				{
+					$ret=DB_ERROR;
+				}
+			} catch ( \PDOException $ex ) {
+				$this->id_error = DB_ERROR;
+				$this->descr_error = $ex->getMessage ();
+				$this->log->info ( $this->descr_error );
+				$ret=DB_ERROR;
+			}
+		}
+		else
+		{
+			$ret=DB_ERROR;
+		}
+		return $ret;
 	}
 	
 	public function getIdSchedulazione() {
 		$this->log->info ( "getIdSchedulazione()" );
-		return 100;
+		$ret=null;
+		if($this->connetion)
+		{
+			try {
+				$sql = "SELECT id_schedulazione FROM sc_config WHERE  id_user = :id_user";
+				$stmt = $this->dbh->prepare ( $sql );
+				$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
+				$stmt->execute ();
+				
+				$ret=array();
+				
+				foreach ( $stmt as $row ) {
+					array_push($ret,$row ['id_schedulazione']);
+				}
+				
+				
+				
+			} catch ( \PDOException $ex ) {
+				$this->id_error = DB_ERROR;
+				$this->descr_error = $ex->getMessage ();
+				$this->log->info ( $this->descr_error );
+				$ret=null;
+			}
+		}
+		else
+		{
+			$ret=null;
+		}
+		return $ret;
 	}
 	
 	public function connect() {
 		$this->name_file = basename ( __FILE__, ".php" );
 		try {
 			$this->dbh = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
+			$this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+			$this->connetion=true;
 		} catch ( \PDOException $ex ) {
-			$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
-			$this->dbh = null;
+			$this->id_error = $ex->getCode();
+			$this->descr_error = $ex->getMessage ();
+			$this->connetion=false;
 		}
 	}
 	
 	public function showParameter() {
 		$this->log->info ( "showParameter()" );
+		
+		$this->log->info ( "id_schedulazione    : ". $this->param->id_schedulazione );
+		$this->log->info ( "id_user             : ". $this->param->id_user );
+		$this->log->info ( "id_account_adw      : ". $this->param->id_account_adw );
+		$this->log->info ( "id_batch            : ". $this->param->id_batch );
+		$this->log->info ( "type_schedulazione  : ". $this->param->type_schedulazione );
+		$this->log->info ( "frequenza           : ". $this->param->frequenza );
+		$this->log->info ( "stato_schedulazione : ". $this->param->stato_schedulazione );
+		$this->log->info ( "tipo_batch          : ". $this->param->tipo_batch );
+		$this->log->info ( "time_start          : ". $this->param->time_start );
+		$this->log->info ( "dal                 : ". $this->param->dal );
+		$this->log->info ( "al                  : ". $this->param->al );
+		
 	}
 }
