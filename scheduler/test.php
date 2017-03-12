@@ -84,8 +84,10 @@ $sm=new SchedulerManager();
    */
 
 /* la frequenza è espressa in secondi. */
+
+/* NB: id_schedulazione=-1 indica un nuovo batch schedulato.*/
 $json_str='{
-	"id_schedulazione": -1,
+	"id_schedulazione": -1,   
 	"hostname": "localhost",
 	"id_user_google": 20,
 	"id_account_adw": 2,
