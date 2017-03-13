@@ -28,7 +28,6 @@ date_default_timezone_set ( 'Europe/Rome' );
 
 /* START SchedulerManager */
 
-
 $sm=new SchedulerManager();
 
 /* stato_schedulazione sono definiti nella tabella adplify_scheduler.sc_stato_schedulazione_lib 
@@ -102,6 +101,8 @@ $json_str='{
 	"al": "2017-01-01 00:00:00"
 }';
 
+
+
 if($sm->setBatch($json_str))
 {
 	$sm->showParameter();
@@ -138,6 +139,8 @@ else
 {
 	/* gestione errore */
 }
+
+
 	
 
 
