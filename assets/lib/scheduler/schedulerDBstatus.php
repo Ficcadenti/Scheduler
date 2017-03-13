@@ -25,6 +25,7 @@ class SchedulerDBstatus {
 	private $dbh = null;
 	private $name_file = "";
 	private $name_tabella = "sc_stato_schedulazione_lib";
+	private $connetion  = false;
 	
 	function __construct() {
 	}
@@ -38,9 +39,10 @@ class SchedulerDBstatus {
 		
 		try {
 			$this->dbh = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
+			$this->connetion=true;
 		} catch ( \PDOException $ex ) {
 			$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
-			$this->dbh = null;
+			$this->connetion=false;
 		}
 	}
 	
@@ -49,7 +51,7 @@ class SchedulerDBstatus {
 	}
 	
 	public function load() {
-		if ($this->dbh != null) {
+		if ($this->connetion==true) {
 			unset ( $this->sc_status_lib );
 			$this->sc_status_lib = array ();
 			$this->log->info ( "	Loading sc_status_lib..." );
@@ -64,11 +66,9 @@ class SchedulerDBstatus {
 				return true;
 			} catch ( \PDOException $ex ) {
 				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
-				$this->dbh = null;
 			}
 		} else {
 			$this->log->info ( "ERROR(" . $this->name_file . "): Connessione DB non stabilita." );
-			$this->dbh = null;
 		}
 	}
 	

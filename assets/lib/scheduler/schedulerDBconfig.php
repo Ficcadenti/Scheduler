@@ -27,7 +27,7 @@
 		private $log		= null;
 		private $dbh		= null;
 		private $name_file	= "";
-
+		private $connetion  = false;
 		
 		function __construct()
 	    {
@@ -40,11 +40,12 @@
 			try 
 			{
 			    $this->dbh = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME'), getenv('DB_USER') , getenv('DB_PASS'));
+			    $this->connetion=true;
 			} 
 			catch (\PDOException $ex) 
 			{
 			    $this->log->info("ERROR(".$this->name_file."): ".$ex->getMessage());
-			    $this->dbh=null;
+			    $this->connetion=false;
 			}
 	    }
 	        
@@ -60,7 +61,7 @@
 		
 		public function load()
 		{
-			if($this->dbh!=null)
+			if($this->connetion==true)
 			{
 				unset($this->sc_config);
 				$this->sc_config=array();
@@ -119,13 +120,11 @@
 				catch (\PDOException $ex) 
 				{
 				    $this->log->info("ERROR(".$this->name_file."): ".$ex->getMessage());
-				    $this->dbh=null;
 				}
 			}
 			else 
 			{
 			      $this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
-			      $this->dbh=null;
 			}
 		}
 		
@@ -147,7 +146,7 @@
 		
 		public function setStatus($id_schedulazione,$stato_schedulazione)
 		{
-		    if($this->dbh!=null)
+		    if($this->connetion==true)
 		    {
 			  $sql = "UPDATE sc_config SET stato_schedulazione = :stato_schedulazione WHERE id_schedulazione = :id_schedulazione";
 			  $stmt = $this->dbh->prepare($sql);                                  
@@ -158,13 +157,12 @@
 		    else 
 		    {
 			  $this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
-			  $this->dbh=null;
 		    }
 		}
 
 		public function setNextStartTime($id_schedulazione,$t)
 		{
-		    if($this->dbh!=null)
+		    if($this->connetion==true)
 		    {
 		    	$str_t=date("Y/m/d H:i:s",$t);
 				$sql = "UPDATE sc_config SET time_start = :time_start WHERE id_schedulazione = :id_schedulazione";
@@ -176,13 +174,12 @@
 		    else 
 		    {
 			  $this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
-			  $this->dbh=null;
 		    }
 		}
 
 		public function setLastStartTime($id_schedulazione,$t)
 		{
-		    if($this->dbh!=null)
+		    if($this->connetion==true)
 		    {
 		    	$str_t=date("Y/m/d H:i:s",$t);
 				$sql = "UPDATE sc_config SET last_time_start = :last_time_start WHERE id_schedulazione = :id_schedulazione";
@@ -194,7 +191,6 @@
 		    else 
 		    {
 			  $this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
-			  $this->dbh=null;
 		    }
 		}
     }

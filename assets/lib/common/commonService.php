@@ -45,21 +45,39 @@
 			}
 		}
 		
-		public function calcolaNextStartTime($run_time_unix,$id_type,$periodo)
+		public function calcolaNextStartTime($run_time_unix,$ts_batch_unix,$id_type,$periodo)
 		{
 		      $t=0;
+		      $p=0;
+		      $num_int=1;
+		     
 		      switch($id_type)
 		      {
 			      case BATCH_ORARIO: /* ORARIO */
 			      {
-				      $t=$run_time_unix+(60*60);
+			      	$p=(60*60);
+			      	if($run_time_unix > $ts_batch_unix)
+			      	{
+			      		$num_int=(int)(($run_time_unix-$ts_batch_unix)/$p);
+			      		$num_int++;
+			      	}	
+	
 			      }break;
 			      
 			      case BATCH_PERIODICO: /* ORARIO */
 			      {
-				      $t=$run_time_unix+$periodo;
+			      	$p=$periodo;
+			      	if($run_time_unix > $ts_batch_unix)
+			      	{
+			      		$num_int=(int)(($run_time_unix-$ts_batch_unix)/$p);
+			      		$num_int++;
+			      	}
 			      }break;
 		      }
+		      
+		      /* calcolo in next time start */
+		      $t=$ts_batch_unix+($num_int*$p);
+		      $str_t=CommonService::strDade($t);
 
 		      return $t;
 		}

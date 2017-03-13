@@ -95,9 +95,9 @@ class SchedulerManager {
 				$this->log->info("Non è definito il parametro 'hostname' !!!");
 				return false;
 			}
-			if (! isset ( $this->param->id_user_google ))
+			if (! isset ( $this->param->id_user ))
 			{
-				$this->log->info("Non è definito il parametro 'id_user_google' !!!");
+				$this->log->info("Non è definito il parametro 'id_user' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->id_account_adw ))
@@ -178,13 +178,12 @@ class SchedulerManager {
 						//id_user,id_batch,descr_schedulazione,parametri_batch,type_schedulazione,frequenza,stato_schedulazione,time_start,last_time_start,creation_time) VALUES (:hostname,:id_user,:id_batch,:descr_schedulazione,:parametri_batch,:type_schedulazione,:frequenza,:stato_schedulazione,:time_start,:last_time_start,:creation_time) ";
 
 														
-				$str="";
 				$str_time=date("Y/m/d H:i:s",time());
 				$str_param=json_encode($this->param);
 				$stmt = $this->dbh->prepare ( $sql );
 				
 				$stmt->bindParam ( ':hostname', $this->param->hostname, \PDO::PARAM_STR );
-				$stmt->bindParam ( ':id_user', $this->param->id_user_google, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
 				$stmt->bindParam ( ':id_batch', $this->param->id_batch, \PDO::PARAM_INT );
 				$stmt->bindParam ( ':descr_schedulazione', $this->param->descr_schedulazione, \PDO::PARAM_STR );
 				$stmt->bindParam ( ':parametri_batch',$str_param , \PDO::PARAM_STR );
@@ -224,6 +223,7 @@ class SchedulerManager {
 					$stmt = $this->dbh->prepare ( $sql );
 					$stmt->bindParam ( ':id_schedulazione', $this->param->id_schedulazione, \PDO::PARAM_INT );
 					$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
+					printf("%d,%d\n",$this->param->id_user,$this->param->id_schedulazione);
 					$stmt->execute ();
 					$ret=DB_NO_ERROR;
 				} catch ( \PDOException $ex ) 
@@ -243,6 +243,44 @@ class SchedulerManager {
 	
 	public function update() {
 		$this->log->info ( "update()" );
+		$ret=DB_ERROR;
+		if($this->connetion)
+		{
+			try {
+				$sql = "UPDATE sc_config SET hostname=:hostname,id_batch=:id_batch,descr_schedulazione=:descr_schedulazione,parametri_batch=:parametri_batch,type_schedulazione=:type_schedulazione,frequenza=:frequenza,stato_schedulazione=:stato_schedulazione,time_start=:time_start,creation_time=:creation_time WHERE id_schedulazione = :id_schedulazione AND id_user = :id_user";
+				$stmt = $this->dbh->prepare ( $sql );
+				
+				$str="";
+				$str_time=date("Y/m/d H:i:s",time());
+				$str_param=json_encode($this->param);
+				$stmt = $this->dbh->prepare ( $sql );
+				
+				$stmt->bindParam ( ':id_schedulazione', $this->param->id_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':hostname', $this->param->hostname, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':id_batch', $this->param->id_batch, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':descr_schedulazione', $this->param->descr_schedulazione, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':parametri_batch',$str_param , \PDO::PARAM_STR );
+				$stmt->bindParam ( ':type_schedulazione', $this->param->type_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':frequenza', $this->param->frequenza, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':stato_schedulazione', $this->param->stato_schedulazione, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':time_start', $this->param->time_start, \PDO::PARAM_STR );
+				$stmt->bindParam ( ':creation_time',$str_time, \PDO::PARAM_STR );
+				
+				$stmt->execute ();
+				
+			} catch ( \PDOException $ex ) {
+				$this->id_error = DB_ERROR;
+				$this->descr_error = $ex->getMessage ();
+				$this->log->info ( $this->descr_error );
+				$ret=DB_ERROR;
+			}
+		}
+		else
+		{
+			$ret=DB_ERROR;
+		}
+		return $ret;
 	}
 	
 	
@@ -283,14 +321,14 @@ class SchedulerManager {
 	}
 	
 	public function getIdSchedulazione() {
-		$this->log->info ( "getIdSchedulazione(".$this->param->id_user_google.")" );
+		$this->log->info ( "getIdSchedulazione(".$this->param->id_user.")" );
 		$ret=null;
 		if($this->connetion)
 		{
 			try {
 				$sql = "SELECT id_schedulazione FROM sc_config WHERE  id_user = :id_user";
 				$stmt = $this->dbh->prepare ( $sql );
-				$stmt->bindParam ( ':id_user', $this->param->id_user_google, \PDO::PARAM_INT );
+				$stmt->bindParam ( ':id_user', $this->param->id_user, \PDO::PARAM_INT );
 				$stmt->execute ();
 				
 				$ret=array();
@@ -298,8 +336,6 @@ class SchedulerManager {
 				foreach ( $stmt as $row ) {
 					array_push($ret,$row ['id_schedulazione']);
 				}
-				
-				
 				
 			} catch ( \PDOException $ex ) {
 				$this->id_error = DB_ERROR;
@@ -333,7 +369,7 @@ class SchedulerManager {
 		
 		$this->log->info ( "id_schedulazione    : ". $this->param->id_schedulazione );
 		$this->log->info ( "hostname            : ". $this->param->hostname );
-		$this->log->info ( "id_user             : ". $this->param->id_user_google );
+		$this->log->info ( "id_user             : ". $this->param->id_user );
 		$this->log->info ( "id_account_adw      : ". $this->param->id_account_adw );
 		$this->log->info ( "id_batch            : ". $this->param->id_batch );
 		$this->log->info ( "type_schedulazione  : ". $this->param->type_schedulazione );

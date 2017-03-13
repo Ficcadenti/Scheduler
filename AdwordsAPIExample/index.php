@@ -147,6 +147,7 @@ function downloadReport($settings, $access_token, $clientCustomerId) {
 	
 	$filePath = dirname ( __FILE__ ) . '/report.csv';
 	$reportUtils = new \ReportUtils ();
+	var_dump($reportDefinition);
 	$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
 	
 	return $filePath;

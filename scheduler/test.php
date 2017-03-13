@@ -87,9 +87,9 @@ $sm=new SchedulerManager();
 
 /* NB: id_schedulazione=-1 indica un nuovo batch schedulato.*/
 $json_str='{
-	"id_schedulazione": -1,   
-	"hostname": "localhost",
-	"id_user_google": 20,
+	"id_schedulazione": 33,   
+	"hostname": "devadplify",
+	"id_user": 20,
 	"id_account_adw": 2,
 	"id_batch": 1,
 	"descr_schedulazione": "BATCH a 30 giorni",
@@ -116,7 +116,8 @@ if($sm->setBatch($json_str))
 			
 		case MODIY_BATCH:
 			{
-				$sm->delete(); /* per cancellare un batch */
+				print_r("Modifica o delete\n");
+				//$sm->delete(); /* per cancellare un batch */
 				$sm->update(); /* per aggiornare un batch */
 			}break;
 			

@@ -104,12 +104,12 @@ if($common->isWindows())
 try {
 	/* sincronizazione al minuto successivo */
 	$log->info ( "Syncronizazione Scheduler" );
-	do {
+	/*do {
 		$run_time_unix = time ();
 		$resto = ($run_time_unix % ROUND_TIME);
 		$log->info ( "Wait... " . (ROUND_TIME - $resto) );
 		sleep ( 1 );
-	} while ( (ROUND_TIME - $resto) != 1 );
+	} while ( (ROUND_TIME - $resto) != 1 );*/
 	
 	$log->info ( "START Scheduler" );
 	$dt_start = date ( 'Ymd' ); /* data utilizzata per cambio giorno */
@@ -178,16 +178,21 @@ try {
 					
 					/* aggiorna parametri batch */
 					$st_config->setStatus ( $id_schedulazione, SUBMITTED );
-					$st_config->setNextStartTime ( $id_schedulazione, $common->calcolaNextStartTime ( $ts_batch_unix, $batch ['type_schedulazione'], $frequenza ) );
+					$st_config->setNextStartTime ( $id_schedulazione, $common->calcolaNextStartTime ( $run_time_unix, $ts_batch_unix, $batch ['type_schedulazione'], $frequenza ) );
 					$st_config->setLastStartTime ( $id_schedulazione, $run_time_unix );
 					
 					$log->info ( "	Submitted" );
+					
 				} else 
 				{
-					$log->info ( "	Skipped (non è ancora ora)" );
+					$log->info ( "	Skipped (non e' ancora ora)" );
 				}
 			} else {
 				$log->info ( "	Skipped " );
+				if($batch ['id_error']!=BATCH_WITHOUT_ERROR)
+				{
+					/* gestione errori */
+				}
 			}
 		}
 		
