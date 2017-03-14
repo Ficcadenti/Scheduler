@@ -16,9 +16,11 @@
 
 *.log
 *.lock
+*.csv
 .settings
 .project
 .buildpath
 adplify_be
 adplify_fe
+AdwordsAPIExample
 vendor
