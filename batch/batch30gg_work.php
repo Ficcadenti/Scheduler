@@ -20,7 +20,9 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
+use Common\lib\CommonService;
 use Batch\DownloadAdWords;
+
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
@@ -181,6 +183,14 @@ class Batch30gg_work implements BatchGlobal {
 		return true;
 	}
 	
+	public function setDataIntervall()
+	{
+		$t=time();
+		$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t);
+		$t=$t-((60*60)*24)*30; /* 30gg*/
+		$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t);
+	}
+	
 	public function getParam($argv) {
 		$this->log->info ( "getParam()" );
 		array_shift ( $argv );
@@ -198,11 +208,13 @@ class Batch30gg_work implements BatchGlobal {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
 					Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
 					if (Batch30gg_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
-						if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+						/*if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
 							return true;
 						} else {
 							return false;
-						}
+						}*/
+						Batch30gg_work::setDataIntervall();
+						return true;
 					} else {
 						return false;
 					}
@@ -256,11 +268,12 @@ class Batch30gg_work implements BatchGlobal {
 			$this->log->info ( $msg );
 		}
 		
-		$msg = sprintf ( "	--dal: %s", $this->JSONparam->dal );
+		/*
+		 * $msg = sprintf ( "	--dal: %s", $this->JSONparam->dal );
 		$this->log->info ( $msg );
 		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
 		$this->log->info ( $msg );
-		
+		*/
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
 	}
@@ -303,10 +316,15 @@ class Batch30gg_work implements BatchGlobal {
 	private function getReport()
 	{
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
-		$param=array(
+		/*$param=array(
 				'dal' => $this->JSONparam->dal,
 				'al' => $this->JSONparam->al
+		);*/
+		$param=array(
+				'dal' => $this->lista_parametri ['--dal'],
+				'al' => $this->lista_parametri ['--al']
 		);
+		
 		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
 	}
 	

@@ -33,6 +33,11 @@
 		{
 		    return date("Y/m/d H:i:s",$t);
 		}
+		
+		public static function strDadeGoogle($t)
+		{
+			return date("Ymd",$t);
+		}
 		public function strTime($t)
 		{
 			$h=0;

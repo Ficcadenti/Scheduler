@@ -56,6 +56,10 @@ BATCH_LOG_CLEAR_GG     = 30
 REFRESH_TOKEN_CMD      = ${BASE_DIR}/adplify_be/batch_refresh_tokens_by_user_id.sh
 
 
+/* Path per file csv scaricati da google AdWords */
+CSV_PATH_FILE                 = ${BASE_DIR}/datafiles
+
+
 
 /* Sezione per parametri MySql DB */
 DB_HOST                = 10.10.10.151

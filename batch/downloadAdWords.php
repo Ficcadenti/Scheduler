@@ -164,7 +164,7 @@ class DownloadAdWords
 		
 		// Download report.
 		
-		$filePath = dirname ( __FILE__ ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
+		$filePath = getenv ( 'CSV_PATH_FILE' ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 		$reportUtils = new \ReportUtils ();
 		$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
 		
