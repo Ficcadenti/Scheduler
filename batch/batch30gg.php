@@ -19,10 +19,14 @@
 use Batch\Batch30gg_work;
 use Batch\lib\BatchLogConfigurator;
 use Batch\lib\BatchService;
+use Common\lib\CommonService;
+
+$start_time = time ();
 
 /* load librerie e define globali */
 require '../vendor/autoload.php';
 require '../assets/define/define.php';
+require '../assets/lib/common/commonService.php';
 
 /* load librerie batch */
 require '../assets/lib/batch/batchLogConfigurator.php';
@@ -34,6 +38,7 @@ date_default_timezone_set ( 'Europe/Rome' );
 
 $bt = new Batch30gg_work ();
 $service = new BatchService ();
+$common = new CommonService ();
 $name_log_file = basename ( __FILE__, ".php" );
 $id_schedulazione = 0;
 $configuration_log = array (
@@ -66,6 +71,8 @@ if ($id_schedulazione != - 1) {
 	/* set logger */
 	Logger::configure ( $configuration_log, new BatchLogConfigurator ( $service->makePathLog (), $name_log_file ) );
 	$log = Logger::getLogger ( $name_log_file );
+	
+	$log->info( "START Time: ".$common->strDade($start_time));
 	$bt->setLogger ( $log );
 	$service->setLogger ( $log );
 	
@@ -92,3 +99,9 @@ if ($id_schedulazione != - 1) {
 		$bt->refreshStatus ( false );
 	}
 }
+
+/* calcolo tempi di esecuzione */
+$stop_time = time ();
+$log->info( "STOP Time: ".$common->strDade($stop_time));
+$log->info( "EXEC Time: ".($stop_time-$start_time)." sec.  --> ".$common->strTime($stop_time-$start_time));
+

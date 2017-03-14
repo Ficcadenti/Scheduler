@@ -33,6 +33,28 @@
 		{
 		    return date("Y/m/d H:i:s",$t);
 		}
+		public function strTime($t)
+		{
+			$h=0;
+			$m=0;
+			$s=0;
+			$str="";
+	
+			$h = (int)($t/3600);
+			$resto = $t % 3600;
+
+			if($resto>0)
+			{
+				$m=(int)($resto/60);
+				$resto = $resto % 60;
+				if($resto>0)
+				{
+					$s=$resto;
+				}
+			}
+			$str=sprintf("%02d:%02d:%02d",$h,$m,$s);
+			return $str;
+		}
 		
 		public function isWindows()
 		{
