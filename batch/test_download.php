@@ -1,7 +1,8 @@
 <?php
+
+
 require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
 require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
-
 
 
 date_default_timezone_set ( 'UTC' );
@@ -13,18 +14,17 @@ $db_settings = array (
 		"db_user" => "root", // db user
 		"db_password" => "raffo" 
 ); // db password
-
 function getConnectionFromUserId($user_id) {
 	$conn = getConnection ();
-	$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 	$stmt = $conn->prepare ( "SELECT * FROM db_user where user_id=:user_id" );
 	$stmt->bindParam ( ':user_id', $user_id );
 	
 	$stmt->execute ();
-	if ($row = $stmt->fetch ( PDO::FETCH_OBJ )) {
+	if ($row = $stmt->fetch ( \PDO::FETCH_OBJ )) {
 		
 		try {
-			$ret = new PDO ( "mysql:host=" . $row->db_host . ";dbname=" . $row->db_name, $row->db_user, $row->db_password );
+			$ret = new \PDO ( "mysql:host=" . $row->db_host . ";dbname=" . $row->db_name, $row->db_user, $row->db_password );
 			// set the PDO error mode to exception
 			return $ret;
 		} catch ( PDOException $e ) {
@@ -38,7 +38,7 @@ function getConnection() {
 	global $db_settings;
 	
 	try {
-		$conn = new PDO ( "mysql:host=" . $db_settings ['db_host'] . ";dbname=" . $db_settings ['db_name'], $db_settings ['db_user'], $db_settings ['db_password'] );
+		$conn = new \PDO ( "mysql:host=" . $db_settings ['db_host'] . ";dbname=" . $db_settings ['db_name'], $db_settings ['db_user'], $db_settings ['db_password'] );
 		// set the PDO error mode to exception
 		return $conn;
 	} catch ( PDOException $e ) {
@@ -47,14 +47,15 @@ function getConnection() {
 }
 function getGoogleAccountsByUserId($user_id) {
 	$conn = getConnectionFromUserId ( $user_id );
-	$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-	$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid FROM google_account g inner join adwords_account a on g.id=a.google_user_id" );
+	$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+	$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename FROM google_account g inner join adwords_account a on g.id=a.google_user_id" );
 	$stmt->execute ();
 	$ret = array ();
-	while ( $row = $stmt->fetch ( PDO::FETCH_OBJ ) ) {
+	while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
 		$ret [] = array (
 				"access_token" => $row->access_token,
-				"customer_id" => $row->api_externalcustomerid 
+				"customer_id" => $row->api_externalcustomerid,
+				"descr" => $row->api_accountdescriptivename 
 		);
 	}
 	
@@ -62,25 +63,28 @@ function getGoogleAccountsByUserId($user_id) {
 }
 function getSettings() {
 	$conn = getConnection ();
-	$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 	$stmt = $conn->prepare ( "SELECT * FROM settings" );
 	
 	$stmt->execute ();
-	if ($row = $stmt->fetch ( PDO::FETCH_OBJ )) {
+	if ($row = $stmt->fetch ( \PDO::FETCH_OBJ )) {
 		return $row;
 	}
 	
 	return null;
 }
 function downloadAllReportsFromUserdId($user_id) {
+	$arrayReport = array ();
 	$settings = getSettings ();
 	$google_accounts = getGoogleAccountsByUserId ( $user_id );
 	foreach ( $google_accounts as $index => $google_account ) {
-		
-		downloadReport ( $user_id, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+		$namefileCSV = $google_account ['descr'] . ".csv";
+		$fileCSV = downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+		$arrayReport [$google_account ['customer_id']] = $fileCSV;
 	}
+	return $arrayReport;
 }
-function downloadReport($user_id, $settings, $access_token, $clientCustomerId) {
+function downloadReport($user_id, $namefileCSV, $settings, $access_token, $clientCustomerId) {
 	$user = new \AdWordsUser ();
 	$user->SetOAuth2Info ( array (
 			'client_id' => $settings->client_id,
@@ -150,25 +154,21 @@ function downloadReport($user_id, $settings, $access_token, $clientCustomerId) {
 	
 	$selector = new \Selector ();
 	$selector->fields = array_keys ( $fields ); // CAMPI DA CHIEDERE A GOOGLE
-	//$selector->dateRange = new \DateRange ( $date_min, $date_max ); // INTERVALLO TEMPORALE
-	/*$reportDefinition->selector->dateRange = new stdClass;
-	$reportDefinition->selector->dateRange->min = $date_min;
-	$reportDefinition->selector->dateRange->max = $date_max;*/
+	$selector->dateRange = new \DateRange ( $date_min, $date_max ); // INTERVALLO TEMPORALE
+	
 	$reportDefinition = new \ReportDefinition ();
 	$reportDefinition->selector = $selector;
 	
 	$reportDefinition->reportName = 'Criteria performance report #' . uniqid ();
 	// TIPO DI INTERVALLO TEMPORALE
 	$reportDefinition->dateRangeType = "CUSTOM_DATE"; // TIPO INTERVALLO PERSONALIZZATO. ALTRI POSSIBILI VALORI SONO : TODAY, LAST_7_DAYS, TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, LAST_14_DAYS, THIS_MONTH, LAST_30_DAYS, LAST_MONTH, ALL_TIME
-	$reportDefinition->selector->dateRange = new stdClass;
-	$reportDefinition->selector->dateRange->min = $date_min;
-	$reportDefinition->selector->dateRange->max = $date_max;
-	//$reportDefinition->dateRangeType = 'LAST_7_DAYS';
-	// TIPO DI REPORT , ALTRI POSSIBILI SONO : KEYWORDS_PERFORMANCE_REPORT, CAMPAIGN_PERFORMANCE_REPORT, KEYWORDS_PERFORMANCE_REPORT, URL_PERFORMANCE_REPORT, ACCOUNT_PERFORMANCE_REPORT
+	                                                  
+	// $reportDefinition->dateRangeType = 'LAST_7_DAYS';
+	                                                  // TIPO DI REPORT , ALTRI POSSIBILI SONO : KEYWORDS_PERFORMANCE_REPORT, CAMPAIGN_PERFORMANCE_REPORT, KEYWORDS_PERFORMANCE_REPORT, URL_PERFORMANCE_REPORT, ACCOUNT_PERFORMANCE_REPORT
 	$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
-	//$reportDefinition->reportType = 'CRITERIA_PERFORMANCE_REPORT';
+	// $reportDefinition->reportType = 'CRITERIA_PERFORMANCE_REPORT';
 	$reportDefinition->downloadFormat = 'CSV'; // FORMATO EXPORT ALTRI VALORI : XML
-	                                       
+	                                           
 	// Set additional options.
 	$options = array (
 			'version' => ADWORDS_VERSION 
@@ -190,18 +190,21 @@ function downloadReport($user_id, $settings, $access_token, $clientCustomerId) {
 	
 	// Download report.
 	
-	$filePath = dirname ( __FILE__ ) . '/report.csv'; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
+	$filePath = dirname ( __FILE__ ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 	$reportUtils = new \ReportUtils ();
 	$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
 	
-	/*$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
+	return $filePath;
+}
+function writeDB($filePath) {
+	$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
 	$conn = getConnectionFromUserId ( $user_id );
 	
 	$stmt = $conn->prepare ( "TRUNCATE " . $table );
 	$stmt->execute (); // QUESTA RIGA SVUOTA LA TABELLA PRIMA DI CARICARLA
 	
-	var_dump($table_columns_for_insert);
-	exit;
+	var_dump ( $table_columns_for_insert );
+	exit ();
 	$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $filePath ) . "'
         INTO TABLE `" . $table . "`
         CHARACTER SET utf8mb4
@@ -212,49 +215,13 @@ function downloadReport($user_id, $settings, $access_token, $clientCustomerId) {
            IGNORE 1 LINES
         (" . $table_columns_for_insert . ")";
 	
-	$conn->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+	$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 	$stmt = $conn->prepare ( $sql );
 	$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA
-	*/
-	return $filePath;
 }
 
-function strTime($t)
-{
-	$h=0;
-	$m=0;
-	$s=0;
-	$str="";
-
-	$h = (int)($t/3600);
-	$resto = $t % 3600;
-
-	if($resto>0)
-	{
-		$m=(int)($resto/60);
-		$resto = $resto % 60;
-		if($resto>0)
-		{
-			$s=$resto;
-		}
-	}
-	$str=sprintf("%02d:%02d:%02d",$h,$m,$s);
-	return $str;
-}
-
-function strDade($t)
-{
-	return date("Y/m/d H:i:s",$t);
-}
-
-
-$start_time = time ();
-printf( "START Time: %s \n",strDade($start_time));
 
 $user_id = 20;
-$file = downloadAllReportsFromUserdId ( $user_id );
-
-$stop_time = time ();
-printf( "STOP Time: %s \n",strDade($stop_time));
-printf( "EXEC Time: %t sec.  --> %s\n",($stop_time-$start_time),strTime($stop_time-$start_time));
+$a = downloadAllReportsFromUserdId ( $user_id );
+var_dump ( $a );
 

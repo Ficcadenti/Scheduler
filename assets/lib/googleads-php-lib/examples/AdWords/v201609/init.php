@@ -42,6 +42,7 @@ ini_set('include_path', implode(array(
     ini_get('include_path'), PATH_SEPARATOR, SRC_PATH
 )));
 
+
 // Include the AdWordsUser
 require_once LIB_PATH . '/AdWordsUser.php';
 require_once dirname(__FILE__) . '/../../Common/ExampleUtils.php';

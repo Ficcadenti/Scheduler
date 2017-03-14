@@ -16,12 +16,15 @@
  * |
  * | Schedulatore per avviare batch di download dati AdWords
  */
+
 use Batch\Batch30gg_work;
 use Batch\lib\BatchLogConfigurator;
 use Batch\lib\BatchService;
 use Common\lib\CommonService;
+//use Batch\DownloadAdWords;
 
 $start_time = time ();
+
 
 /* load librerie e define globali */
 require '../vendor/autoload.php';
@@ -33,8 +36,11 @@ require '../assets/lib/batch/batchLogConfigurator.php';
 require '../assets/lib/batch/batchService.php';
 require 'batch30gg_work.php';
 
+
+
 date_default_timezone_set ( 'UTC' );
 date_default_timezone_set ( 'Europe/Rome' );
+
 
 $bt = new Batch30gg_work ();
 $service = new BatchService ();
@@ -58,7 +64,6 @@ try {
 	printf ( "%s\n", $ex->getMessage () );
 	exit ();
 }
-
 
 $id_schedulazione = $bt->getIdSchedulazione ( $argv );
 

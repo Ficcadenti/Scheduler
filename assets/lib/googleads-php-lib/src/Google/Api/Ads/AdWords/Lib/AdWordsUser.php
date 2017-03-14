@@ -159,10 +159,10 @@ class AdWordsUser extends AdsUser {
    */
   protected function InitLogs() {
     parent::InitLogs();
-    Logger::LogToFile(self::REPORT_LOG_CHANNEL_NAME,
+    Logger_google::LogToFile(self::REPORT_LOG_CHANNEL_NAME,
         $this->GetLogsDirectory() . DIRECTORY_SEPARATOR
             . self::REPORT_LOG_FILE_NAME);
-    Logger::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger::$FATAL);
+    Logger_google::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger_google::$FATAL);
   }
 
   /**
@@ -171,7 +171,7 @@ class AdWordsUser extends AdsUser {
    */
   public function LogDefaults() {
     parent::LogDefaults();
-    Logger::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger::$ERROR);
+    Logger_google::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger_google::$ERROR);
   }
 
   /**
@@ -180,7 +180,7 @@ class AdWordsUser extends AdsUser {
    */
   public function LogErrors() {
     parent::LogErrors();
-    Logger::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger::$ERROR);
+    Logger_google::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger_google::$ERROR);
   }
 
   /**
@@ -189,7 +189,7 @@ class AdWordsUser extends AdsUser {
    */
   public function LogAll() {
     parent::LogAll();
-    Logger::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger::$INFO);
+    Logger_google::SetLogLevel(self::REPORT_LOG_CHANNEL_NAME, Logger_google::$INFO);
   }
 
   /**

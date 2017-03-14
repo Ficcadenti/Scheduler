@@ -20,9 +20,14 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
+use Batch\DownloadAdWords;
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
+require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
+require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
+require 'downloadAdWords.php';
+
 class Batch30gg_work implements BatchGlobal {
 	private $log = null;
 	private $dbh = null;
@@ -31,8 +36,12 @@ class Batch30gg_work implements BatchGlobal {
 	private $id_error = BATCH_WITHOUT_ERROR;
 	private $descr_error = "";
 	private $connetion=false;
+	private $downAdWords= null;
+	private $JSONparam = null;
 	
 	function __construct() {
+		$this->downAdWords=new DownloadAdWords();
+		$this->name_file = basename ( __FILE__, ".php" );
 	}
 	function __destruct() {
 		$this->dbh = null;
@@ -42,9 +51,9 @@ class Batch30gg_work implements BatchGlobal {
 	}
 	private function connect() {
 		$this->log->info ( "connect()" );
-		$this->name_file = basename ( __FILE__, ".php" );
+		
 		try {
-			$this->dbh = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
+			$this->dbh = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME_SCHEDULER' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
 			$this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			$this->connetion=true;
 		} catch ( \PDOException $ex ) {
@@ -55,8 +64,10 @@ class Batch30gg_work implements BatchGlobal {
 	}
 	public function setLogger($log) {
 		$this->log = $log;
+		$this->downAdWords->setLogger ( $log );
 	}
 	public function init() {
+		
 		$this->log->info ( "init()" );
 		Batch30gg_work::connect ();
 		if ($this->connetion == true) {
@@ -104,6 +115,73 @@ class Batch30gg_work implements BatchGlobal {
 			return false;
 		}
 	}
+	
+	private function getJSONParam($id_schedulazione) {
+		if ($this->connetion==true) {
+				
+			try {
+				$sql = "SELECT parametri_batch FROM sc_config WHERE  id_schedulazione = :id_schedulazione";
+				$stmt = $this->dbh->prepare ( $sql );
+				$stmt->bindParam ( ':id_schedulazione', $id_schedulazione, \PDO::PARAM_INT );
+				$stmt->execute ();
+	
+				$count = $stmt->rowCount ();
+				if ($count == 1) {
+					foreach ( $stmt as $row ) {
+						//$this->lista_parametri ['--parametri_batch'] = $row ['parametri_batch'];
+						var_dump($row ['parametri_batch']);
+						if(Batch30gg_work::validateJSONParam($row ['parametri_batch']))
+						{
+							return true;
+						}
+						else
+						{
+							return false;
+						}
+					}
+					return true;
+				} else {
+					if ($count == 0) {
+						$this->id_error = ERROR;
+						$this->descr_error = "Non esistono schedulazioni con id_schedulazione=" . $id_schedulazione;
+						$this->log->info ( $this->descr_error );
+					} else {
+						$this->id_error = ERROR;
+						$this->descr_error = "Ci sono più schedulazioni con lo stesso id_schedulazione=" . $id_schedulazione;
+						$this->log->info ( $this->descr_error );
+					}
+					return false;
+				}
+			} catch ( \PDOException $ex ) {
+				$this->id_error = ERROR;
+				$this->descr_error = $ex->getMessage ();
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	public function validateJSONParam($parameter) {
+
+			$this->log->info ( "setBatch()" );
+			$this->JSONparam = json_decode ( $parameter );
+	
+			/* check parameter */
+			if (! isset ( $this->JSONparam->dal ))
+			{
+				$this->log->info("Non è definito il parametro 'dal' !!!");
+				return false;
+			}
+			if (! isset ( $this->JSONparam->al ))
+			{
+				$this->log->info("Non è definito il parametro 'al' !!!");
+				return false;
+			}
+	
+		return true;
+	}
+	
 	public function getParam($argv) {
 		$this->log->info ( "getParam()" );
 		array_shift ( $argv );
@@ -121,7 +199,11 @@ class Batch30gg_work implements BatchGlobal {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
 					Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
 					if (Batch30gg_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
-						return true;
+						if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+							return true;
+						} else {
+							return false;
+						}
 					} else {
 						return false;
 					}
@@ -175,6 +257,11 @@ class Batch30gg_work implements BatchGlobal {
 			$this->log->info ( $msg );
 		}
 		
+		$msg = sprintf ( "	--dal: %s", $key, $this->JSONparam->dal );
+		$this->log->info ( $msg );
+		$msg = sprintf ( "	--al: %s", $key, $this->JSONparam->al );
+		$this->log->info ( $msg );
+		
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
 	}
@@ -187,9 +274,10 @@ class Batch30gg_work implements BatchGlobal {
 		$this->log->info ( $command );
 		exec ( escapeshellcmd ( $command ), $output );
 		
-		$this->log->info($output);
+		
 		
 		foreach ( $output as $key => $value ) {
+			$this->log->info($key."=> ".$value);
 			$obj = json_decode ( $value );
 			$ret = $obj->failed;
 			if ($ret == 1) {
@@ -213,10 +301,14 @@ class Batch30gg_work implements BatchGlobal {
 		return true;
 	}
 	
-	private function getCampagne()
+	private function getReport()
 	{
-		$this->log->info ( "getCampagne()" );
-		return true;
+		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
+		$param=array(
+				'dal' => '20170213',
+				'al' => '20170313'
+		);
+		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
 	}
 	
 	public function run() {
@@ -226,7 +318,22 @@ class Batch30gg_work implements BatchGlobal {
 		$ret = Batch30gg_work::refreshToken();
 		if($ret==true)
 		{
-			$ret = Batch30gg_work::getCampagne();
+			$this->downAdWords->connect();
+			if ($this->downAdWords->getIdError()==BATCH_WITHOUT_ERROR)
+			{
+				$arrayFileCsv = Batch30gg_work::getReport();
+				foreach ($arrayFileCsv as $key => $value)
+				{
+					$this->log->info ( "(".$key.")=> ".$value );
+				}
+				$ret=true;
+			}
+			else 
+			{
+				$this->id_error = $this->downAdWords->getIdError();
+				$this->descr_error = $this->downAdWords->getDescError();
+				$ret=false;
+			}
 		}
 		
 		return $ret;
@@ -236,11 +343,12 @@ class Batch30gg_work implements BatchGlobal {
 	}
 	private function setStatus($id_schedulazione, $stato_schedulazione) {
 		if ($this->connetion==true) {
+			$str_error="[".$this->name_file."] ".$this->descr_error;
 			$sql = "UPDATE sc_config SET stato_schedulazione = :stato_schedulazione, id_error = :id_error, descr_error = :descr_error WHERE id_schedulazione = :id_schedulazione";
 			$stmt = $this->dbh->prepare($sql);
 			$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione, \PDO::PARAM_INT );
 			$stmt->bindParam ( ':id_error', $this->id_error, \PDO::PARAM_INT );
-			$stmt->bindParam ( ':descr_error', $this->descr_error, \PDO::PARAM_STR );
+			$stmt->bindParam ( ':descr_error', $str_error , \PDO::PARAM_STR );
 			$stmt->bindParam ( ':id_schedulazione', $id_schedulazione, \PDO::PARAM_INT );
 			$stmt->execute ();
 		} 

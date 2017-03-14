@@ -26,7 +26,7 @@
  * @license    http://www.apache.org/licenses/LICENSE-2.0 Apache License,
  *             Version 2.0
  */
-require_once 'Google/Api/Ads/Common/Util/Logger.php';
+require_once 'Google/Api/Ads/Common/Util/Logger_google.php';
 
 /**
  * A collection of utility methods for logging or throwing errors related to the
@@ -49,7 +49,7 @@ abstract class DeprecationUtils {
       $message .= sprintf(" For more information, please see '%s'",
           $moreInfoLink);
     }
-    self::Log($message, Logger::$ERROR);
+    self::Log($message, Logger_google::$ERROR);
   }
 
   /**
@@ -59,8 +59,8 @@ abstract class DeprecationUtils {
    * @param string $level is the message level to log
    */
   protected static function Log($message, $level = null) {
-    Logger::log(Logger::$SOAP_XML_LOG, $message, $level);
-    Logger::log(Logger::$REQUEST_INFO_LOG, $message, $level);
+    Logger_google::log(Logger_google::$SOAP_XML_LOG, $message, $level);
+    Logger_google::log(Logger_google::$REQUEST_INFO_LOG, $message, $level);
   }
 }
 

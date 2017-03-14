@@ -24,7 +24,7 @@
 require_once 'Google/Api/Ads/AdWords/Lib/AdWordsUser.php';
 require_once 'Google/Api/Ads/AdWords/Util/ReportDownloadException.php';
 require_once 'Google/Api/Ads/Common/Util/CurlUtils.php';
-require_once 'Google/Api/Ads/Common/Util/Logger.php';
+require_once 'Google/Api/Ads/Common/Util/Logger_google.php';
 require_once 'Google/Api/Ads/Common/Util/XmlUtils.php';
 require_once 'Google/Api/Ads/AdWords/Util/v201609/ReportClasses.php';
 require_once 'Google/Api/Ads/AdWords/Util/XmlDeserializer.php';
@@ -337,7 +337,7 @@ class ReportUtilsDelegate {
    */
   private static function LogRequest($requestHeaders, $responseCode,
       $params = null, $exception = null) {
-    $level = isset($exception) ? Logger::$ERROR : Logger::$INFO;
+    $level = isset($exception) ? Logger_google::$ERROR : Logger_google::$INFO;
     $messageParts = array();
     $messageParts[] = trim($requestHeaders);
     $messageParts[] = ''; // Blank line for readability.
@@ -352,6 +352,6 @@ class ReportUtilsDelegate {
     }
     $messageParts[] = ''; // Blank line for readability.
     $message = implode("\n", $messageParts);
-    Logger::Log(AdWordsUser::REPORT_LOG_CHANNEL_NAME, $message, $level);
+    Logger_google::Log(AdWordsUser::REPORT_LOG_CHANNEL_NAME, $message, $level);
   }
 }

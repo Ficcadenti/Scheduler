@@ -57,6 +57,7 @@ REFRESH_TOKEN_CMD             = ${BASE_DIR}/../adplify_be/batch_refresh_tokens_b
 
 /* Sezione per parametri MySql DB */
 DB_HOST                       = localhost
-DB_NAME                       = adplify_scheduler
+DB_NAME_SCHEDULER             = adplify_scheduler
+DB_NAME_ADPMANAGER            = adplify_manager
 DB_USER                       = adplify
 DB_PASS                       = adplify

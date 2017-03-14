@@ -39,7 +39,7 @@
 			$this->name_file=basename(__FILE__, ".php");
 			try 
 			{
-			    $this->dbh = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME'), getenv('DB_USER') , getenv('DB_PASS'));
+			    $this->dbh = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME_SCHEDULER'), getenv('DB_USER') , getenv('DB_PASS'));
 			    $this->connetion=true;
 			} 
 			catch (\PDOException $ex) 
