@@ -86,7 +86,7 @@ $sm=new SchedulerManager();
 
 /* NB: id_schedulazione=-1 indica un nuovo batch schedulato.*/
 $json_str='{
-	"id_schedulazione": 33,   
+	"id_schedulazione": -1,   
 	"hostname": "devadplify",
 	"id_user": 20,
 	"id_account_adw": 2,
@@ -96,9 +96,9 @@ $json_str='{
 	"frequenza": 10800,
 	"stato_schedulazione": 6,
 	"tipo_batch": 1,
-	"time_start": "2017-03-13 10:00:00",
-	"dal": "2016-01-01 00:00:00",
-	"al": "2017-01-01 00:00:00"
+	"time_start": "2017-03-14 16:40:00",
+	"dal": "20170212",
+	"al": "20170311"
 }';
 
 
