@@ -129,7 +129,6 @@ class Batch30gg_work implements BatchGlobal {
 				if ($count == 1) {
 					foreach ( $stmt as $row ) {
 						//$this->lista_parametri ['--parametri_batch'] = $row ['parametri_batch'];
-						var_dump($row ['parametri_batch']);
 						if(Batch30gg_work::validateJSONParam($row ['parametri_batch']))
 						{
 							return true;
@@ -257,9 +256,9 @@ class Batch30gg_work implements BatchGlobal {
 			$this->log->info ( $msg );
 		}
 		
-		$msg = sprintf ( "	--dal: %s", $key, $this->JSONparam->dal );
+		$msg = sprintf ( "	--dal: %s", $this->JSONparam->dal );
 		$this->log->info ( $msg );
-		$msg = sprintf ( "	--al: %s", $key, $this->JSONparam->al );
+		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
 		$this->log->info ( $msg );
 		
 		$msg = sprintf ( "------------------------------------------------" );
@@ -305,8 +304,8 @@ class Batch30gg_work implements BatchGlobal {
 	{
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
 		$param=array(
-				'dal' => '20170213',
-				'al' => '20170313'
+				'dal' => $this->JSONparam->dal,
+				'al' => $this->JSONparam->al
 		);
 		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
 	}
