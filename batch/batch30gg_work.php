@@ -155,7 +155,6 @@ class Batch30gg_work implements BatchGlobal {
 		Batch30gg_work::getInputParameter ( $argv );
 		
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
-			printf ( "id_schedulazione=%d\n", $this->lista_parametri ['--id_schedulazione'] );
 			return $this->lista_parametri ['--id_schedulazione'];
 		} else {
 			$msg = "-Il Batch è stato invocato senza parametro --id_schedulazione";
