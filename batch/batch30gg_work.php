@@ -208,7 +208,7 @@ class Batch30gg_work implements BatchGlobal {
 				}break;
 			case GIORNI_60: /* Calcolo i 60 giorni   */
 				{
-					$t_dal=$t_al-((60*60)*24)*60; /* 30gg*/
+					$t_dal=$t_al-((60*60)*24)*60; /* 60gg*/
 					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
 					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
 				}break;

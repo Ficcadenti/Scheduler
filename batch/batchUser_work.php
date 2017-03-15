@@ -8,7 +8,7 @@
  * | Author email raffaele.ficcadenti@gmail.com
  * |
  * | FILE
- * | Batch2year_work.php
+ * | batchUser_work.php
  * |
  * | HISTORY:
  * | -[Date]- -[Who]- -[What]-
@@ -30,9 +30,9 @@ require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php"
 require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 require 'downloadAdWords.php';
 
-class Batch2year_work implements BatchGlobal {
+class BatchUser_work implements BatchGlobal {
 	
-	private $typeBatch = ANNI_2;
+	private $typeBatch = USER_DEFINED;
 	private $log = null;
 	private $dbh = null;
 	private $name_file = "";
@@ -74,7 +74,7 @@ class Batch2year_work implements BatchGlobal {
 	public function init() {
 		
 		$this->log->info ( "init()" );
-		Batch2year_work::connect ();
+		self::connect ();
 		if ($this->connetion == true) {
 			return $this->connetion;
 		} else {
@@ -134,7 +134,7 @@ class Batch2year_work implements BatchGlobal {
 				if ($count == 1) {
 					foreach ( $stmt as $row ) {
 						//$this->lista_parametri ['--parametri_batch'] = $row ['parametri_batch'];
-						if(Batch2year_work::validateJSONParam($row ['parametri_batch']))
+						if(self::validateJSONParam($row ['parametri_batch']))
 						{
 							return true;
 						}
@@ -237,16 +237,16 @@ class Batch2year_work implements BatchGlobal {
 			return false;
 		}
 		
-		Batch2year_work::getInputParameter ( $argv );
+		self::getInputParameter ( $argv );
 		
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			if (array_key_exists ( strtolower ( "--run_time" ), $this->lista_parametri )) {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
-					Batch2year_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
-					if (Batch2year_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+					self::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
+					if (self::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
 						
-						if (Batch2year_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
-							Batch2year_work::setDataIntervall();
+						if (self::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+							self::setDataIntervall();
 							return true;
 						} else {
 							return false;
@@ -283,7 +283,7 @@ class Batch2year_work implements BatchGlobal {
 			return - 1;
 		}
 		
-		Batch2year_work::getInputParameter ( $argv );
+		self::getInputParameter ( $argv );
 		
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			return $this->lista_parametri ['--id_schedulazione'];
@@ -398,19 +398,19 @@ class Batch2year_work implements BatchGlobal {
 		$ret=true;
 		$this->log->info ( "run()" );
 		
-		$ret = Batch2year_work::refreshToken();
+		$ret = self::refreshToken();
 		if($ret==true)
 		{
 			$this->downAdWords->connect();
 			if ($this->downAdWords->getIdError()==BATCH_WITHOUT_ERROR)
 			{
-				$arrayFileCsv = Batch2year_work::getReport();
+				$arrayFileCsv = self::getReport();
 				foreach ($arrayFileCsv as $key => $value)
 				{
-					$import=Batch2year_work::writeDB($this->lista_parametri ['--id_user'],$value);
+					$import=self::writeDB($this->lista_parametri ['--id_user'],$value);
 					if($import==true)
 					{
-						$ren=Batch2year_work::renameCSVtoIMP($value);
+						$ren=self::renameCSVtoIMP($value);
 						if($ren==false)
 						{
 							$this->id_error = ERROR;
@@ -453,16 +453,16 @@ class Batch2year_work implements BatchGlobal {
 		} 
 	}
 	public function refreshStatus($status) {
-		$this->log->info ( "refreshStatus(" . Batch2year_work::boolToStr ( $status ) . ")" );
+		$this->log->info ( "refreshStatus(" . self::boolToStr ( $status ) . ")" );
 		
 		if ($status == false) {
-			Batch2year_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], ERROR );
+			self::setStatus ( $this->lista_parametri ['--id_schedulazione'], ERROR );
 			$this->log->info ( "ERROR(" . $this->name_file . "): (" . $this->id_error.")-".$this->descr_error );
 		} else {
 			if ($this->lista_parametri ['--type'] == BATCH_UNA_TANTUM) {
-				Batch2year_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], FINISCHED );
+				self::setStatus ( $this->lista_parametri ['--id_schedulazione'], FINISCHED );
 			} else {
-				Batch2year_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], TO_BE_SUBMITTED );
+				self::setStatus ( $this->lista_parametri ['--id_schedulazione'], TO_BE_SUBMITTED );
 			}
 		}
 	}
