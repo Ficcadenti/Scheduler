@@ -321,6 +321,10 @@ class SchedulerManager {
 	}
 	
 	public function getIdSchedulazione() {
+		return $this->param->id_schedulazione;
+	}
+	
+	public function getAllIdSchedulazione() {
 		$this->log->info ( "getIdSchedulazione(".$this->param->id_user.")" );
 		$ret=null;
 		if($this->connetion)

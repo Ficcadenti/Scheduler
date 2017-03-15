@@ -113,6 +113,8 @@ if($sm->setBatch($json_str))
 			{
 				$newid=$sm->insert(); /* per creare un nuovo batch */
 				$sm->showParameter(); /* per prendere il nuovo id_schedulazione inserito */
+				$id = $sm->getIdSchedulazione();
+				printf("id=%d\n",$id);
 			}break;
 			
 		case MODIY_BATCH:
@@ -128,11 +130,7 @@ if($sm->setBatch($json_str))
 				/* gestione errore database */
 			}break;		
 	}
-	$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
-	foreach ($id as $key => $value)
-	{
-		printf("id[%d]=%d\n",$key,$value);
-	}
+	
    	$sm->unsetBatch();
 }
 else
