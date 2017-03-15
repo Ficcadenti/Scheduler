@@ -57,25 +57,31 @@ class DownloadAdWords
 		$this->log->info ( "info()" );
 	}
 	
-	private function downloadReport($user_id, $param,  $namefileCSV, $settings, $access_token, $clientCustomerId) 
+	private function getFields()
 	{
-		$user = new \AdWordsUser ();
-		$user->SetOAuth2Info ( array (
-				'client_id' => $settings->client_id,
-				'client_secret' => $settings->client_secret,
-				'refresh_token' => $settings->refresh_token,
-				'access_token' => $access_token 
-		) );
+		$this->log->info ( "getFields()" );
+		$fields = array ();
+		if($this->connetion==true)
+		{
+			try {
+			
+				$statement = $this->dbh->prepare ( "SELECT * FROM api_adgroup-performance-report" );
+			
+				foreach ( $statement as $row ) {
+					//array_push($fields, $row['Name']);
+					printf("%s\n",$row['Name']);
+				}
+				
+			} catch ( \PDOException $ex ) {
+				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
+			}
+			
+		}
 		
-		// Load the service, so that the required classes are available.
-		$user->LoadService ( 'ReportDefinitionService', ADWORDS_VERSION );
-		// Optional: Set clientCustomerId to get reports of your child accounts
-		$user->SetClientCustomerId ( $clientCustomerId );
-		$user->SetDeveloperToken ( $settings->dev_key );
 		
-		// Create selector.
+		exit;
 		
-		// CAMPI DA PRENDERE PER SCARICARE ADGROUP
+		
 		$fields = array (
 				"AdNetworkType1" => "AdNetworkType1",
 				"AllConversionRate" => "AllConversionRate",
@@ -112,15 +118,30 @@ class DownloadAdWords
 				"AdGroupId" => "AdGroupId" 
 		);
 		
-		$table_columns_for_insert = "";
-		$table_columns_for_select = array ();
+		return $fields;
+
+	}
+	
+	private function downloadReport($user_id, $param,  $namefileCSV, $settings, $access_token, $clientCustomerId) 
+	{
+		$user = new \AdWordsUser ();
+		$user->SetOAuth2Info ( array (
+				'client_id' => $settings->client_id,
+				'client_secret' => $settings->client_secret,
+				'refresh_token' => $settings->refresh_token,
+				'access_token' => $access_token 
+		) );
 		
-		foreach ( $fields as $k => $field ) {
-			$field_4_select = "api_" . strtolower ( str_replace ( " ", "", $field ) ) . "";
-			$field_4_insert = "`" . $field_4_select . "`";
-			$table_columns_for_insert = $table_columns_for_insert == "" ? $field_4_insert : $table_columns_for_insert . "," . $field_4_insert;
-			$table_columns_for_select [] = $field_4_select;
-		}
+		// Load the service, so that the required classes are available.
+		$user->LoadService ( 'ReportDefinitionService', ADWORDS_VERSION );
+		// Optional: Set clientCustomerId to get reports of your child accounts
+		$user->SetClientCustomerId ( $clientCustomerId );
+		$user->SetDeveloperToken ( $settings->dev_key );
+		
+		// Create selector.
+		
+		// CAMPI DA PRENDERE PER SCARICARE ADGROUP
+		$fields = DownloadAdWords::getFields();
 		
 		// RAPPRESENTA L'INTERVALLO TEMPORALE NEL QUALE PRENDERE I DATI
 		$date_min = $param['dal']; // "20150301"; // PRENDI DA DATA
@@ -167,8 +188,61 @@ class DownloadAdWords
 		$filePath = getenv ( 'CSV_PATH_FILE' ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 		$reportUtils = new \ReportUtils ();
 		$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
+		//$reportUtils->DownloadReport ( $reportDefinition, $namefileCSV, $user, $options );
 		
-		return $filePath;
+		return $namefileCSV;
+	}
+	
+	public function writeDB($user_id,$fileCSV)
+	{
+		$ret=true;
+		
+		$complete_fileCSV = getenv ( 'CSV_PATH_FILE' ) . '/' .$fileCSV;
+	
+		$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
+		
+		$fields = DownloadAdWords::getFields();
+		
+		$table_columns_for_insert = "";
+		$table_columns_for_select = array ();
+		
+		foreach ( $fields as $k => $field ) {
+			$field_4_select = "api_" . strtolower ( str_replace ( " ", "", $field ) ) . "";
+			$field_4_insert = "`" . $field_4_select . "`";
+			printf("%s\n",$field_4_insert);
+			$table_columns_for_insert = $table_columns_for_insert == "" ? $field_4_insert : $table_columns_for_insert . "," . $field_4_insert;
+			$table_columns_for_select [] = $field_4_select;
+		}
+		
+		$conn = DownloadAdWords::getConnectionFromUserId ( $user_id );
+		
+		if($conn!=null)
+		{
+			$stmt = $conn->prepare ( "TRUNCATE " . $table );
+			$stmt->execute (); // QUESTA RIGA SVUOTA LA TABELLA PRIMA DI CARICARLA
+			
+			$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
+			INTO TABLE `" . $table . "`
+			CHARACTER SET utf8mb4
+			FIELDS
+			TERMINATED BY ','
+			LINES
+			TERMINATED BY '\n'
+			IGNORE 1 LINES
+			(" . $table_columns_for_insert . ")";
+			
+			$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+			$stmt = $conn->prepare ( $sql );
+			$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA
+			$ret=true;
+		}
+		else
+		{
+			$ret=false;
+		}
+		
+		return $ret;
+
 	}
 	
 	private function getConnectionFromUserId($user_id) {
@@ -181,7 +255,7 @@ class DownloadAdWords
 			if ($row = $stmt->fetch ( \PDO::FETCH_OBJ )) {
 		
 				try {
-					$ret = new \PDO ( "mysql:host=" . $row->db_host . ";dbname=" . $row->db_name, $row->db_user, $row->db_password );
+					$ret = new \PDO ( "mysql:host=" . $row->db_host . ";dbname=" . $row->db_name, $row->db_user, $row->db_password , [\PDO::MYSQL_ATTR_LOCAL_INFILE => true]);
 					// set the PDO error mode to exception
 					return $ret;
 				} catch ( \PDOException $ex ) {
@@ -202,14 +276,14 @@ class DownloadAdWords
 		}
 	}
 	
-	private function getGoogleAccountsByUserId($user_id) {
+	private function getGoogleAccountsByUserId($user_id,$customer_id) {
 		$conn = DownloadAdWords::getConnectionFromUserId ( $user_id );
 		$ret = array ();
-		
 		if($conn!=null)
 		{
 			$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-			$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename FROM google_account g inner join adwords_account a on g.id=a.google_user_id" );
+			$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename FROM google_account g inner join adwords_account a on g.id=a.google_user_id AND a.api_externalcustomerid = :customer_id" );
+			$stmt->bindParam ( ':customer_id', $customer_id );
 			$stmt->execute ();
 			
 			while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
@@ -245,7 +319,7 @@ class DownloadAdWords
 		{
 			
 			$settings = DownloadAdWords::getSettings ();
-			$google_accounts = DownloadAdWords::getGoogleAccountsByUserId ( $user_id );
+			$google_accounts = DownloadAdWords::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
 
 			foreach ( $google_accounts as $index => $google_account ) 
 			{
@@ -260,4 +334,5 @@ class DownloadAdWords
 		}
 		return $arrayReport;
 	}
+	
 }

@@ -48,4 +48,9 @@
   define("DB_ERROR",3);
   define("DB_NO_ERROR",4);
   
+  define("GIORNI_30",0);
+  define("GIORNI_60",1);
+  define("ANNI_2",2);
+  define("USER_DEFINED",3);
+  
   

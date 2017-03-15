@@ -31,6 +31,8 @@ require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 require 'downloadAdWords.php';
 
 class Batch30gg_work implements BatchGlobal {
+	
+	private $typeBatch = GIORNI_30;
 	private $log = null;
 	private $dbh = null;
 	private $name_file = "";
@@ -40,6 +42,7 @@ class Batch30gg_work implements BatchGlobal {
 	private $connetion=false;
 	private $downAdWords= null;
 	private $JSONparam = null;
+	
 	
 	function __construct() {
 		$this->downAdWords=new DownloadAdWords();
@@ -169,15 +172,23 @@ class Batch30gg_work implements BatchGlobal {
 			$this->JSONparam = json_decode ( $parameter );
 	
 			/* check parameter */
-			if (! isset ( $this->JSONparam->dal ))
+			if (! isset ( $this->JSONparam->id_account_adw ))
 			{
-				$this->log->info("Non è definito il parametro 'dal' !!!");
+				$this->log->info("Non è definito il parametro 'id_account_adw' !!!");
 				return false;
 			}
-			if (! isset ( $this->JSONparam->al ))
+			if($this->typeBatch==USER_DEFINED)
 			{
-				$this->log->info("Non è definito il parametro 'al' !!!");
-				return false;
+				if (! isset ( $this->JSONparam->dal ))
+				{
+					$this->log->info("Non è definito il parametro 'dal' !!!");
+					return false;
+				}
+				if (! isset ( $this->JSONparam->al ))
+				{
+					$this->log->info("Non è definito il parametro 'al' !!!");
+					return false;
+				}
 			}
 	
 		return true;
@@ -185,10 +196,35 @@ class Batch30gg_work implements BatchGlobal {
 	
 	public function setDataIntervall()
 	{
-		$t=time();
-		$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t);
-		$t=$t-((60*60)*24)*30; /* 30gg*/
-		$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t);
+		$t_al=time();
+		
+		switch($this->typeBatch)
+		{
+			case GIORNI_30: /* Calcolo i 30 giorni   */
+				{
+					$t_dal=$t_al-((60*60)*24)*30; /* 30gg*/
+					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
+					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
+				}break;
+			case GIORNI_60: /* Calcolo i 60 giorni   */
+				{
+					$t_dal=$t_al-((60*60)*24)*60; /* 30gg*/
+					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
+					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
+				}break;
+			case ANNI_2: /* Calcolo i 2 anni  */
+				{
+					$t_dal=$t_al-(((60*60)*24)*365)*2; /* 2anni*/
+					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
+					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
+				}break;
+			case USER_DEFINED: /* vengono dai parametri JSON passati dal be */
+				{
+					$this->lista_parametri ['--dal']=$this->JSONparam->dal;
+					$this->lista_parametri ['--al']=$this->JSONparam->al;
+					
+				}break;
+		}
 	}
 	
 	public function getParam($argv) {
@@ -208,12 +244,14 @@ class Batch30gg_work implements BatchGlobal {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
 					Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
 					if (Batch30gg_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
-						/*if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+						
+						if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+							Batch30gg_work::setDataIntervall();
 							return true;
 						} else {
 							return false;
-						}*/
-						Batch30gg_work::setDataIntervall();
+						}
+						
 						return true;
 					} else {
 						return false;
@@ -268,9 +306,10 @@ class Batch30gg_work implements BatchGlobal {
 			$this->log->info ( $msg );
 		}
 		
-		/*
-		 * $msg = sprintf ( "	--dal: %s", $this->JSONparam->dal );
+		
+		$msg = sprintf ( "	--id_account_adw: %s", $this->JSONparam->id_account_adw );
 		$this->log->info ( $msg );
+		/*
 		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
 		$this->log->info ( $msg );
 		*/
@@ -285,7 +324,6 @@ class Batch30gg_work implements BatchGlobal {
 		
 		$this->log->info ( $command );
 		exec ( escapeshellcmd ( $command ), $output );
-		
 		
 		
 		foreach ( $output as $key => $value ) {
@@ -321,11 +359,39 @@ class Batch30gg_work implements BatchGlobal {
 				'al' => $this->JSONparam->al
 		);*/
 		$param=array(
+				'customer_id' => $this->JSONparam->id_account_adw,
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);
 		
 		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
+	}
+	
+	private function writeDB($user_id,$fileCSV) 
+	{
+		$this->log->info ( "... writeDB(".$user_id.",".getenv ( 'CSV_PATH_FILE' )."/".$fileCSV.")" );
+		
+		$import=$this->downAdWords->writeDB($this->lista_parametri ['--id_user'],$fileCSV);
+		if($import==true)
+		{
+			
+		}
+		else
+		{
+			
+		}
+		return $import;
+	}
+	
+	private function renameCSVtoIMP($csv_file)
+	{
+		$path_csv=getenv ( 'CSV_PATH_FILE' );
+		$path_imp=getenv ( 'IMP_PATH_FILE' );
+		$imp_file=str_replace("csv","imp",$csv_file);
+		$this->log->info ( "... renameCSVtoIMP(".$path_csv."/".$csv_file." --> ".$path_imp."/".$imp_file .")" );
+		$ok = rename($path_csv."/".$csv_file, $path_imp."/".$imp_file);
+		
+		return $ok;
 	}
 	
 	public function run() {
@@ -341,7 +407,23 @@ class Batch30gg_work implements BatchGlobal {
 				$arrayFileCsv = Batch30gg_work::getReport();
 				foreach ($arrayFileCsv as $key => $value)
 				{
-					$this->log->info ( "(".$key.")=> ".$value );
+					$import=Batch30gg_work::writeDB($this->lista_parametri ['--id_user'],$value);
+					if($import==true)
+					{
+						$ren=Batch30gg_work::renameCSVtoIMP($value);
+						if($ren==false)
+						{
+							$this->id_error = ERROR;
+							$this->descr_error = "Errore rename file ".$value;
+							return false;
+						}
+					}
+					else 
+					{
+						$this->id_error = ERROR;
+						$this->descr_error = "Errore import file ".$value;
+						return false;
+					}
 				}
 				$ret=true;
 			}

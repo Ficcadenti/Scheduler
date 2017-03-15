@@ -62,8 +62,8 @@ class SchedulerManager {
 			exit ();
 		}
 		
-		printf ( "SCHEDULER_MANAGER Log path: %s\n", $this->service->makePathLog () );
-		printf ( "SCHEDULER_MANAGER Log file: <yyyy-mm-dd>.%s.log\n", $this->name_log_file );
+		//printf ( "SCHEDULER_MANAGER Log path: %s\n", $this->service->makePathLog () );
+		//printf ( "SCHEDULER_MANAGER Log file: <yyyy-mm-dd>.%s.log\n", $this->name_log_file );
 		
 		\Logger::configure ( $this->configuration_log, new SchedulerManagerLogConfigurator ( $this->service->makePathLog (), $this->name_log_file ) );
 		$this->log = \Logger::getLogger ( "schedulerManagerLogger" );

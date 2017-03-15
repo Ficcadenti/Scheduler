@@ -63,7 +63,7 @@
             // Add both appenders to the root logger
             $root = $hierarchy->getRootLogger();
             //$root->addAppender($appFile);
-            $root->addAppender($appEcho);
+            //$root->addAppender($appEcho);
             $root->addAppender($rollingAppender);
         }
     }

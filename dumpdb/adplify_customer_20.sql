@@ -1,11 +1,9 @@
-CREATE DATABASE  IF NOT EXISTS `adplify_customer_20` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `adplify_customer_20`;
 -- phpMyAdmin SQL Dump
 -- version 4.4.15.9
 -- https://www.phpmyadmin.net
 --
 -- Host: localhost
--- Creato il: Mar 10, 2017 alle 09:34
+-- Creato il: Mar 15, 2017 alle 12:13
 -- Versione del server: 5.5.52-MariaDB
 -- Versione PHP: 5.6.30
 
@@ -21,6 +19,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `adplify_customer_20`
 --
+CREATE DATABASE IF NOT EXISTS `adplify_customer_20` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `adplify_customer_20`;
 
 -- --------------------------------------------------------
 
@@ -28,7 +28,6 @@ SET time_zone = "+00:00";
 -- Struttura della tabella `adwords_account`
 --
 
-DROP TABLE IF EXISTS `adwords_account`;
 CREATE TABLE IF NOT EXISTS `adwords_account` (
   `id` bigint(20) NOT NULL,
   `api_accountcurrencycode` varchar(5) DEFAULT NULL,
@@ -53,7 +52,6 @@ INSERT INTO `adwords_account` (`id`, `api_accountcurrencycode`, `api_accountdesc
 -- Struttura della tabella `cache_adgroup_attributes`
 --
 
-DROP TABLE IF EXISTS `cache_adgroup_attributes`;
 CREATE TABLE IF NOT EXISTS `cache_adgroup_attributes` (
   `api_adgroupid` bigint(20) DEFAULT NULL,
   `api_adgroupname` varchar(255) DEFAULT NULL,
@@ -152,7 +150,6 @@ INSERT INTO `cache_adgroup_attributes` (`api_adgroupid`, `api_adgroupname`, `api
 -- Struttura della tabella `cache_adgroup_metrics`
 --
 
-DROP TABLE IF EXISTS `cache_adgroup_metrics`;
 CREATE TABLE IF NOT EXISTS `cache_adgroup_metrics` (
   `id` int(11) NOT NULL,
   `api_date` varchar(10) DEFAULT NULL,
@@ -196,7 +193,6 @@ CREATE TABLE IF NOT EXISTS `cache_adgroup_metrics` (
 -- Struttura della tabella `cache_campaign_attributes`
 --
 
-DROP TABLE IF EXISTS `cache_campaign_attributes`;
 CREATE TABLE IF NOT EXISTS `cache_campaign_attributes` (
   `api_amount` decimal(11,3) DEFAULT NULL,
   `api_campaignid` bigint(20) NOT NULL,
@@ -230,7 +226,6 @@ INSERT INTO `cache_campaign_attributes` (`api_amount`, `api_campaignid`, `api_ca
 -- Struttura della tabella `cache_campaign_metrics`
 --
 
-DROP TABLE IF EXISTS `cache_campaign_metrics`;
 CREATE TABLE IF NOT EXISTS `cache_campaign_metrics` (
   `id` int(11) NOT NULL,
   `api_date` varchar(10) DEFAULT NULL,
@@ -273,7 +268,6 @@ CREATE TABLE IF NOT EXISTS `cache_campaign_metrics` (
 -- Struttura della tabella `cache_keywords_attributes`
 --
 
-DROP TABLE IF EXISTS `cache_keywords_attributes`;
 CREATE TABLE IF NOT EXISTS `cache_keywords_attributes` (
   `api_id` bigint(20) NOT NULL,
   `api_campaignid` bigint(20) NOT NULL,
@@ -287,7 +281,6 @@ CREATE TABLE IF NOT EXISTS `cache_keywords_attributes` (
 -- Struttura della tabella `cache_keywords_metrics`
 --
 
-DROP TABLE IF EXISTS `cache_keywords_metrics`;
 CREATE TABLE IF NOT EXISTS `cache_keywords_metrics` (
   `id` int(11) NOT NULL,
   `api_date` varchar(10) DEFAULT NULL,
@@ -332,7 +325,6 @@ CREATE TABLE IF NOT EXISTS `cache_keywords_metrics` (
 -- Struttura della tabella `cache_url_attributes`
 --
 
-DROP TABLE IF EXISTS `cache_url_attributes`;
 CREATE TABLE IF NOT EXISTS `cache_url_attributes` (
   `id` bigint(20) NOT NULL,
   `api_url` varchar(255) DEFAULT NULL,
@@ -346,7 +338,6 @@ CREATE TABLE IF NOT EXISTS `cache_url_attributes` (
 -- Struttura della tabella `cache_url_metrics`
 --
 
-DROP TABLE IF EXISTS `cache_url_metrics`;
 CREATE TABLE IF NOT EXISTS `cache_url_metrics` (
   `id` int(11) NOT NULL,
   `api_campaignid` bigint(20) DEFAULT NULL,
@@ -391,7 +382,6 @@ CREATE TABLE IF NOT EXISTS `cache_url_metrics` (
 -- Struttura della tabella `google_account`
 --
 
-DROP TABLE IF EXISTS `google_account`;
 CREATE TABLE IF NOT EXISTS `google_account` (
   `id` bigint(20) NOT NULL,
   `access_token` varchar(255) NOT NULL,
@@ -407,8 +397,8 @@ CREATE TABLE IF NOT EXISTS `google_account` (
 --
 
 INSERT INTO `google_account` (`id`, `access_token`, `refresh_token`, `expires_in`, `token_refreshed_at`, `google_email`, `user_id`) VALUES
-(1, 'ya29.GlsJBMx7GjtpB4H_MrZqs3zVi7ouj0Lb8fsG_5xQQCtzroOnVxbUA8SS6-fvwTom7hARXF9sDNvuEzKpZ6sDdmGi1LZ8WlIMq38bQ6cL6NZi60BeYwG-x8YddVpR', '1/tk_Cvv2hIjZK9Nop8cItPHUBLP_oNfz_niMk0FX9zXs', 3600, '2017-03-09 16:19:00', 'prodotti@exolab.it', 20),
-(2, 'ya29.GlsJBIg4hIgXrjyDsX_W_qfAIpLtPiXjiiVCWkH_aLn-D9WbeL9JDhr8uaJ3ZUxonbhugCNksyJOBGM5d2UZ5yw90LjnDXCRrtOBVlOHTPBqYi_orOzCQVeiR9eD', '1/kDkYe8tiWQNu-0Pa3ev7s5BqpwQlxdksfyFb9wKUlw8', 3600, '2017-03-09 16:30:00', 'provalaura2016@gmail.com', 20);
+(1, 'ya29.GlwPBOQWRyL4P_1X2dVA70dXGZJ0YyyrC79f80oySvi0pjgTU4sx-lVsGUcwKjmlS_yBc0e5Fb7Ff23Fhb4sAYn5b1BjlE4H-wUpNv-npUd_tFitwbHAKQtKzILFPg', '1/tk_Cvv2hIjZK9Nop8cItPHUBLP_oNfz_niMk0FX9zXs', 3600, '2017-03-15 10:30:00', 'prodotti@exolab.it', 20),
+(2, 'ya29.GlwPBCWJhN7XBWxaGQ7CrZZOroNf7cnT_jqvw_4dVvFB3fyz2fALfoHclafnjyd75j3qNDmuLJosaPi98xSC_kMiob40HGRtWe4uJ9Nhliiryium21zR79G7eyxa6A', '1/kDkYe8tiWQNu-0Pa3ev7s5BqpwQlxdksfyFb9wKUlw8', 3600, '2017-03-15 10:30:00', 'provalaura2016@gmail.com', 20);
 
 -- --------------------------------------------------------
 
@@ -416,7 +406,6 @@ INSERT INTO `google_account` (`id`, `access_token`, `refresh_token`, `expires_in
 -- Struttura della tabella `last_sync`
 --
 
-DROP TABLE IF EXISTS `last_sync`;
 CREATE TABLE IF NOT EXISTS `last_sync` (
   `api_context` varchar(100) NOT NULL,
   `last_sync_at` datetime NOT NULL
@@ -428,7 +417,6 @@ CREATE TABLE IF NOT EXISTS `last_sync` (
 -- Struttura della tabella `log`
 --
 
-DROP TABLE IF EXISTS `log`;
 CREATE TABLE IF NOT EXISTS `log` (
   `id` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
