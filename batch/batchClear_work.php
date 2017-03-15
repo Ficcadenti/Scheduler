@@ -20,9 +20,6 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
-use Common\lib\CommonService;
-
-
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';

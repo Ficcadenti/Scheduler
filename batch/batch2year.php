@@ -21,7 +21,7 @@ use Batch\Batch2year_work;
 use Batch\lib\BatchLogConfigurator;
 use Batch\lib\BatchService;
 use Common\lib\CommonService;
-//use Batch\DownloadAdWords;
+
 
 $start_time = time ();
 
