@@ -61,7 +61,7 @@ class SchedulerDBstatus {
 				$statement = $this->dbh->query ( 'SELECT * FROM '.$this->name_tabella );
 				
 				foreach ( $statement as $row ) {
-					$this->sc_status_lib [$row ['id_stato_schedulazione']] = $row ['descrizione'];
+					$this->sc_status_lib [$row ['id_stato_schedulazione']] = $row ['descr_stato_schedulazione'];
 				}
 				return true;
 			} catch ( \PDOException $ex ) {

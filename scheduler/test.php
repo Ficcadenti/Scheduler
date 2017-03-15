@@ -89,7 +89,7 @@ $json_str='{
 	"id_schedulazione": -1,   
 	"hostname": "devadplify",
 	"id_user": 20,
-	"id_account_adw": 8374530883,
+	"id_account_adw": -1,
 	"id_batch": 1,
 	"descr_schedulazione": "BATCH a 30 giorni",
 	"type_schedulazione": 7,

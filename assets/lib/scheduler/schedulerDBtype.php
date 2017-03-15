@@ -61,7 +61,7 @@ class SchedulerDBtype {
 				
 				foreach ( $statement as $row ) {
 					
-					$this->sc_type_lib [$row ['id_type_schedulazione']] = $row ['descrizione'];
+					$this->sc_type_lib [$row ['id_type_schedulazione']] = $row ['descr_type_schedulazione'];
 				}
 				
 				return true;

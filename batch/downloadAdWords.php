@@ -60,17 +60,32 @@ class DownloadAdWords
 	private function getFields()
 	{
 		$this->log->info ( "getFields()" );
-		/*$fields = array ();
+		$fields = array ();
 		if($this->connetion==true)
 		{
+			
+			
 			try {
+				$stmt = $this->dbh->query( "SELECT * FROM adplify_manager.db_user" );
 			
-				$statement = $this->dbh->prepare ( "SELECT * FROM api_adgroup-performance-report" );
-			
-				foreach ( $statement as $row ) {
+				foreach ( $stmt as $row ) {
 					//array_push($fields, $row['Name']);
-					printf("%s\n",$row['Name']);
+					printf("%s\n",$row['user_id']);
 				}
+				
+				exit
+				
+				/*
+				$stmt = $this->dbh->prepare( "SELECT * FROM `api_adgroup-performance-report` WHERE enabled=1" );
+				$stmt->execute ();
+					
+				while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
+					printf("%s\n",$row->Name);
+					$fields[$row->Name]=$row->Name;
+				}
+				
+				*/
+				
 				
 			} catch ( \PDOException $ex ) {
 				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
@@ -79,10 +94,10 @@ class DownloadAdWords
 		}
 		
 		
-		exit;*/
 		
 		
-		$fields = array (
+		
+		/*$fields = array (
 				"AdNetworkType1" => "AdNetworkType1",
 				"AllConversionRate" => "AllConversionRate",
 				"AllConversions" => "AllConversions",
@@ -116,7 +131,7 @@ class DownloadAdWords
 				"Year" => "Year",
 				"CampaignId" => "CampaignId",
 				"AdGroupId" => "AdGroupId" 
-		);
+		);*/
 		
 		return $fields;
 

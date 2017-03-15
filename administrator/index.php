@@ -69,11 +69,10 @@ $result = $db_connection->query("SELECT id,name FROM users");
       <select class="form-control" id="type_schedulazione" name="type_schedulazione">
       <?php
         $db_connection->select_db("adplify_scheduler");
-        $result = $db_connection->query("SELECT id_type_schedulazione,descrizione FROM sc_type_schedulazione_lib");
+        $result = $db_connection->query("SELECT * FROM sc_type_schedulazione_lib");
         while($row = $result->fetch_assoc())
           {
-
-              echo  "<option value=\"".$row['id_type_schedulazione'] ."\">".$row['descrizione']."(".$row['id_type_schedulazione'].")" ."</option><br>";
+              echo  "<option value=\"".$row['id_type_schedulazione'] ."\">".$row['descr_type_schedulazione']."(".$row['id_type_schedulazione'].")" ."</option><br>";
           }
       ?>
       </select>
@@ -89,11 +88,11 @@ $result = $db_connection->query("SELECT id,name FROM users");
       <select class="form-control" id="stato_schedulazione" name="stato_schedulazione">
       <?php
         $db_connection->select_db("adplify_scheduler");
-        $result = $db_connection->query("SELECT id_stato_schedulazione,descrizione FROM sc_stato_schedulazione_lib");
+        $result = $db_connection->query("SELECT id_stato_schedulazione,descr_stato_schedulazione FROM sc_stato_schedulazione_lib");
         while($row = $result->fetch_assoc())
           {
 
-              echo  "<option value=\"".$row['id_stato_schedulazione'] ."\">".$row['descrizione']."(".$row['id_stato_schedulazione'].")" ."</option><br>";
+              echo  "<option value=\"".$row['id_stato_schedulazione'] ."\">".$row['descr_stato_schedulazione']."(".$row['id_stato_schedulazione'].")" ."</option><br>";
           }
       ?>
       </select>
