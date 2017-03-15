@@ -60,7 +60,7 @@ class DownloadAdWords
 	private function getFields()
 	{
 		$this->log->info ( "getFields()" );
-		$fields = array ();
+		/*$fields = array ();
 		if($this->connetion==true)
 		{
 			try {
@@ -79,7 +79,7 @@ class DownloadAdWords
 		}
 		
 		
-		exit;
+		exit;*/
 		
 		
 		$fields = array (
