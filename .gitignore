@@ -17,6 +17,7 @@
 *.log
 *.lock
 *.csv
+*.imp
 .settings
 .project
 .buildpath
