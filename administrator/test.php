@@ -107,6 +107,7 @@ $json_str='{
 
 if($sm->setBatch($json_str))
 {
+	print_r("<h1>Sono QUA</h1><br>");
 	$sm->showParameter();
 
 	switch($sm->status())
@@ -114,6 +115,7 @@ if($sm->setBatch($json_str))
 		case NEW_BATCH:
 			{
 				$newid=$sm->insert(); /* per creare un nuovo batch */
+				print_r("<h1>insert</h1><br>");
 				$sm->showParameter(); /* per prendere il nuovo id_schedulazione inserito */
 			}break;
 			
@@ -133,13 +135,14 @@ if($sm->setBatch($json_str))
 	$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
 	foreach ($id as $key => $value)
 	{
-		printf("id[%d]=%d<br>",$key,$value);
+		printf("id[%d]=%d\n",$key,$value);
 	}
    	$sm->unsetBatch();
 }
 else
 {
 	/* gestione errore */
+	print_r("<h1>gestione errore</h1><br>");
 }
 
 
