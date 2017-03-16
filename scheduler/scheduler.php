@@ -115,7 +115,7 @@ try {
 	$dt_start = date ( 'Ymd' ); /* data utilizzata per cambio giorno */
 	
 	while ( true) /* loop cheduler */
-		{
+	{
 		$run_time_unix = time ();
 		$val = ( int ) ($run_time_unix / (ROUND_TIME));
 		$run_time_unix = (ROUND_TIME) * $val;

@@ -20,12 +20,14 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
+use Batch\lib\BatchDBType;
 use Common\lib\CommonService;
 use Batch\DownloadAdWords;
 
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
+require '../assets/lib/batch/batchDBType.php';
 require '../assets/lib/batch/downloadAdWords.php';
 
 require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
@@ -48,6 +50,7 @@ class Batch30gg_work implements BatchGlobal {
 	
 	function __construct() {
 		$this->downAdWords=new DownloadAdWords();
+		$this->batchType=new BatchDBType();
 		$this->name_file = basename ( __FILE__, ".php" );
 	}
 	function __destruct() {
@@ -72,13 +75,24 @@ class Batch30gg_work implements BatchGlobal {
 	public function setLogger($log) {
 		$this->log = $log;
 		$this->downAdWords->setLogger ( $log );
+		$this->batchType->setLogger ( $log );
 	}
 	public function init() {
 		
 		$this->log->info ( "init()" );
 		self::connect ();
 		if ($this->connetion == true) {
-			return $this->connetion;
+			$this->batchType->connect();
+			if($this->batchType->load())
+			{
+				return true;
+			}
+			else 
+			{
+				$this->id_error = ERROR;
+				$this->descr_error = "Errore nel caricamento della tabella batch_type_lib !!!!!";
+				return false;
+			}
 		} else {
 			$this->id_error = ERROR;
 			$this->descr_error = "Errore connessione DB null pointer";
@@ -318,10 +332,7 @@ class Batch30gg_work implements BatchGlobal {
 		
 		$msg = sprintf ( "	--download_report_type: %s", $this->JSONparam->download_report_type );
 		$this->log->info ( $msg );
-		/*
-		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
-		$this->log->info ( $msg );
-		*/
+
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
 	}
@@ -363,6 +374,7 @@ class Batch30gg_work implements BatchGlobal {
 	private function getReport()
 	{
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
+		$this->log->info ( "getReport(".$this->batchType->getDescrizione($this->JSONparam->download_report_type).")" );
 		/*$param=array(
 				'dal' => $this->JSONparam->dal,
 				'al' => $this->JSONparam->al
@@ -370,6 +382,7 @@ class Batch30gg_work implements BatchGlobal {
 		$param=array(
 				'customer_id' => $this->JSONparam->id_account_adw,
 				'download_report_type' => $this->JSONparam->download_report_type,
+				'descr_report_type' => $this->batchType->getDescrizione($this->JSONparam->download_report_type),
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);

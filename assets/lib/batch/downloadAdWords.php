@@ -316,7 +316,6 @@ class DownloadAdWords
 		foreach ( $fields as $k => $field ) {
 			$field_4_select = "api_" . strtolower ( str_replace ( " ", "", $field ) ) . "";
 			$field_4_insert = "`" . $field_4_select . "`";
-			printf("Database record: %s\n",$field_4_insert);
 			$table_columns_for_insert = $table_columns_for_insert == "" ? $field_4_insert : $table_columns_for_insert . "," . $field_4_insert;
 			$table_columns_for_select [] = $field_4_select;
 		}
@@ -434,20 +433,51 @@ class DownloadAdWords
 			$this->log->info("Download report type Undefined !!!");
 			return $arrayReport;
 		}
-		
-		if($this->connetion==true)
+		else if($this->param['download_report_type']!=DOWNLOAD_ALL_METRICHE)
 		{
-			
-			$settings = self::getSettings ();
-			$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
-
-			foreach ( $google_accounts as $index => $google_account ) 
+			if($this->connetion==true)
 			{
-
-				$namefileCSV = $google_account ['descr'] . ".csv";
-				$this->log->info("... downloading '".$namefileCSV."'");
-				$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
-				$arrayReport [$google_account ['customer_id']] = $fileCSV;
+				
+				$settings = self::getSettings ();
+				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
+	
+				foreach ( $google_accounts as $index => $google_account ) 
+				{
+	
+					$namefileCSV = "(".$this->param['descr_report_type'].")_".$google_account ['descr'] . ".csv";
+					$this->log->info("... downloading report type (".$this->param['descr_report_type'].") sul file '".$namefileCSV."'");
+					$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+					//$arrayReport [$google_account ['customer_id']] = $fileCSV;
+					array_push($arrayReport, $fileCSV);
+				}
+			}
+		}
+		else if($this->param['download_report_type']==DOWNLOAD_ALL_METRICHE)
+		{
+			if($this->connetion==true)
+			{
+				$settings = self::getSettings ();
+				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
+				$all_metrics=array(DOWNLOAD_ADGROUP_METRICHE,
+									DOWNLOAD_CAMPAGNE_METRICHE,
+									DOWNLOAD_KEYWORDS_METRICHE,
+									DOWNLOAD_URL_METRICHE);
+				$all_metrics_csv=array( "ADGM",
+										"CAMM",
+										"KEYM",
+										"URLM");
+				
+				foreach ( $google_accounts as $index => $google_account )
+				{
+					for($i=0;$i<2;$i++)
+					{
+						$this->param['download_report_type']=$all_metrics[$i];
+						$namefileCSV = "(".$all_metrics_csv[$i].")_".$google_account ['descr'] . ".csv";
+						$this->log->info("... downloading report type (".$all_metrics_csv[$i].") sul file '".$namefileCSV."'");
+						$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+						array_push($arrayReport, $fileCSV);
+					}
+				}
 			}
 		}
 		return $arrayReport;

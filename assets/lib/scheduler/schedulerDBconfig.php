@@ -120,11 +120,13 @@
 				catch (\PDOException $ex) 
 				{
 				    $this->log->info("ERROR(".$this->name_file."): ".$ex->getMessage());
+				    return false;
 				}
 			}
 			else 
 			{
 			      $this->log->info("ERROR(".$this->name_file."): Connessione DB non stabilita.");
+			      return false;
 			}
 		}
 		

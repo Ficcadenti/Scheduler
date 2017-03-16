@@ -27,6 +27,7 @@ class BatchDBType {
 	private $name_tabella = "batch_type_lib";
 	private $connetion=false;
 	
+	
 	function __construct() {
 	}
 	
@@ -52,8 +53,8 @@ class BatchDBType {
 	
 	public function load() {
 		if ($this->connetion==true) {
-			unset ( $this->$batch_type_lib );
-			$this->$batch_type_lib = array ();
+			unset ( $this->batch_type_lib );
+			$this->batch_type_lib = array ();
 			$this->log->info ( "	Loading batch_type_lib..." );
 			
 			try {
@@ -61,28 +62,32 @@ class BatchDBType {
 				$statement = $this->dbh->query ( 'SELECT * FROM '.$this->name_tabella );
 				
 				foreach ( $statement as $row ) {
-					$this->$batch_type_lib [$row ['id_download_report_type']] = $row ['descrizione'];
+					$this->batch_type_lib [$row ['id_download_report_type']] = array(
+															'descrizione'=>$row ['descrizione'],
+															'suffisso_file_csv'=>$row ['suffisso_file_csv']);
 				}
 				return true;
 			} catch ( \PDOException $ex ) {
 				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
+				return false;
 			}
 		} else {
-			$this->log->info ( "ERROR(" . $this->name_file . "): Connessione DB non stabilita." );
+			$this->log->info ( "ERROR(" . $this->name_file . "): Connessione DB non stabilita111." );
+			return false;
 		}
 	}
 	
 	public function get() {
-		return $this->$batch_type_lib;
+		return $this->batch_type_lib;
 	}
 	
 	public function getAllType() {
-		return $this->$batch_type_lib;
+		return $this->batch_type_lib;
 	}
 	
-	public function getStatus($id_batch_type) {
-		if (array_key_exists ( $id_batch_type, $this->$batch_type_lib )) {
-			return $this->$batch_type_lib [$id_batch_type];
+	public function getDescrizione($id_batch_type) {
+		if (array_key_exists ( $id_batch_type, $this->batch_type_lib )) {
+			return $this->batch_type_lib [$id_batch_type]['suffisso_file_csv'];
 		} else {
 			$this->log->info ( "ERROR: type (" . $id_batch_type . ") indefinito." );
 		}
