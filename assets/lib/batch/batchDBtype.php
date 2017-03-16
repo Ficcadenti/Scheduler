@@ -61,7 +61,7 @@ class BatchDBType {
 				$statement = $this->dbh->query ( 'SELECT * FROM '.$this->name_tabella );
 				
 				foreach ( $statement as $row ) {
-					$this->$batch_type_lib [$row ['id_batch_type']] = $row ['descrizione'];
+					$this->$batch_type_lib [$row ['id_download_report_type']] = $row ['descrizione'];
 				}
 				return true;
 			} catch ( \PDOException $ex ) {

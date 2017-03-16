@@ -79,6 +79,20 @@ $result = $db_connection->query("SELECT id,name FROM users");
     </div>
 
     <div class="form-group">
+      <label for="download_report_type">Download Report Type</label>
+      <select class="form-control" id="download_report_type" name="download_report_type">
+      <?php
+        $db_connection->select_db("adplify_scheduler");
+        $result = $db_connection->query("SELECT * FROM batch_type_lib");
+        while($row = $result->fetch_assoc())
+          {
+              echo  "<option value=\"".$row['id_download_report_type'] ."\">".$row['descrizione']."(".$row['id_download_report_type'].")" ."</option><br>";
+          }
+      ?>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label for="frequenza">Frequenza</label>
       <input type="text" class="form-control" id="frequenza" name="frequenza" placeholder="10800">
     </div>

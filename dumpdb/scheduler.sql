@@ -31,7 +31,7 @@ CREATE TABLE `batch_lib` (
   `descr_batch` varchar(45) DEFAULT NULL,
   `phpname_batch` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `batch_lib` (
 
 LOCK TABLES `batch_lib` WRITE;
 /*!40000 ALTER TABLE `batch_lib` DISABLE KEYS */;
-INSERT INTO `batch_lib` VALUES (1,1,'batch30gg','BATCH a 30 giorni','batch30gg.php'),(2,2,'batchTest','BATCH Test','batchTest.php');
+INSERT INTO `batch_lib` VALUES (1,1,'batch30gg','BATCH a 30 giorni','batch30gg.php'),(2,2,'batch60gg','BATCH a 60 giorni','batch60gg.php'),(3,3,'batch2year','BATCH a 2 anni','batch2year.php'),(4,4,'batchClear','BATCH Clear BATCH','batchClear.php'),(5,5,'batchUser','BATCH a date variabili','batchUser.php');
 /*!40000 ALTER TABLE `batch_lib` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -93,7 +93,7 @@ CREATE TABLE `sc_config` (
   `id_error` varchar(45) DEFAULT NULL,
   `descr_error` varchar(2000) DEFAULT NULL,
   PRIMARY KEY (`id_schedulazione`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='Tabella di configurazione scheduler';
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COMMENT='Tabella di configurazione scheduler';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +102,7 @@ CREATE TABLE `sc_config` (
 
 LOCK TABLES `sc_config` WRITE;
 /*!40000 ALTER TABLE `sc_config` DISABLE KEYS */;
-INSERT INTO `sc_config` VALUES (5,'localhost',20,2,'Schedulazione Utente Raffaele','{\"userGoogle\": 1,\"userAdw\": 2,\"tipoBatch\": 1,\"tipoReport\": 1,\"tipoSchedulazione\": 1,\"periodo\": 10800,\"dal\": \"2016-01-01 00:00:00\",\"al\": \"2017-01-01 00:00:00\"}',7,10800,'2017-03-10 18:26:00','2017-03-10 17:19:00',6,NULL,'2017-03-03 00:00:00','0','');
+INSERT INTO `sc_config` VALUES (35,'devadplify',20,4,'4','{\"id_schedulazione\":-1,\"hostname\":\"devadplify\",\"id_user\":20,\"id_account_adw\":2,\"id_batch\":4,\"descr_schedulazione\":\"BATCH a 30 giorni\",\"type_schedulazione\":7,\"frequenza\":-1,\"stato_schedulazione\":6,\"tipo_batch\":1,\"time_start\":\"2017-03-15 20:00:00\",\"dal\":\"20170212\",\"al\":\"20170311\"}',7,60,'2017-03-15 21:19:00','2017-03-15 21:18:00',6,NULL,'2017-03-15 21:04:00','0','');
 /*!40000 ALTER TABLE `sc_config` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,7 +116,7 @@ DROP TABLE IF EXISTS `sc_stato_schedulazione_lib`;
 CREATE TABLE `sc_stato_schedulazione_lib` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_stato_schedulazione` int(11) DEFAULT NULL,
-  `descrizione` varchar(45) DEFAULT NULL,
+  `descr_stato_schedulazione` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -141,7 +141,7 @@ DROP TABLE IF EXISTS `sc_type_schedulazione_lib`;
 CREATE TABLE `sc_type_schedulazione_lib` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_type_schedulazione` int(11) DEFAULT NULL,
-  `descrizione` varchar(45) DEFAULT NULL,
+  `descr_type_schedulazione` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -173,4 +173,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-12 20:58:54
+-- Dump completed on 2017-03-16  7:18:18

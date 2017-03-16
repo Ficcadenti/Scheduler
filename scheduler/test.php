@@ -62,7 +62,7 @@ $sm=new SchedulerManager();
   id_batch=2 --> batch Real Time
 */
 
-/* tipo_batch: definiti nella tabella adplify_scheduler.batch_type_lib  
+/* download_batch_type: definiti nella tabella adplify_scheduler.batch_type_lib  
    valori possibili:
    
    1=ALL,
@@ -95,7 +95,7 @@ $json_str='{
 	"type_schedulazione": 7,
 	"frequenza": 10800,
 	"stato_schedulazione": 6,
-	"tipo_batch": 1,
+	"download_batch_type": 1,
 	"time_start": "2017-03-14 16:40:00",
 	"dal": "20170212",
 	"al": "20170311"

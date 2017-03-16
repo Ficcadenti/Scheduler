@@ -34,6 +34,11 @@
 		    return date("Y/m/d H:i:s",$t);
 		}
 		
+		public function strDeleteReport($t)
+		{
+			return date("Y-m-d 00:00:00",$t);
+		}
+		
 		public static function strDadeGoogle($t)
 		{
 			return date("Ymd",$t);

@@ -14,6 +14,7 @@ class DownloadAdWords
 	private $id_error = BATCH_WITHOUT_ERROR;
 	private $descr_error = "";
 	private $connetion=false;
+	private $param=array();
 
 	function __construct() {
 		$this->name_file = basename ( __FILE__, ".php" );
@@ -61,31 +62,47 @@ class DownloadAdWords
 	{
 		$this->log->info ( "getFields()" );
 		$fields = array ();
+		
+		switch($this->param['download_report_type'])
+		{	
+			case DOWNLOAD_ADGROUP_METRICHE:
+				{
+					$table = "api_adgroup-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
+				
+			case DOWNLOAD_CAMPAGNE_METRICHE:
+				{
+					$table = "api_campaign-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
+			
+			case DOWNLOAD_KEYWORDS_METRICHE:
+				{
+					$table = "api_keywords-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
+				
+			case DOWNLOAD_URL_METRICHE:
+				{
+					$table = "api_url-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			
+					
+		}
+		
 		if($this->connetion==true)
 		{
 			
 			
 			try {
-				$stmt = $this->dbh->query( "SELECT * FROM adplify_manager.db_user" );
-			
-				foreach ( $stmt as $row ) {
-					//array_push($fields, $row['Name']);
-					printf("%s\n",$row['user_id']);
-				}
-				
-				exit
-				
-				/*
-				$stmt = $this->dbh->prepare( "SELECT * FROM `api_adgroup-performance-report` WHERE enabled=1" );
+				$stmt = $this->dbh->prepare( "SELECT * FROM `".$table."` WHERE enabled=1" );
 				$stmt->execute ();
 					
 				while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
-					printf("%s\n",$row->Name);
+					$msg=sprintf("... Enabled: %s",$row->Name);
+					$this->log->info($msg);
 					$fields[$row->Name]=$row->Name;
 				}
-				
-				*/
-				
+	
 				
 			} catch ( \PDOException $ex ) {
 				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
@@ -93,101 +110,84 @@ class DownloadAdWords
 			
 		}
 		
-		
-		
-		
-		
-		/*$fields = array (
-				"AdNetworkType1" => "AdNetworkType1",
-				"AllConversionRate" => "AllConversionRate",
-				"AllConversions" => "AllConversions",
-				"AllConversionValue" => "AllConversionValue",
-				"AverageCpc" => "AverageCpc",
-				"AverageCpm" => "AverageCpm",
-				"AverageCpv" => "AverageCpv",
-				"AveragePosition" => "AveragePosition",
-				"Clicks" => "Clicks",
-				"ConversionRate" => "ConversionRate",
-				"Conversions" => "Conversions",
-				"ConversionValue" => "ConversionValue",
-				"Cost" => "Cost",
-				"CostPerAllConversion" => "CostPerAllConversion",
-				"CostPerConversion" => "CostPerConversion",
-				"CrossDeviceConversions" => "CrossDeviceConversions",
-				"Ctr" => "Ctr",
-				"Date" => "Date",
-				"DayOfWeek" => "DayOfWeek",
-				"Device" => "Device",
-				"Impressions" => "Impressions",
-				"Month" => "Month",
-				"MonthOfYear" => "MonthOfYear",
-				"Quarter" => "Quarter",
-				"ValuePerAllConversion" => "ValuePerAllConversion",
-				"ValuePerConversion" => "ValuePerConversion",
-				"VideoViewRate" => "VideoViewRate",
-				"VideoViews" => "VideoViews",
-				"ViewThroughConversions" => "ViewThroughConversions",
-				"Week" => "Week",
-				"Year" => "Year",
-				"CampaignId" => "CampaignId",
-				"AdGroupId" => "AdGroupId" 
-		);*/
-		
 		return $fields;
 
 	}
+
 	
-	private function downloadReport($user_id, $param,  $namefileCSV, $settings, $access_token, $clientCustomerId) 
+	private function downloadReport($user_id, $param,  $namefileCSV, $settings, $access_token, $clientCustomerId)
 	{
 		$user = new \AdWordsUser ();
 		$user->SetOAuth2Info ( array (
 				'client_id' => $settings->client_id,
 				'client_secret' => $settings->client_secret,
 				'refresh_token' => $settings->refresh_token,
-				'access_token' => $access_token 
+				'access_token' => $access_token
 		) );
-		
+	
 		// Load the service, so that the required classes are available.
 		$user->LoadService ( 'ReportDefinitionService', ADWORDS_VERSION );
 		// Optional: Set clientCustomerId to get reports of your child accounts
 		$user->SetClientCustomerId ( $clientCustomerId );
 		$user->SetDeveloperToken ( $settings->dev_key );
-		
+	
 		// Create selector.
-		
+	
 		// CAMPI DA PRENDERE PER SCARICARE ADGROUP
-		$fields = DownloadAdWords::getFields();
-		
+		$fields = self::getFields();
+	
 		// RAPPRESENTA L'INTERVALLO TEMPORALE NEL QUALE PRENDERE I DATI
 		$date_min = $param['dal']; // "20150301"; // PRENDI DA DATA
 		$date_max = $param['al']; // "20170228"; // ...A DATA
-		
+	
 		$selector = new \Selector ();
 		$selector->fields = array_keys ( $fields ); // CAMPI DA CHIEDERE A GOOGLE
 		$selector->dateRange = new \DateRange ( $date_min, $date_max ); // INTERVALLO TEMPORALE
-		
+	
 		$reportDefinition = new \ReportDefinition ();
 		$reportDefinition->selector = $selector;
-		
+	
 		$reportDefinition->reportName = 'Criteria performance report #' . uniqid ();
 		// TIPO DI INTERVALLO TEMPORALE
 		$reportDefinition->dateRangeType = "CUSTOM_DATE"; // TIPO INTERVALLO PERSONALIZZATO. ALTRI POSSIBILI VALORI SONO : TODAY, LAST_7_DAYS, TODAY, YESTERDAY, THIS_WEEK, LAST_WEEK, LAST_14_DAYS, THIS_MONTH, LAST_30_DAYS, LAST_MONTH, ALL_TIME
-		                                                  
-		// $reportDefinition->dateRangeType = 'LAST_7_DAYS';
-		                                                  // TIPO DI REPORT , ALTRI POSSIBILI SONO : KEYWORDS_PERFORMANCE_REPORT, CAMPAIGN_PERFORMANCE_REPORT, KEYWORDS_PERFORMANCE_REPORT, URL_PERFORMANCE_REPORT, ACCOUNT_PERFORMANCE_REPORT
-		$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
-		// $reportDefinition->reportType = 'CRITERIA_PERFORMANCE_REPORT';
+	
+		$reportDefinition->reportType = 'CAMPAIGN_PERFORMANCE_REPORT';
+		
+		switch($this->param['download_report_type'])
+		{		
+			
+			case DOWNLOAD_ADGROUP_METRICHE:
+				{
+					$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
+				}break;
+			
+			case DOWNLOAD_CAMPAGNE_METRICHE:
+				{
+					$reportDefinition->reportType = 'CAMPAIGN_PERFORMANCE_REPORT';
+				}break;
+						
+			case DOWNLOAD_KEYWORDS_METRICHE:
+				{
+					$reportDefinition->reportType = 'KEYWORDS_PERFORMANCE_REPORT';
+				}break;
+				
+			case DOWNLOAD_URL_METRICHE:
+				{
+					$reportDefinition->reportType = 'URL_PERFORMANCE_REPORT';
+				}break;
+				
+		}
+		
 		$reportDefinition->downloadFormat = 'CSV'; // FORMATO EXPORT ALTRI VALORI : XML
-		                                           
+		 
 		// Set additional options.
 		$options = array (
-				'version' => ADWORDS_VERSION 
+				'version' => ADWORDS_VERSION
 		);
-		
+	
 		// Optional: Set skipReportHeader, skipColumnHeader, skipReportSummary to
 		// suppress headers or summary rows.
 		$options ['skipReportHeader'] = true;
-		// $options['skipColumnHeader'] = true;
 		$options ['skipReportSummary'] = true;
 		//
 		// Optional: Set useRawEnumValues to return enum values instead of enum
@@ -197,26 +197,118 @@ class DownloadAdWords
 		// Optional: Set includeZeroImpressions to include zero impression rows in
 		// the report output.
 		$options ['includeZeroImpressions'] = true;
-		
+	
 		// Download report.
-		
+	
 		$filePath = getenv ( 'CSV_PATH_FILE' ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 		$reportUtils = new \ReportUtils ();
 		$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
-		//$reportUtils->DownloadReport ( $reportDefinition, $namefileCSV, $user, $options );
-		
+	
 		return $namefileCSV;
 	}
+	
+	private function clearReport($conn)
+	{
+		$ret=true;
+		$table = "";
+		
+		$s=$this->param['dal'];
+		$str_dal = substr($s,0,4)."-".substr($s,4,2)."-".substr($s,6,2);
+		$s=$this->param['al'];
+		$str_al = substr($s,0,4)."-".substr($s,4,2)."-".substr($s,6,2);
+		
+		
+		$this->log->info ( "clearReport DAL: ".$str_dal."   AL: " .$str_al);
+		
+		switch($this->param['download_report_type'])
+		{
+			case DOWNLOAD_ADGROUP_ANAGRAFICHE:
+				{
+					$table = "cache_adgroup_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_ADGROUP_METRICHE:
+				{
+					$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+				
+			case DOWNLOAD_CAMPAGNE_ANAGRAFICHE:
+				{
+					$table = "cache_campaign_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_CAMPAGNE_METRICHE:
+				{
+					$table = "cache_campaign_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_KEYWORDS_ANAGRAFICHE:
+				{
+					$table = "cache_keywords_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_KEYWORDS_METRICHE:
+				{
+					$table = "cache_keywords_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+				
+			case DOWNLOAD_URL_ANAGRAFICHE:
+				{
+					$table = "cache_url_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_URL_METRICHE:
+				{
+					$table = "cache_url_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+					
+		}
+
+		$sql = "DELETE FROM ".$table." WHERE api_date >= :api_date";
+	
+		
+		$stmt = $conn->prepare ( $sql );
+		$stmt->bindParam ( ':api_date', $str_dal );
+		$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA*/
+		
+		$ret=true;
+		
+		return $ret;
+	}
+	
 	
 	public function writeDB($user_id,$fileCSV)
 	{
 		$ret=true;
-		
+		$table = "";
 		$complete_fileCSV = getenv ( 'CSV_PATH_FILE' ) . '/' .$fileCSV;
 	
-		$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
 		
-		$fields = DownloadAdWords::getFields();
+		switch($this->param['download_report_type'])
+		{
+			case DOWNLOAD_CAMPAGNE_ANAGRAFICHE:
+				{
+					$table = "cache_campaign_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_CAMPAGNE_METRICHE:
+				{
+					$table = "cache_campaign_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_ADGROUP_ANAGRAFICHE:
+				{
+					$table = "cache_adgroup_attributes"; // TABELLA DA ALIMENTARE
+				}break;
+					
+			case DOWNLOAD_ADGROUP_METRICHE:
+				{
+					$table = "cache_adgroup_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+					
+		}
+		
+		$fields = self::getFields();
 		
 		$table_columns_for_insert = "";
 		$table_columns_for_select = array ();
@@ -224,17 +316,18 @@ class DownloadAdWords
 		foreach ( $fields as $k => $field ) {
 			$field_4_select = "api_" . strtolower ( str_replace ( " ", "", $field ) ) . "";
 			$field_4_insert = "`" . $field_4_select . "`";
-			printf("%s\n",$field_4_insert);
+			printf("Database record: %s\n",$field_4_insert);
 			$table_columns_for_insert = $table_columns_for_insert == "" ? $field_4_insert : $table_columns_for_insert . "," . $field_4_insert;
 			$table_columns_for_select [] = $field_4_select;
 		}
 		
-		$conn = DownloadAdWords::getConnectionFromUserId ( $user_id );
+		$conn = self::getConnectionFromUserId ( $user_id );
 		
 		if($conn!=null)
 		{
-			$stmt = $conn->prepare ( "TRUNCATE " . $table );
-			$stmt->execute (); // QUESTA RIGA SVUOTA LA TABELLA PRIMA DI CARICARLA
+			self::clearReport($conn);
+			/*$stmt = $conn->prepare ( "TRUNCATE " . $table );
+			$stmt->execute (); // QUESTA RIGA SVUOTA LA TABELLA PRIMA DI CARICARLA*/
 			
 			$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
 			INTO TABLE `" . $table . "`
@@ -292,12 +385,16 @@ class DownloadAdWords
 	}
 	
 	private function getGoogleAccountsByUserId($user_id,$customer_id) {
-		$conn = DownloadAdWords::getConnectionFromUserId ( $user_id );
+		$conn = self::getConnectionFromUserId ( $user_id );
 		$ret = array ();
 		if($conn!=null)
 		{
 			$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-			$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename FROM google_account g inner join adwords_account a on g.id=a.google_user_id AND a.api_externalcustomerid = :customer_id" );
+			$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename 
+					FROM google_account g 
+					INNER JOIN adwords_account a on g.id=a.google_user_id 
+					AND a.api_externalcustomerid = :customer_id" );
+			
 			$stmt->bindParam ( ':customer_id', $customer_id );
 			$stmt->execute ();
 			
@@ -328,23 +425,29 @@ class DownloadAdWords
 	}
 	
 	public function downloadAllReportsFromUserdId($user_id,$param) {
-		$arrayReport = array ();
-
+		$arrayReport       = array ();
+		$this->param       = $param;
+		
+		
+		if($this->param['download_report_type']==DOWNLOAD_UNDEFINED)
+		{
+			$this->log->info("Download report type Undefined !!!");
+			return $arrayReport;
+		}
+		
 		if($this->connetion==true)
 		{
 			
-			$settings = DownloadAdWords::getSettings ();
-			$google_accounts = DownloadAdWords::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
+			$settings = self::getSettings ();
+			$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
 
 			foreach ( $google_accounts as $index => $google_account ) 
 			{
 
 				$namefileCSV = $google_account ['descr'] . ".csv";
 				$this->log->info("... downloading '".$namefileCSV."'");
-				
-				$fileCSV = DownloadAdWords::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+				$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
 				$arrayReport [$google_account ['customer_id']] = $fileCSV;
-
 			}
 		}
 		return $arrayReport;

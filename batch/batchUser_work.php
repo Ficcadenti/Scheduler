@@ -177,6 +177,11 @@ class BatchUser_work implements BatchGlobal {
 				$this->log->info("Non è definito il parametro 'id_account_adw' !!!");
 				return false;
 			}
+			if (! isset ( $this->JSONparam->download_report_type ))
+			{
+				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
+				return false;
+			}
 			if($this->typeBatch==USER_DEFINED)
 			{
 				if (! isset ( $this->JSONparam->dal ))
@@ -222,7 +227,6 @@ class BatchUser_work implements BatchGlobal {
 				{
 					$this->lista_parametri ['--dal']=$this->JSONparam->dal;
 					$this->lista_parametri ['--al']=$this->JSONparam->al;
-					
 				}break;
 		}
 	}
@@ -309,10 +313,8 @@ class BatchUser_work implements BatchGlobal {
 		
 		$msg = sprintf ( "	--id_account_adw: %s", $this->JSONparam->id_account_adw );
 		$this->log->info ( $msg );
-		/*
-		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
+		$msg = sprintf ( "	--download_report_type: %s", $this->JSONparam->download_report_type );
 		$this->log->info ( $msg );
-		*/
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
 	}
@@ -354,12 +356,10 @@ class BatchUser_work implements BatchGlobal {
 	private function getReport()
 	{
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
-		/*$param=array(
-				'dal' => $this->JSONparam->dal,
-				'al' => $this->JSONparam->al
-		);*/
+
 		$param=array(
 				'customer_id' => $this->JSONparam->id_account_adw,
+				'download_report_type' => $this->JSONparam->download_report_type,
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);

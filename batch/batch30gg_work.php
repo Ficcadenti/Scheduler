@@ -8,7 +8,7 @@
  * | Author email raffaele.ficcadenti@gmail.com
  * |
  * | FILE
- * | batch30gg_work.php
+ * | self.php
  * |
  * | HISTORY:
  * | -[Date]- -[Who]- -[What]-
@@ -76,7 +76,7 @@ class Batch30gg_work implements BatchGlobal {
 	public function init() {
 		
 		$this->log->info ( "init()" );
-		Batch30gg_work::connect ();
+		self::connect ();
 		if ($this->connetion == true) {
 			return $this->connetion;
 		} else {
@@ -136,7 +136,7 @@ class Batch30gg_work implements BatchGlobal {
 				if ($count == 1) {
 					foreach ( $stmt as $row ) {
 						//$this->lista_parametri ['--parametri_batch'] = $row ['parametri_batch'];
-						if(Batch30gg_work::validateJSONParam($row ['parametri_batch']))
+						if(self::validateJSONParam($row ['parametri_batch']))
 						{
 							return true;
 						}
@@ -179,6 +179,12 @@ class Batch30gg_work implements BatchGlobal {
 				$this->log->info("Non è definito il parametro 'id_account_adw' !!!");
 				return false;
 			}
+			if (! isset ( $this->JSONparam->download_report_type ))
+			{
+				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
+				return false;
+			}
+			
 			if($this->typeBatch==USER_DEFINED)
 			{
 				if (! isset ( $this->JSONparam->dal ))
@@ -223,8 +229,6 @@ class Batch30gg_work implements BatchGlobal {
 			case USER_DEFINED: /* vengono dai parametri JSON passati dal be */
 				{
 					$this->lista_parametri ['--dal']=$this->JSONparam->dal;
-					$this->lista_parametri ['--al']=$this->JSONparam->al;
-					
 				}break;
 		}
 	}
@@ -239,16 +243,16 @@ class Batch30gg_work implements BatchGlobal {
 			return false;
 		}
 		
-		Batch30gg_work::getInputParameter ( $argv );
+		self::getInputParameter ( $argv );
 		
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			if (array_key_exists ( strtolower ( "--run_time" ), $this->lista_parametri )) {
 				if (array_key_exists ( strtolower ( "--type" ), $this->lista_parametri )) {
-					Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
-					if (Batch30gg_work::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+					self::setStatus ( $this->lista_parametri ['--id_schedulazione'], WORKING, BATCH_WITHOUT_ERROR, "dsad" );
+					if (self::getIdUser ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
 						
-						if (Batch30gg_work::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
-							Batch30gg_work::setDataIntervall();
+						if (self::getJSONParam ( $this->lista_parametri ['--id_schedulazione'] ) == true) {
+							self::setDataIntervall();
 							return true;
 						} else {
 							return false;
@@ -285,7 +289,7 @@ class Batch30gg_work implements BatchGlobal {
 			return - 1;
 		}
 		
-		Batch30gg_work::getInputParameter ( $argv );
+		self::getInputParameter ( $argv );
 		
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			return $this->lista_parametri ['--id_schedulazione'];
@@ -310,6 +314,9 @@ class Batch30gg_work implements BatchGlobal {
 		
 		
 		$msg = sprintf ( "	--id_account_adw: %s", $this->JSONparam->id_account_adw );
+		$this->log->info ( $msg );
+		
+		$msg = sprintf ( "	--download_report_type: %s", $this->JSONparam->download_report_type );
 		$this->log->info ( $msg );
 		/*
 		$msg = sprintf ( "	--al: %s", $this->JSONparam->al );
@@ -362,6 +369,7 @@ class Batch30gg_work implements BatchGlobal {
 		);*/
 		$param=array(
 				'customer_id' => $this->JSONparam->id_account_adw,
+				'download_report_type' => $this->JSONparam->download_report_type,
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);
@@ -400,19 +408,19 @@ class Batch30gg_work implements BatchGlobal {
 		$ret=true;
 		$this->log->info ( "run()" );
 		
-		$ret = Batch30gg_work::refreshToken();
+		$ret = self::refreshToken();
 		if($ret==true)
 		{
 			$this->downAdWords->connect();
 			if ($this->downAdWords->getIdError()==BATCH_WITHOUT_ERROR)
 			{
-				$arrayFileCsv = Batch30gg_work::getReport();
+				$arrayFileCsv = self::getReport();
 				foreach ($arrayFileCsv as $key => $value)
 				{
-					$import=Batch30gg_work::writeDB($this->lista_parametri ['--id_user'],$value);
+					$import=self::writeDB($this->lista_parametri ['--id_user'],$value);
 					if($import==true)
 					{
-						$ren=Batch30gg_work::renameCSVtoIMP($value);
+						$ren=self::renameCSVtoIMP($value);
 						if($ren==false)
 						{
 							$this->id_error = ERROR;
@@ -455,16 +463,16 @@ class Batch30gg_work implements BatchGlobal {
 		} 
 	}
 	public function refreshStatus($status) {
-		$this->log->info ( "refreshStatus(" . Batch30gg_work::boolToStr ( $status ) . ")" );
+		$this->log->info ( "refreshStatus(" . self::boolToStr ( $status ) . ")" );
 		
 		if ($status == false) {
-			Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], ERROR );
+			self::setStatus ( $this->lista_parametri ['--id_schedulazione'], ERROR );
 			$this->log->info ( "ERROR(" . $this->name_file . "): (" . $this->id_error.")-".$this->descr_error );
 		} else {
 			if ($this->lista_parametri ['--type'] == BATCH_UNA_TANTUM) {
-				Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], FINISCHED );
+				self::setStatus ( $this->lista_parametri ['--id_schedulazione'], FINISCHED );
 			} else {
-				Batch30gg_work::setStatus ( $this->lista_parametri ['--id_schedulazione'], TO_BE_SUBMITTED );
+				self::setStatus ( $this->lista_parametri ['--id_schedulazione'], TO_BE_SUBMITTED );
 			}
 		}
 	}

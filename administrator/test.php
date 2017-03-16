@@ -62,7 +62,7 @@ $sm=new SchedulerManager();
   id_batch=2 --> batch Real Time
 */
 
-/* tipo_batch: definiti nella tabella adplify_scheduler.batch_type_lib  
+/* download_report_type: definiti nella tabella adplify_scheduler.batch_type_lib  
    valori possibili:
    
    1=ALL,
@@ -99,7 +99,7 @@ $json_str='{
 	"type_schedulazione": '.$_POST['type_schedulazione'].',
 	"frequenza": '.$_POST['id_schedulazione'].',
 	"stato_schedulazione": '.$_POST['stato_schedulazione'].',
-	"tipo_batch": 1,
+	"download_report_type": '.$_POST['download_report_type'].',
 	"time_start": "'.$_POST['time_start'].'",
 	"dal": "20170212",
 	"al": "20170311"
