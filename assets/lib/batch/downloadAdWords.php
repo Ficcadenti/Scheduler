@@ -115,7 +115,7 @@ class DownloadAdWords
 	}
 
 	
-	private function downloadReport($user_id, $param,  $namefileCSV, $settings, $access_token, $clientCustomerId)
+	private function downloadReport($user_id,  $namefileCSV, $settings, $access_token, $clientCustomerId)
 	{
 		$user = new \AdWordsUser ();
 		$user->SetOAuth2Info ( array (
@@ -137,8 +137,8 @@ class DownloadAdWords
 		$fields = self::getFields();
 	
 		// RAPPRESENTA L'INTERVALLO TEMPORALE NEL QUALE PRENDERE I DATI
-		$date_min = $param['dal']; // "20150301"; // PRENDI DA DATA
-		$date_max = $param['al']; // "20170228"; // ...A DATA
+		$date_min = $this->param['dal']; // "20150301"; // PRENDI DA DATA
+		$date_max = $this->param['al']; // "20170228"; // ...A DATA
 	
 		$selector = new \Selector ();
 		$selector->fields = array_keys ( $fields ); // CAMPI DA CHIEDERE A GOOGLE
@@ -443,10 +443,16 @@ class DownloadAdWords
 	
 				foreach ( $google_accounts as $index => $google_account ) 
 				{
-	
-					$namefileCSV = "(".$this->param['descr_report_type'].")_".$google_account ['descr'] . ".csv";
+					/* costruzione nome file CSV */
+					$namefileCSV = $this->param['al'].
+									"_".$user_id."_".
+									$this->param['descr_report_type'].
+									"_".$google_account ['descr'].
+									".csv";
+					$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
+					
 					$this->log->info("... downloading report type (".$this->param['descr_report_type'].") sul file '".$namefileCSV."'");
-					$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+					$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
 					//$arrayReport [$google_account ['customer_id']] = $fileCSV;
 					array_push($arrayReport, $fileCSV);
 				}
@@ -472,9 +478,15 @@ class DownloadAdWords
 					for($i=0;$i<2;$i++)
 					{
 						$this->param['download_report_type']=$all_metrics[$i];
-						$namefileCSV = "(".$all_metrics_csv[$i].")_".$google_account ['descr'] . ".csv";
+						/* costruzione nome file CSV */
+						$namefileCSV = $this->param['al'].
+										"_".$user_id."_".
+										$all_metrics_csv[$i].
+										"_".$google_account ['descr'].
+										".csv";
+						$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 						$this->log->info("... downloading report type (".$all_metrics_csv[$i].") sul file '".$namefileCSV."'");
-						$fileCSV = self::downloadReport ( $user_id, $param, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+						$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
 						array_push($arrayReport, $fileCSV);
 					}
 				}

@@ -8,7 +8,7 @@
  * | Author email raffaele.ficcadenti@gmail.com
  * |
  * | FILE
- * | self.php
+ * | batch30gg_work.php
  * |
  * | HISTORY:
  * | -[Date]- -[Who]- -[What]-
@@ -243,6 +243,7 @@ class Batch30gg_work implements BatchGlobal {
 			case USER_DEFINED: /* vengono dai parametri JSON passati dal be */
 				{
 					$this->lista_parametri ['--dal']=$this->JSONparam->dal;
+					$this->lista_parametri ['--al']=$this->JSONparam->al;
 				}break;
 		}
 	}
@@ -375,10 +376,6 @@ class Batch30gg_work implements BatchGlobal {
 	{
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
 		$this->log->info ( "getReport(".$this->batchType->getDescrizione($this->JSONparam->download_report_type).")" );
-		/*$param=array(
-				'dal' => $this->JSONparam->dal,
-				'al' => $this->JSONparam->al
-		);*/
 		$param=array(
 				'customer_id' => $this->JSONparam->id_account_adw,
 				'download_report_type' => $this->JSONparam->download_report_type,
