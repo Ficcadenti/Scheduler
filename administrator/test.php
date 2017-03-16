@@ -133,7 +133,7 @@ if($sm->setBatch($json_str))
 	$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
 	foreach ($id as $key => $value)
 	{
-		printf("id[%d]=%d\n",$key,$value);
+		printf("id[%d]=%d<br>",$key,$value);
 	}
    	$sm->unsetBatch();
 }

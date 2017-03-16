@@ -53,7 +53,7 @@
   define("ANNI_2",2);
   define("USER_DEFINED",3);
   
-  define("DOWNLOAD_UNDEFINED",-1);
+  define("DOWNLOAD_UNDEFINED",11);
   define("DOWNLOAD_ADGROUP_METRICHE",1);
   define("DOWNLOAD_ADGROUP_ANAGRAFICHE",2);
   define("DOWNLOAD_CAMPAGNE_METRICHE",3);

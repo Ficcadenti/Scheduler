@@ -130,9 +130,9 @@ class SchedulerManager {
 				$this->log->info("Non è definito il parametro 'stato_schedulazione' !!!");
 				return false;
 			}
-			if (! isset ( $this->param->tipo_batch ))
+			if (! isset ( $this->param->download_report_type ))
 			{
-				$this->log->info("Non è definito il parametro 'tipo_batch' !!!");
+				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->time_start ))

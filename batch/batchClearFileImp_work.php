@@ -8,7 +8,7 @@
  * | Author email raffaele.ficcadenti@gmail.com
  * |
  * | FILE
- * | self.php
+ * | batchClearFileImp_work.php
  * |
  * | HISTORY:
  * | -[Date]- -[Who]- -[What]-
@@ -27,7 +27,7 @@ require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php"
 require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 
 
-class self implements BatchGlobal {
+class BatchClearFileImp_work implements BatchGlobal {
 	
 	
 	private $log = null;
@@ -77,8 +77,6 @@ class self implements BatchGlobal {
 			return $this->connetion;
 		}
 	}
-	
-	
 	
 	
 	public function getParam($argv) {
@@ -157,61 +155,7 @@ class self implements BatchGlobal {
 	{
 		$ret=true;
 		$this->log->info ( "run()" );
-		if ($this->connetion==true) 
-		{
-			$ret=true;
-			/* Elenco i BATCH di tipo UNA_TANTUM nello stato FINISCHED */
-			try 
-			{
-				$sql = "SELECT a.id_schedulazione,b.descr_batch,c.descr_stato_schedulazione,d.descr_type_schedulazione
-						FROM sc_config a, batch_lib b, sc_stato_schedulazione_lib c, sc_type_schedulazione_lib d
-						WHERE a.type_schedulazione=d.id_type_schedulazione 
-							AND a.stato_schedulazione=c.id_stato_schedulazione 
-							AND a.id_batch=b.id_batch 
-							AND type_schedulazione = :type_schedulazione 
-							AND stato_schedulazione = :stato_schedulazione";
-				$stmt = $this->dbh->prepare($sql);
-				$type_schedulazione=BATCH_UNA_TANTUM;
-				$stato_schedulazione=FINISCHED;
-				$stmt->bindParam ( ':type_schedulazione', $type_schedulazione , \PDO::PARAM_INT );
-				$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione , \PDO::PARAM_INT );
-				$stmt->execute ();
-				
-				while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
-					$msg=sprintf("... Delete => %s(%d): %s - %s",$row->descr_batch,$row->id_schedulazione,$row->descr_type_schedulazione,$row->descr_stato_schedulazione);
-					$this->log->info ( $msg );
-
-				}
-			
-				$ret=true;
-			}
-			catch ( \PDOException $ex ) 
-			{
-				$this->id_error = $ex->getCode();
-				$this->descr_error = $ex->getMessage ();
-				$this->log->info ($this->descr_error);
-			}
-			
-			/* cancello i BATCH di tipo UNA_TANTUM nello stato FINISCHED */
-			try
-			{
-				$sql = "DELETE FROM sc_config WHERE
-								 type_schedulazione = :type_schedulazione
-								AND stato_schedulazione = :stato_schedulazione";
-				$stmt = $this->dbh->prepare($sql);
-				$type_schedulazione=BATCH_UNA_TANTUM;
-				$stato_schedulazione=FINISCHED;
-				$stmt->bindParam ( ':type_schedulazione', $type_schedulazione , \PDO::PARAM_INT );
-				$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione , \PDO::PARAM_INT );
-				$stmt->execute ();
-			}
-			catch ( \PDOException $ex )
-			{
-				$this->id_error = $ex->getCode();
-				$this->descr_error = $ex->getMessage ();
-				$this->log->info ($this->descr_error);
-			}
-		}
+		$this->log->info ( "Cancello file più vecchi di ".getenv('IMP_FILE_CLEAR_GG')."gg" );
 		return $ret;
 	}
 	

@@ -59,7 +59,7 @@ REFRESH_TOKEN_CMD      = ${BASE_DIR}/adplify_be/batch_refresh_tokens_by_user_id.
 /* Path per file csv/imp scaricati da google AdWords */
 CSV_PATH_FILE                 = ${BASE_DIR}/datafiles/csv
 IMP_PATH_FILE                 = ${BASE_DIR}/datafiles/imp
-
+IMP_FILE_CLEAR_GG             = 6
 
 /* Sezione per parametri MySql DB */
 DB_HOST                = 10.10.10.151
