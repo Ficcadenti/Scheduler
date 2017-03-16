@@ -377,7 +377,7 @@ class Batch30gg_work implements BatchGlobal {
 		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
 		$this->log->info ( "getReport(".$this->batchType->getDescrizione($this->JSONparam->download_report_type).")" );
 		$param=array(
-				'customer_id' => $this->JSONparam->id_account_adw,
+				'id_account_adw' => $this->JSONparam->id_account_adw,
 				'download_report_type' => $this->JSONparam->download_report_type,
 				'descr_report_type' => $this->batchType->getDescrizione($this->JSONparam->download_report_type),
 				'dal' => $this->lista_parametri ['--dal'],
@@ -387,11 +387,11 @@ class Batch30gg_work implements BatchGlobal {
 		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
 	}
 	
-	private function writeDB($user_id,$fileCSV) 
+	private function writeDB($user_id,$id_account_adw,$fileCSV) 
 	{
-		$this->log->info ( "... writeDB(".$user_id.",".getenv ( 'CSV_PATH_FILE' )."/".$fileCSV.")" );
+		$this->log->info ( "... writeDB(".$user_id.",".$id_account_adw.",".getenv ( 'CSV_PATH_FILE' )."/".$fileCSV.")" );
 		
-		$import=$this->downAdWords->writeDB($this->lista_parametri ['--id_user'],$fileCSV);
+		$import=$this->downAdWords->writeDB($user_id,$id_account_adw,$fileCSV);
 		if($import==true)
 		{
 			
@@ -427,7 +427,7 @@ class Batch30gg_work implements BatchGlobal {
 				$arrayFileCsv = self::getReport();
 				foreach ($arrayFileCsv as $key => $value)
 				{
-					$import=self::writeDB($this->lista_parametri ['--id_user'],$value);
+					$import=self::writeDB($this->lista_parametri ['--id_user'],$this->JSONparam->id_account_adw,$value);
 					if($import==true)
 					{
 						$ren=self::renameCSVtoIMP($value);

@@ -207,7 +207,7 @@ class DownloadAdWords
 		return $namefileCSV;
 	}
 	
-	private function clearReport($conn)
+	private function clearReport($conn,$id_account_adw)
 	{
 		$ret=true;
 		$table = "";
@@ -265,10 +265,12 @@ class DownloadAdWords
 		}
 
 		$sql = "DELETE FROM ".$table." WHERE api_date >= :api_date";
+				//AND id_account_adw=:id_account_adw";
 	
 		
 		$stmt = $conn->prepare ( $sql );
 		$stmt->bindParam ( ':api_date', $str_dal );
+		//$stmt->bindParam ( ':id_account_adw', $id_account_adw );
 		$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA*/
 		
 		$ret=true;
@@ -277,7 +279,7 @@ class DownloadAdWords
 	}
 	
 	
-	public function writeDB($user_id,$fileCSV)
+	public function writeDB($user_id,$id_account_adw,$fileCSV)
 	{
 		$ret=true;
 		$table = "";
@@ -324,9 +326,8 @@ class DownloadAdWords
 		
 		if($conn!=null)
 		{
-			self::clearReport($conn);
-			/*$stmt = $conn->prepare ( "TRUNCATE " . $table );
-			$stmt->execute (); // QUESTA RIGA SVUOTA LA TABELLA PRIMA DI CARICARLA*/
+			/*clear data */
+			self::clearReport($conn,$id_account_adw);
 			
 			$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
 			INTO TABLE `" . $table . "`
@@ -383,7 +384,7 @@ class DownloadAdWords
 		}
 	}
 	
-	private function getGoogleAccountsByUserId($user_id,$customer_id) {
+	private function getGoogleAccountsByUserId($user_id,$id_account_adw) {
 		$conn = self::getConnectionFromUserId ( $user_id );
 		$ret = array ();
 		if($conn!=null)
@@ -392,15 +393,15 @@ class DownloadAdWords
 			$stmt = $conn->prepare ( "SELECT g.access_token,a.api_externalcustomerid,a.api_accountdescriptivename 
 					FROM google_account g 
 					INNER JOIN adwords_account a on g.id=a.google_user_id 
-					AND a.api_externalcustomerid = :customer_id" );
+					AND a.api_externalcustomerid = :id_account_adw" );
 			
-			$stmt->bindParam ( ':customer_id', $customer_id );
+			$stmt->bindParam ( ':id_account_adw', $id_account_adw );
 			$stmt->execute ();
 			
 			while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
 				$ret [] = array (
 						"access_token" => $row->access_token,
-						"customer_id" => $row->api_externalcustomerid,
+						"id_account_adw" => $row->api_externalcustomerid,
 						"descr" => $row->api_accountdescriptivename
 				);
 			}
@@ -439,7 +440,7 @@ class DownloadAdWords
 			{
 				
 				$settings = self::getSettings ();
-				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
+				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['id_account_adw'] );
 	
 				foreach ( $google_accounts as $index => $google_account ) 
 				{
@@ -452,8 +453,8 @@ class DownloadAdWords
 					$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 					
 					$this->log->info("... downloading report type (".$this->param['descr_report_type'].") sul file '".$namefileCSV."'");
-					$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
-					//$arrayReport [$google_account ['customer_id']] = $fileCSV;
+					$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
+					//$arrayReport [$google_account ['id_account_adw']] = $fileCSV;
 					array_push($arrayReport, $fileCSV);
 				}
 			}
@@ -463,7 +464,7 @@ class DownloadAdWords
 			if($this->connetion==true)
 			{
 				$settings = self::getSettings ();
-				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['customer_id'] );
+				$google_accounts = self::getGoogleAccountsByUserId ( $user_id, $param['id_account_adw'] );
 				$all_metrics=array(DOWNLOAD_ADGROUP_METRICHE,
 									DOWNLOAD_CAMPAGNE_METRICHE,
 									DOWNLOAD_KEYWORDS_METRICHE,
@@ -486,7 +487,7 @@ class DownloadAdWords
 										".csv";
 						$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 						$this->log->info("... downloading report type (".$all_metrics_csv[$i].") sul file '".$namefileCSV."'");
-						$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['customer_id'] );
+						$fileCSV = self::downloadReport ( $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
 						array_push($arrayReport, $fileCSV);
 					}
 				}
