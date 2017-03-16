@@ -402,7 +402,7 @@ class DownloadAdWords
 				$ret [] = array (
 						"access_token" => $row->access_token,
 						"id_account_adw" => $row->api_externalcustomerid,
-						"descr" => $row->api_accountdescriptivename
+						"adw_name" => $row->api_accountdescriptivename
 				);
 			}
 		}
@@ -447,8 +447,8 @@ class DownloadAdWords
 					/* costruzione nome file CSV */
 					$namefileCSV = $this->param['al'].
 									"_".$user_id."_".
+									"_".$google_account ['adw_name'].
 									$this->param['descr_report_type'].
-									"_".$google_account ['descr'].
 									".csv";
 					$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 					
@@ -482,8 +482,8 @@ class DownloadAdWords
 						/* costruzione nome file CSV */
 						$namefileCSV = $this->param['al'].
 										"_".$user_id."_".
+										"_".$google_account ['adw_name'].
 										$all_metrics_csv[$i].
-										"_".$google_account ['descr'].
 										".csv";
 						$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 						$this->log->info("... downloading report type (".$all_metrics_csv[$i].") sul file '".$namefileCSV."'");
