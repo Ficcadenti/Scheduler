@@ -27,7 +27,7 @@ use Batch\DownloadAdWords;
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
-require '../assets/lib/batch/batchDBType.php';
+require '../assets/lib/batch/batchDBtype.php';
 require '../assets/lib/batch/downloadAdWords.php';
 
 require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
