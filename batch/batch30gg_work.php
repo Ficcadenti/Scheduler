@@ -224,7 +224,7 @@ class Batch30gg_work implements BatchGlobal {
 		{
 			case GIORNI_30: /* Calcolo i 30 giorni   */
 				{
-					$t_dal=$t_al-((60*60)*24)*30; /* 30gg*/
+					$t_dal=$t_al-((60*60)*24)*3; /* 30gg*/
 					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
 					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
 				}break;
@@ -391,16 +391,28 @@ class Batch30gg_work implements BatchGlobal {
 	{
 		$this->log->info ( "... writeDB(".$user_id.",".$id_account_adw.",".getenv ( 'CSV_PATH_FILE' )."/".$fileCSV.")" );
 		
-		$import=$this->downAdWords->writeDB($user_id,$id_account_adw,$fileCSV);
-		if($import==true)
+		$ret=$this->downAdWords->writeDB($user_id,$id_account_adw,$fileCSV);
+		switch($ret)
 		{
+			case REPORT_OK:
+				{
+					return true;
+				}break;
 			
+			case REPORT_ERROR_ANAGRAFICHE:
+				{
+					$this->id_error = ERROR;
+					$this->descr_error = "Errore download report anagrafiche";
+					return false;
+				}break;
+			case REPORT_ERROR_METRICHE:
+				{
+					$this->id_error = ERROR;
+					$this->descr_error = "Errore download report metriche";
+					return false;
+				}break;
 		}
-		else
-		{
-			
-		}
-		return $import;
+		
 	}
 	
 	private function renameCSVtoIMP($csv_file)
