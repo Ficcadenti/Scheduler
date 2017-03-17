@@ -446,9 +446,9 @@ class DownloadAdWords
 				{
 					/* costruzione nome file CSV */
 					$namefileCSV = $this->param['al'].
-									"_".$user_id."_".
+									"_".$user_id.
 									"_".$google_account ['adw_name'].
-									$this->param['descr_report_type'].
+									"_".$this->param['descr_report_type'].
 									".csv";
 					$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 					
@@ -481,9 +481,9 @@ class DownloadAdWords
 						$this->param['download_report_type']=$all_metrics[$i];
 						/* costruzione nome file CSV */
 						$namefileCSV = $this->param['al'].
-										"_".$user_id."_".
+										"_".$user_id.
 										"_".$google_account ['adw_name'].
-										$all_metrics_csv[$i].
+										"_".$all_metrics_csv[$i].
 										".csv";
 						$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
 						$this->log->info("... downloading report type (".$all_metrics_csv[$i].") sul file '".$namefileCSV."'");
