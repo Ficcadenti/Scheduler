@@ -53,16 +53,13 @@
   define("ANNI_2",2);
   define("USER_DEFINED",3);
   
+  /* gli ID dei download devono essere crescenti */
   define("DOWNLOAD_UNDEFINED",-1);
-  define("DOWNLOAD_ALL",0);
   define("DOWNLOAD_CAMPAGNE",1);
   define("DOWNLOAD_ADGROUP",2);
   define("DOWNLOAD_KEYWORDS",3);
   define("DOWNLOAD_URL",4);
+  define("DOWNLOAD_ALL",5);
   
-  
-  define("REPORT_OK",0);
-  define("REPORT_ERROR_ANAGRAFICHE",1);
-  define("REPORT_ERROR_METRICHE",2);
   
   

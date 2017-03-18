@@ -20,14 +20,12 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
-use Batch\lib\BatchDBType;
+
 use Common\lib\CommonService;
 use Batch\DownloadAdWords;
-
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
-require '../assets/lib/batch/batchDBtype.php';
 require '../assets/lib/batch/downloadAdWords.php';
 
 require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
@@ -50,7 +48,6 @@ class Batch30gg_work implements BatchGlobal {
 	
 	function __construct() {
 		$this->downAdWords=new DownloadAdWords();
-		$this->batchType=new BatchDBType();
 		$this->name_file = basename ( __FILE__, ".php" );
 	}
 	function __destruct() {
@@ -75,24 +72,13 @@ class Batch30gg_work implements BatchGlobal {
 	public function setLogger($log) {
 		$this->log = $log;
 		$this->downAdWords->setLogger ( $log );
-		$this->batchType->setLogger ( $log );
 	}
 	public function init() {
 		
 		$this->log->info ( "init()" );
 		self::connect ();
 		if ($this->connetion == true) {
-			$this->batchType->connect();
-			if($this->batchType->load())
-			{
-				return true;
-			}
-			else 
-			{
-				$this->id_error = ERROR;
-				$this->descr_error = "Errore nel caricamento della tabella batch_type_lib !!!!!";
-				return false;
-			}
+			return true;
 		} else {
 			$this->id_error = ERROR;
 			$this->descr_error = "Errore connessione DB null pointer";
@@ -224,7 +210,7 @@ class Batch30gg_work implements BatchGlobal {
 		{
 			case GIORNI_30: /* Calcolo i 30 giorni   */
 				{
-					$t_dal=$t_al-((60*60)*24)*3; /* 30gg*/
+					$t_dal=$t_al-((60*60)*24)*30; /* 30gg*/
 					$this->lista_parametri ['--dal']=CommonService::strDadeGoogle($t_dal);
 					$this->lista_parametri ['--al']=CommonService::strDadeGoogle($t_al);
 				}break;
@@ -374,56 +360,14 @@ class Batch30gg_work implements BatchGlobal {
 	
 	private function getReport()
 	{
-		$this->log->info ( "getReport(".$this->lista_parametri ['--id_user'].")" );
-		$this->log->info ( "getReport(".$this->batchType->getDescrizione($this->JSONparam->download_report_type).")" );
 		$param=array(
 				'id_account_adw' => $this->JSONparam->id_account_adw,
 				'download_report_type' => $this->JSONparam->download_report_type,
-				'descr_report_type' => $this->batchType->getDescrizione($this->JSONparam->download_report_type),
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);
 		
 		return $this->downAdWords->downloadAllReportsFromUserdId($this->lista_parametri ['--id_user'],$param);
-	}
-	
-	private function writeDB($user_id,$id_account_adw,$fileCSV) 
-	{
-		$this->log->info ( "... writeDB(".$user_id.",".$id_account_adw.",".getenv ( 'CSV_PATH_FILE' )."/".$fileCSV.")" );
-		
-		$ret=$this->downAdWords->writeDB($user_id,$id_account_adw,$fileCSV);
-		switch($ret)
-		{
-			case REPORT_OK:
-				{
-					return true;
-				}break;
-			
-			case REPORT_ERROR_ANAGRAFICHE:
-				{
-					$this->id_error = ERROR;
-					$this->descr_error = "Errore download report anagrafiche";
-					return false;
-				}break;
-			case REPORT_ERROR_METRICHE:
-				{
-					$this->id_error = ERROR;
-					$this->descr_error = "Errore download report metriche";
-					return false;
-				}break;
-		}
-		
-	}
-	
-	private function renameCSVtoIMP($csv_file)
-	{
-		$path_csv=getenv ( 'CSV_PATH_FILE' );
-		$path_imp=getenv ( 'IMP_PATH_FILE' );
-		$imp_file=str_replace("csv","imp",$csv_file);
-		$this->log->info ( "... renameCSVtoIMP(".$path_csv."/".$csv_file." --> ".$path_imp."/".$imp_file .")" );
-		$ok = rename($path_csv."/".$csv_file, $path_imp."/".$imp_file);
-		
-		return $ok;
 	}
 	
 	public function run() {
@@ -436,28 +380,16 @@ class Batch30gg_work implements BatchGlobal {
 			$this->downAdWords->connect();
 			if ($this->downAdWords->getIdError()==BATCH_WITHOUT_ERROR)
 			{
-				$arrayFileCsv = self::getReport();
-				foreach ($arrayFileCsv as $key => $value)
+				if(self::getReport()==true)
 				{
-					$import=self::writeDB($this->lista_parametri ['--id_user'],$this->JSONparam->id_account_adw,$value);
-					if($import==true)
-					{
-						$ren=self::renameCSVtoIMP($value);
-						if($ren==false)
-						{
-							$this->id_error = ERROR;
-							$this->descr_error = "Errore rename file ".$value;
-							return false;
-						}
-					}
-					else 
-					{
-						$this->id_error = ERROR;
-						$this->descr_error = "Errore import file ".$value;
-						return false;
-					}
+					$ret=true;
 				}
-				$ret=true;
+				else
+				{
+					$this->id_error = $this->downAdWords->getIdError();
+					$this->descr_error = $this->downAdWords->getDescError();
+					$ret=false;
+				}
 			}
 			else 
 			{

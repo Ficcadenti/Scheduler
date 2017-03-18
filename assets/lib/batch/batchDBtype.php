@@ -87,6 +87,14 @@ class BatchDBType {
 	
 	public function getDescrizione($id_batch_type) {
 		if (array_key_exists ( $id_batch_type, $this->batch_type_lib )) {
+			return $this->batch_type_lib [$id_batch_type]['descrizione'];
+		} else {
+			$this->log->info ( "ERROR: type (" . $id_batch_type . ") indefinito." );
+		}
+	}
+	
+	public function getSuffisso($id_batch_type) {
+		if (array_key_exists ( $id_batch_type, $this->batch_type_lib )) {
 			return $this->batch_type_lib [$id_batch_type]['suffisso_file_csv'];
 		} else {
 			$this->log->info ( "ERROR: type (" . $id_batch_type . ") indefinito." );
