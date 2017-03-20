@@ -135,6 +135,16 @@ class SchedulerManager {
 				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
 				return false;
 			}
+			if (! isset ( $this->param->abilita_anagrafiche ))
+			{
+				$this->log->info("Non è definito il parametro 'abilita_anagrafiche' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->abilita_metriche ))
+			{
+				$this->log->info("Non è definito il parametro 'abilita_metriche' !!!");
+				return false;
+			}
 			if (! isset ( $this->param->time_start ))
 			{
 				$this->log->info("Non è definito il parametro 'time_start' !!!");
@@ -371,18 +381,20 @@ class SchedulerManager {
 	public function showParameter() {
 		$this->log->info ( "showParameter()" );
 		
-		$this->log->info ( "id_schedulazione    : ". $this->param->id_schedulazione );
-		$this->log->info ( "hostname            : ". $this->param->hostname );
-		$this->log->info ( "id_user             : ". $this->param->id_user );
-		$this->log->info ( "id_account_adw      : ". $this->param->id_account_adw );
-		$this->log->info ( "id_batch            : ". $this->param->id_batch );
-		$this->log->info ( "type_schedulazione  : ". $this->param->type_schedulazione );
-		$this->log->info ( "frequenza           : ". $this->param->frequenza );
-		$this->log->info ( "stato_schedulazione : ". $this->param->stato_schedulazione );
-		$this->log->info ( "tipo_batch          : ". $this->param->tipo_batch );
-		$this->log->info ( "time_start          : ". $this->param->time_start );
-		$this->log->info ( "dal                 : ". $this->param->dal );
-		$this->log->info ( "al                  : ". $this->param->al );
+		$this->log->info ( "id_schedulazione     : ". $this->param->id_schedulazione );
+		$this->log->info ( "hostname             : ". $this->param->hostname );
+		$this->log->info ( "id_user              : ". $this->param->id_user );
+		$this->log->info ( "id_account_adw       : ". $this->param->id_account_adw );
+		$this->log->info ( "id_batch             : ". $this->param->id_batch );
+		$this->log->info ( "type_schedulazione   : ". $this->param->type_schedulazione );
+		$this->log->info ( "frequenza            : ". $this->param->frequenza );
+		$this->log->info ( "stato_schedulazione  : ". $this->param->stato_schedulazione );
+		$this->log->info ( "download_report_type : ". $this->param->download_report_type );
+		$this->log->info ( "abilita_anagrafiche  : ". $this->param->abilita_anagrafiche );
+		$this->log->info ( "abilita_metriche     : ". $this->param->abilita_metriche );
+		$this->log->info ( "time_start           : ". $this->param->time_start );
+		$this->log->info ( "dal                  : ". $this->param->dal );
+		$this->log->info ( "al                   : ". $this->param->al );
 		
 	}
 }

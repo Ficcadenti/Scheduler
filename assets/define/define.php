@@ -61,5 +61,11 @@
   define("DOWNLOAD_URL",4);
   define("DOWNLOAD_ALL",5);
   
+  define("GOOGLE_MONEY_UNIT",1000000);
+  define("ANAGRAFICHE_ABILITATE",1);
+  define("METRICHE_ABILITATE",1);
+  
+  
+  
   
   

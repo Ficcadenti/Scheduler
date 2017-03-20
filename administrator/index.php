@@ -91,6 +91,39 @@ $result = $db_connection->query("SELECT id,name FROM users");
       ?>
       </select>
     </div>
+    
+    <div class="form-group">
+       <div class="row">
+        <div class="col-sm-3"><b>Abilita Anagrafiche</b></div>
+        <div class="col-sm-9">
+      		<div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" id="abilita_anagrafiche" name="abilita_anagrafiche" checked="checked" value="1" /> Si
+                </label> 
+                <label class="btn btn-default">
+                    <input type="radio" id="abilita_anagrafiche" name="abilita_anagrafiche" value="0" /> No
+                </label> 
+            </div>
+          </div>
+          </div>
+    </div>
+    
+    <div class="form-group">
+       <div class="row">
+        <div class="col-sm-3"><b>Abilita Metriche</b></div>
+        <div class="col-sm-9">
+      		<div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default">
+                    <input type="radio" id="abilita_metriche" name="abilita_metriche" checked="checked" value="1" /> Si
+                </label> 
+                <label class="btn btn-default">
+                    <input type="radio" id="abilita_metriche" name="abilita_metriche" value="0" /> No
+                </label> 
+            </div>
+          </div>
+          </div>
+    </div>
+    
 
     <div class="form-group">
       <label for="frequenza">Frequenza</label>

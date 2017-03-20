@@ -100,6 +100,8 @@ $json_str='{
 	"frequenza": '.$_POST['id_schedulazione'].',
 	"stato_schedulazione": '.$_POST['stato_schedulazione'].',
 	"download_report_type": '.$_POST['download_report_type'].',
+	"abilita_anagrafiche": '.$_POST['abilita_anagrafiche'].',
+	"abilita_metriche": '.$_POST['abilita_metriche'].',
 	"time_start": "'.$_POST['time_start'].'",
 	"dal": "20170212",
 	"al": "20170311"
@@ -132,11 +134,11 @@ if($sm->setBatch($json_str))
 				/* gestione errore database */
 			}break;		
 	}
-	$id = $sm->getIdSchedulazione(); /* ritorna un array di id */
+	/*$id = $sm->getIdSchedulazione(); // ritorna un array di id 
 	foreach ($id as $key => $value)
 	{
 		printf("id[%d]=%d\n",$key,$value);
-	}
+	}*/
    	$sm->unsetBatch();
 }
 else

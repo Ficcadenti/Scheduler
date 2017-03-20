@@ -3,9 +3,11 @@
 namespace Batch;
 
 use Batch\lib\BatchDBType;
+use Batch\lib\WriteDBAdWords;
 
 
 require 'batchDBtype.php';
+require 'writeDBAdWords.php';
 
 date_default_timezone_set ( 'UTC' );
 date_default_timezone_set ( 'Europe/Rome' );
@@ -22,12 +24,14 @@ class DownloadAdWords
 	private $param=array();
 	private $pid=-1;
 	private $batchType = null;
+	private $dbAdwords=null;
 
 	function __construct() {
 		$this->name_file = basename ( __FILE__, ".php" );
 		$this->pid=getmypid();
 		$this->batchType=new BatchDBType();
 	}
+	
 	function __destruct() {
 	}
 
@@ -48,12 +52,12 @@ class DownloadAdWords
 			$this->connetion=false;
 		}
 	}
+	
 	public function getIdError()
 	{
 		return $this->id_error;
 	}
-	
-	
+
 	public function getDescError()
 	{
 		return $this->descr_error;
@@ -114,7 +118,9 @@ class DownloadAdWords
 	
 				
 			} catch ( \PDOException $ex ) {
-				$this->log->info ( "ERROR(" . $this->name_file . "): " . $ex->getMessage () );
+				$this->id_error = $ex->getCode();
+				$this->descr_error = "[".$this->name_file."] getFields: ".$ex->getMessage ();
+				$this->log->info ( $this->descr_error );
 			}
 			
 		}
@@ -122,7 +128,6 @@ class DownloadAdWords
 		return $fields;
 
 	}
-
 	
 	private function downloadMetriche($repoType, $user_id,  $namefileCSV, $settings, $access_token, $clientCustomerId)
 	{
@@ -206,12 +211,6 @@ class DownloadAdWords
 		}
 		
 		$reportDefinition->downloadFormat = 'CSV'; // FORMATO EXPORT ALTRI VALORI : XML
-		 
-		
-
-	
-		
-		
 	
 		// Download report.
 	
@@ -225,59 +224,57 @@ class DownloadAdWords
 	
 	private function downloadAnagrafiche($user_id, $settings, $access_token, $clientCustomerId)
 	{
-		$campaignService = null;
-		$user = new \AdWordsUser ();
+		$all_campagneervice = null;
+		$all_campagne_id    = array();
+		$adwordsUser        = new \AdWordsUser ();
+		$ret                = false;
 		
-		$user->SetOAuth2Info ( array (
+		$adwordsUser->SetOAuth2Info ( array (
 				'client_id' => $settings->client_id,
 				'client_secret' => $settings->client_secret,
 				'refresh_token' => $settings->refresh_token,
 				'access_token' => $access_token
 		) );
 	
-		$user->SetClientCustomerId ( $clientCustomerId );
-		$user->SetDeveloperToken ( $settings->dev_key );
+		$adwordsUser->SetClientCustomerId ( $clientCustomerId );
+		$adwordsUser->SetDeveloperToken ( $settings->dev_key );
 	
-		$campaignService = $user->GetService('CampaignService', ADWORDS_VERSION);
-	
+		try {
+			
+			$all_campagneervice = $adwordsUser->GetService('CampaignService', ADWORDS_VERSION);
 		
-		// Create selector.
-		$selector = new \Selector();
-		$selector->fields = array('Id', 'Name');
-		$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
-
-		// Create paging controls.
-		$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
-		do 
-		{
+			// Create selector.
+			$selector = new \Selector();
+			$selector->fields = array('Id', 'Name','Amount','ServingStatus','StartDate','EndDate','Status');
+			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
+	
+			// Create paging controls.
+			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
+			do 
+			{
 				// Make the get request.
-				$page = $campaignService->get($selector);
+				$page = $all_campagneervice->get($selector);
 		
 				// Display results.
 				if (isset($page->entries)) {
-					foreach ($page->entries as $campaign) 
+					foreach ($page->entries as $campagna) 
 					{
-						$amount = 0;
-						if(isset($campaign->budget))
+						if(!in_array($campagna->id,$all_campagne_id))
 						{
-							$budget = $campaign->budget;
-							if($budget->amount!="" && is_numeric($budget->amount))
-							{
-								$amount = $budget->amount;
-							}
-						}						
-						
-						
-						if(!isset($campaigns[$campaign->id]))
-						{
-							$msg=printf("SAVEEEEEEE %d %s %s",$campaign->id, $campaign->name,$clientCustomerId);
-							$this->log->info ( $msg );
-							$campaigns[$campaign->id]=$campaign->id;
-						}
-						else 
-						{
-							$msg=printf("---------- %d %s %s",$campaign->id, $campaign->name,$clientCustomerId);
-							$this->log->info ( $msg );
+							$amount = ($campagna->budget->amount->microAmount)/(GOOGLE_MONEY_UNIT);
+							
+							$c = array("api_campaignid"=>$campagna->id,
+									"api_campaignname"=>$campagna->name,
+									"api_amount"=>$amount,
+									"api_servingstatus"=>$campagna->servingStatus,
+									"api_startdate"=>$campagna->startDate,
+									"api_enddate"=>$campagna->endDate,
+									"api_campaignstatus"=>$campagna->status,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							
+							array_push($all_campagne_id, $campagna->id);
+							$this->dbAdWord->insertCampagna($c);
 						}
 					}
 				}
@@ -285,8 +282,83 @@ class DownloadAdWords
 				// Advance the paging index.
 				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
+			$ret=true;
 
-			return true;
+			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
+			
+			$this->dbAdWord->show();
+			
+		}
+		catch(Exception $ex)
+		{
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] downloadAnagrafiche: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
+			$ret=false;
+		}
+		
+		return $ret;
+	}
+	
+	public function downloadAnagraficheAdGroups($adwordsUser,$all_campagne_id)
+	{
+		$page = null;
+		$adgroups = null;
+		$clientCustomerId = $adwordsUser->GetClientCustomerId();
+		$ret=true;
+		
+		try {
+	
+			$service = $adwordsUser->GetService('AdGroupService', ADWORDS_VERSION);
+	
+			// Create selector.
+			$selector = new \Selector();
+			$selector->fields = array('Id', 'Name','CampaignId','Status');
+			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
+
+			$selector->predicates[] = new \Predicate('CampaignId', 'IN',$all_campagne_id);
+			 
+			// Create paging controls.
+			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
+	
+			$adgroups = array();
+	
+			do {
+				// Make the get request.
+				$page = $service->get($selector);
+	
+				// Display results.
+				if (isset($page->entries)) {
+					foreach ($page->entries as $adgroup) 
+					{
+						if(!isset($adgroups[$adgroup->id . "-". $adgroup->campaignId])){
+
+							$adgroups[$adgroup->id . "-". $adgroup->campaignId]=$adgroup->id . "-". $adgroup->campaignId;
+							$g = array("api_adgroupid"=>$adgroup->id,
+									"api_adgroupname"=>$adgroup->name,
+									"api_adgroupstatus"=>$adgroup->status,
+									"api_campaignid"=>$adgroup->campaignId,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							$this->dbAdWord->insertGruppi($g);
+						}
+					} 
+				}
+	
+				// Advance the paging index.
+				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
+			} while ($page->totalNumEntries > $selector->paging->startIndex);
+	
+			$ret=true;
+	
+		} catch (\Exception $ex) {
+	
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] downloadAnagraficheAdGroups: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
+		}
+		return $ret;
+	
 	}
 	
 	private function clearReportMetriche($conn,$id_account_adw,$repoType)
@@ -327,85 +399,51 @@ class DownloadAdWords
 					
 		}
 		
-		$sql = "LOCK TABLES ".$table." WRITE";
-		$stmt = $conn->prepare ( $sql );
-		$stmt->execute ();
-		
-		
-		$sql = "DELETE FROM ".$table." WHERE api_date >= :api_date AND api_externalcustomerid = :api_externalcustomerid";
-		$stmt = $conn->prepare ( $sql );
-		$stmt->bindParam ( ':api_date', $str_dal );
-		$stmt->bindParam ( ':api_externalcustomerid', $id_account_adw );
-		$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA*/
-
-		$sql = "UNLOCK  TABLES";
-		$stmt = $conn->prepare ( $sql );
-		$stmt->execute ();
-		
-		$ret=true;
-		
-		return $ret;
-	}
-	
-	private function clearReportAnagrafiche($conn,$id_account_adw)
-	{
-		$ret=true;
-		$table = "";
-	
-		$table = array("cache_campaign_attributes",
-				"cache_campaign_attributes",
-				"cache_keywords_attributes",
-				
-		"cache_url_attributes");
-		
-	
-		$this->log->info ( "clearReportAnagrafiche per ADW Account: ".$id_account_adw);
-	
-		
-		for($i=0;$i<count($table);$i++)
-		{
-			$sql = "LOCK TABLES ".$table[$i]." WRITE";
+		try {
+			$sql = "LOCK TABLES ".$table." WRITE";
 			$stmt = $conn->prepare ( $sql );
 			$stmt->execute ();
-		
-			$sql = "DELETE FROM ".$table[$i]." WHERE api_externalcustomerid = :api_externalcustomerid";
+			
+			
+			$sql = "DELETE FROM ".$table." WHERE api_date >= :api_date AND api_externalcustomerid = :api_externalcustomerid";
 			$stmt = $conn->prepare ( $sql );
+			$stmt->bindParam ( ':api_date', $str_dal );
 			$stmt->bindParam ( ':api_externalcustomerid', $id_account_adw );
-			$stmt->execute ();
-		
+			$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA*/
+	
 			$sql = "UNLOCK  TABLES";
 			$stmt = $conn->prepare ( $sql );
 			$stmt->execute ();
+			
+			$ret=true;
+		} catch (\Exception $ex) {
 	
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] clearReportMetriche: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
 		}
 		
-		$ret=true;
-	
 		return $ret;
 	}
 	
+	
 	public function writeDB($user_id,$id_account_adw,$repoType,$fileCSV)
 	{
-		if(self::writeDBAnagrafiche($user_id,$id_account_adw,$fileCSV))
+		$ret=true;
+		
+		if(self::writeDBMetriche($user_id,$id_account_adw,$repoType,$fileCSV))
 		{
-			if(self::writeDBMetriche($user_id,$id_account_adw,$repoType,$fileCSV))
-			{
-				/** da mandare un codice di errore per capire dove o fallito: metriche o anagrafiche */
-				return true;
-			}
-			else 
-			{
-				$this->id_error = ERROR;
-				$this->descr_error = "Errore write metriche ".$repoType;
-				return false;
-			}
+			/** da mandare un codice di errore per capire dove o fallito: metriche o anagrafiche */
+			$ret=true;
 		}
-		else
+		else 
 		{
 			$this->id_error = ERROR;
-			$this->descr_error = "Errore write anagrafiche ";
-			return false;
+			$this->descr_error = "[".$this->name_file."] writeDB: Errore write metriche ".$repoType;
+			$ret=false;
 		}
+
+		return $ret;
 	}
 	
 	private function writeDBMetriche($user_id,$id_account_adw,$repoType,$fileCSV)
@@ -456,22 +494,36 @@ class DownloadAdWords
 		if($conn!=null)
 		{
 			/*clear data */
-			self::clearReportMetriche($conn,$id_account_adw,$repoType);
-			
-			$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
-			INTO TABLE `" . $table . "`
-			CHARACTER SET utf8mb4
-			FIELDS
-			TERMINATED BY ','
-			LINES
-			TERMINATED BY '\n'
-			IGNORE 1 LINES
-			(" . $table_columns_for_insert . ")";
-			
-			$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-			$stmt = $conn->prepare ( $sql );
-			$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA
-			$ret=true;
+			if(self::clearReportMetriche($conn,$id_account_adw,$repoType))
+			{
+				try 
+				{
+					$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
+					INTO TABLE `" . $table . "`
+					CHARACTER SET utf8mb4
+					FIELDS
+					TERMINATED BY ','
+					LINES
+					TERMINATED BY '\n'
+					IGNORE 1 LINES
+					(" . $table_columns_for_insert . ")";
+					
+					$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+					$stmt = $conn->prepare ( $sql );
+					$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA
+					$ret=true;
+				}
+				catch (\Exception $ex) {
+				
+					$this->id_error = $ex->getCode();
+					$this->descr_error = "[".$this->name_file."] writeDBMetriche: ".$ex->getMessage ();
+					$this->log->info ( $this->descr_error );
+				}
+			}
+			else
+			{
+				$ret=false;
+			}
 		}
 		else
 		{
@@ -481,22 +533,7 @@ class DownloadAdWords
 		return $ret;
 
 	}
-	
-	private function writeDBAnagrafiche($user_id,$id_account_adw,$fileCSV)
-	{
-		$ret=true;
-		$table = array(	"cache_campaign_attributes",
-						"cache_adgroup_attributes",
-						"cache_keywords_attributes",
-						"cache_url_attributes");
-		
-		for($i=0;$i<count($table);$i++)
-		{
-		}
-		
-		return $ret;
-	
-	}
+
 	
 	private function getConnectionFromUserId($user_id) {
 		if($this->connetion==true)
@@ -568,6 +605,7 @@ class DownloadAdWords
 			return null;
 		}
 	}
+	
 	public function logicaMetriche($repoType) 
 	{
 		$all_metrics = array();
@@ -624,7 +662,9 @@ class DownloadAdWords
 		{
 			if($repoType==DOWNLOAD_UNDEFINED)
 			{
-				$this->log->info("Download report type Undefined !!!");
+				$this->id_error = ERROR;
+				$this->descr_error = "[".$this->name_file."] downloadAllReportsFromUserdId: Download report type Undefined !!!";
+				$this->log->info($this->descr_error);
 				$ret=false;
 			}
 			else 
@@ -639,38 +679,66 @@ class DownloadAdWords
 					foreach ( $google_accounts as $index => $google_account ) 
 					{
 						$i=0;
-						while( ($i<count($all_metrics)) && ($all_metrics[$i]<=$repoType) )
-						{
-							if($all_metrics[$i]==DOWNLOAD_ALL)
-							{
-								$i++;
-								continue;
-							}
-							
-							/* costruzione nome file CSV */
-							$namefileCSV = $this->param['al'].
-											"_".$this->pid.
-											"_".$user_id.
-											"_".$google_account ['adw_name'].
-											"_".$this->batchType->getSuffisso($all_metrics[$i]).
-											".csv";
-							$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
-							
-							
-							$this->log->info("... downloading report type (".
-									$this->batchType->getSuffisso($all_metrics[$i]).") sul file '".$namefileCSV."'");
-							
-							$ana=true;//self::downloadAnagrafiche($user_id, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
+						$ana=true;
+						
+
+						if($this->param['abilita_anagrafiche']==ANAGRAFICHE_ABILITATE)
+						{	
+							$this->dbAdWord=new WriteDBAdWords();
+							$this->dbAdWord->setLogger($this->log);
+							$this->dbAdWord->setIdAccountAdw($google_account ['id_account_adw']);
+							$this->dbAdWord->setIdUser($user_id);
+
+							$ana=self::downloadAnagrafiche($user_id, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
 							if($ana==true)
 							{
-								$fileCSV_METRIC = self::downloadMetriche( $all_metrics[$i], $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
-								array_push($arrayReport, $fileCSV_METRIC);
+								$this->dbAdWord->connect();
+								$ret_save=$this->dbAdWord->save();
 							}
-							
-							$i++;
-							
+							else 
+							{
+								$ret=false;
+							}
 						}
-	
+						else 
+						{
+							$ana=true; /* forzatura per abilitare il successivo download delle metriche */
+						}
+						
+						if($this->param['abilita_metriche']==METRICHE_ABILITATE)
+						{
+							if($ana==true)
+							{
+								while( ($i<count($all_metrics)) && ($all_metrics[$i]<=$repoType) )
+								{
+									if($all_metrics[$i]==DOWNLOAD_ALL)
+									{
+										$i++;
+										continue;
+									}
+									
+									// costruzione nome file CSV 
+									$namefileCSV = $this->param['al'].
+													"_".$this->pid.
+													"_".$user_id.
+													"_".$google_account ['adw_name'].
+													"_".$this->batchType->getSuffisso($all_metrics[$i]).
+													".csv";
+									$namefileCSV = preg_replace('/\s+/', '', $namefileCSV);
+									
+									
+									$this->log->info("... downloading report type (".
+															$this->batchType->getSuffisso($all_metrics[$i]).") sul file '".$namefileCSV."'");
+									
+				
+									$fileCSV_METRIC = self::downloadMetriche( $all_metrics[$i], $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
+									array_push($arrayReport, $fileCSV_METRIC);
+									
+									$i++;
+									
+								}
+							}
+						}
 					}
 				}
 	
@@ -716,7 +784,7 @@ class DownloadAdWords
 		if($ok==false)
 		{
 			$this->id_error = ERROR;
-			$this->descr_error = "Errore rename file ".$csv_file;
+			$this->descr_error = "[".$this->name_file."] downloadAllReportsFromUserdId: Errore rename file ".$csv_file;
 		}
 		return $ok;
 	}
