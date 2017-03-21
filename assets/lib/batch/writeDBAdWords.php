@@ -121,54 +121,82 @@ class WriteDBAdWords {
 		return $ret;
 	}
 	
-	private function getField($repoType)
+	private function getField($repoType,$conn)
 	{
-		$this->log->info("getField($repoType)");
+		$fields       = "";
+		$fieldsValues = "";
+		$cont_row     = 0;
+		$cont_key     = 0;
+		
 		switch($repoType)
 		{
 		
 			case DOWNLOAD_CAMPAGNE:
 				{
 					$a = array_keys($this->campagne[0]);
+					$values = ($this->campagne);
 				}break;
 				
 			case DOWNLOAD_ADGROUP:
 				{
 					$a = array_keys($this->gruppi[0]);
+					$values = ($this->gruppi);
 				}break;
 		
 			case DOWNLOAD_KEYWORDS:
 				{
 					$a = array_keys($this->keywords[0]);
+					$values = ($this->keywords);
 				}break;
 					
 			case DOWNLOAD_URL:
 				{
 					$a = array_keys($this->url[0]);
+					$values = ($this->url);
 				}break;	
 		}
 		
 		$fields=sprintf("`%s`",$a[0]);	
-		$fieldsBinds=sprintf(":%s",$a[0]);
 		
 		for($i=1;$i<count($a);$i++)
 		{
 			$fields=$fields.",".sprintf("`%s`",$a[$i]);	
-			$fieldsBinds=$fieldsBinds.",".sprintf(":%s",$a[$i]);
+		}
+		
+		foreach ($values as $row)
+		{
+			$cont_key=0;$cont_row++;
+				
+			$fieldsValues=$fieldsValues."(";
+			$keys = array_keys($row);
+			foreach ($row as $key => $val)
+			{
+				$cont_key++;
+				$fieldsValues=$fieldsValues.$conn->quote(stripslashes($row[$key]));
+				if($cont_key<count($row))
+				{
+					$fieldsValues=$fieldsValues.",";
+				}
+			}
+			$fieldsValues=$fieldsValues.")";
+			if($cont_row<count($values))
+			{
+				$fieldsValues=$fieldsValues.",";
+			}
 		}
 
-		return array($fields,$fieldsBinds);		
+		return array($fields,$fieldsValues);		
 	}
 	
 	private function writeDBAnagrafiche($id_user,$id_account_adw)
 	{
-		$ret=true;
-		$table = array(	"cache_campaign_attributes",
+		$ret      = true;
+		
+		$table    = array(	"cache_campaign_attributes",
 						"cache_adgroup_attributes",
 						"cache_keywords_attributes",
 						"cache_url_attributes");
 	
-		
 		if($this->connetion==true)
 		{
 			$conn = self::getConnectionFromUserId ( $id_user );
@@ -176,31 +204,25 @@ class WriteDBAdWords {
 			if($conn!=null)
 			{
 					try {
-						$fields=self::getField(DOWNLOAD_CAMPAGNE);
 						
+						/* INSERT ANAGRAFICHE CAMPAGNE */
+						$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn);
 						//$table[0]; // write anagrafiche campagne
-						$sql = "INSERT INTO ".$table[0]." (".$fields[0].") VALUES ($fields[1])";
-						
+						$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+						$stmt = $conn->prepare ( $sql );
 						
-						foreach ($this->campagne as $row)
-						{
-							$stmt = $conn->prepare ( $sql );
-							$row['api_externalcustomerid']=1;
-							$stmt->bindParam ( ':api_campaignid', $row['api_campaignid'], \PDO::PARAM_INT );
-							$stmt->bindParam ( ':api_campaignname', $row['api_campaignname'], \PDO::PARAM_STR );
-							$stmt->bindParam ( ':api_amount', $row['api_amount'], \PDO::PARAM_INT );
-							$stmt->bindParam ( ':api_servingstatus', $row['api_servingstatus'], \PDO::PARAM_STR );
-							$stmt->bindParam ( ':api_startdate', $row['api_startdate'], \PDO::PARAM_STR );
-							$stmt->bindParam ( ':api_enddate', $row['api_enddate'], \PDO::PARAM_STR );
-							$stmt->bindParam ( ':api_campaignstatus', $row['api_campaignstatus'], \PDO::PARAM_STR );
-							$stmt->bindParam ( ':api_externalcustomerid', $row['api_externalcustomerid'], \PDO::PARAM_STR );
-							
-							$this->log->info($sql);
-							$stmt->execute();
-						}
+						$stmt->execute();
 						
-						//$table[1]; // write anagrafiche  gruppi
+						/* INSERT ANAGRAFICHE GRUPPI */
+						//$table[1]; // write anagrafiche Gruppi
+						$fields=self::getField(DOWNLOAD_ADGROUP,$conn);	
+						$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+						$stmt = $conn->prepare ( $sql );
+						
+						$stmt->execute();
+						
 						//$table[2]; // write anagrafiche keyword
 						//$table[3]; // write anagrafiche url
 					}
@@ -262,7 +284,7 @@ class WriteDBAdWords {
 	{
 		$ret   = true;
 		$table = array("cache_campaign_attributes",
-				"cache_campaign_attributes",
+				"cache_adgroup_attributes",
 				"cache_keywords_attributes",
 				"cache_url_attributes");
 	
@@ -278,6 +300,10 @@ class WriteDBAdWords {
 				for($i=0;$i<count($table);$i++)
 				{
 					try {
+						$sql = "set foreign_key_checks=0";
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute ();
+						
 						$sql = "LOCK TABLES ".$table[$i]." WRITE";
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
@@ -288,6 +314,10 @@ class WriteDBAdWords {
 						$stmt->execute ();
 				
 						$sql = "UNLOCK  TABLES";
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute ();
+						
+						$sql = "set foreign_key_checks=1";
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
 					} 

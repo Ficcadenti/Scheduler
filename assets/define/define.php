@@ -65,6 +65,9 @@
   define("ANAGRAFICHE_ABILITATE",1);
   define("METRICHE_ABILITATE",1);
   
+  define("NOME_CAMPI",0);
+  define("VALORE_CAMPI",1);
+  
   
   
   

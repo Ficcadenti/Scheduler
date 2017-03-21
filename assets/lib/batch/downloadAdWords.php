@@ -286,7 +286,8 @@ class DownloadAdWords
 
 			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
 			
-			$this->dbAdWord->show();
+			self::downloadAnagraficheKeywords($adwordsUser,1,1);
+			//$this->dbAdWord->show();
 			
 		}
 		catch(Exception $ex)
@@ -343,6 +344,64 @@ class DownloadAdWords
 							$this->dbAdWord->insertGruppi($g);
 						}
 					} 
+				}
+	
+				// Advance the paging index.
+				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
+			} while ($page->totalNumEntries > $selector->paging->startIndex);
+	
+			$ret=true;
+	
+		} catch (\Exception $ex) {
+	
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] downloadAnagraficheAdGroups: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
+		}
+		return $ret;
+	
+	}
+	
+	public function downloadAnagraficheKeywords($adwordsUser,$all_campagne_id,$all_gruppi_id)
+	{
+		$page = null;
+		$adgroups = null;
+		$clientCustomerId = $adwordsUser->GetClientCustomerId();
+		$ret=true;
+		
+		$all_gruppi_id=5503054340;
+	
+		
+		
+		try {
+	
+			$service = $adwordsUser->GetService('AdGroupCriterionService', ADWORDS_VERSION);
+	
+			// Create selector.
+			$selector = new \Selector();
+			$selector->fields = array('AdGroupId', 'Status','KeywordText');
+			$selector->ordering[] = new \OrderBy('AdGroupId', 'ASCENDING');
+	
+			$selector->predicates[] = new \Predicate('AdGroupId', 'EQUALS',$all_gruppi_id);
+	
+			var_dump($selector->predicates);
+			// Create paging controls.
+			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
+	
+			$adgroups = array();
+	
+			do {
+				// Make the get request.
+				$page = $service->get($selector);
+	
+				// Display results.
+				if (isset($page->entries)) {
+					foreach ($page->entries as $keyword)
+					{
+						
+						$msg=sprintf("%s %s %s\n",$keyword->AdGroupId,$keyword->criterion->text,$keyword->userStatus);
+						$this->log->info( $msg );	
+					}
 				}
 	
 				// Advance the paging index.
@@ -498,6 +557,10 @@ class DownloadAdWords
 			{
 				try 
 				{
+					$sql = "set foreign_key_checks=0";
+					$stmt = $conn->prepare ( $sql );
+					$stmt->execute ();
+					
 					$sql = "LOAD DATA LOCAL INFILE '" . str_replace ( "\\", "/", $complete_fileCSV )  . "'
 					INTO TABLE `" . $table . "`
 					CHARACTER SET utf8mb4
@@ -507,10 +570,15 @@ class DownloadAdWords
 					TERMINATED BY '\n'
 					IGNORE 1 LINES
 					(" . $table_columns_for_insert . ")";
+					print_r($sql);
 					
 					$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 					$stmt = $conn->prepare ( $sql );
 					$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA
+					
+					$sql = "set foreign_key_checks=1";
+					$stmt = $conn->prepare ( $sql );
+					$stmt->execute ();
 					$ret=true;
 				}
 				catch (\Exception $ex) {
