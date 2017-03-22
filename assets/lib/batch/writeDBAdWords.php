@@ -204,6 +204,9 @@ class WriteDBAdWords {
 			if($conn!=null)
 			{
 					try {
+						$sql = "set foreign_key_checks=0";
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute ();
 						
 						/* INSERT ANAGRAFICHE CAMPAGNE */
 						$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn);
@@ -211,7 +214,6 @@ class WriteDBAdWords {
 						$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 						$stmt = $conn->prepare ( $sql );
-						
 						$stmt->execute();
 						
 						/* INSERT ANAGRAFICHE GRUPPI */
@@ -220,16 +222,35 @@ class WriteDBAdWords {
 						$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 						$stmt = $conn->prepare ( $sql );
-						
 						$stmt->execute();
 						
-						//$table[2]; // write anagrafiche keyword
+						/* INSERT ANAGRAFICHE KEYWORDS */
+						//$table[2]; // write anagrafiche keywords
+						$fields=self::getField(DOWNLOAD_KEYWORDS,$conn);
+						$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute();
+						
+						/* INSERT ANAGRAFICHE KEYWORDS */
+						//$table[3]; // write anagrafiche url
+						$fields=self::getField(DOWNLOAD_URL,$conn);
+						$sql = "INSERT INTO ".$table[3]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute();
+						
+						
+						$sql = "set foreign_key_checks=1";
+						$stmt = $conn->prepare ( $sql );
+						$stmt->execute ();
+						
 						//$table[3]; // write anagrafiche url
 					}
 					catch ( \PDOException $ex ) {
 						$this->id_error = $ex->getCode();
 						$this->descr_error = "[".$this->name_file."] writeDBAnagrafiche: ".$ex->getMessage ();
-						print_r("SONO qua 3");
+						$this->log->info($this->descr_error);
 						$ret=false;
 					}
 				
@@ -344,6 +365,26 @@ class WriteDBAdWords {
 		return $ret;
 	}
 	
+	public function countCampagne()
+	{
+		return count($this->campagne);
+	}
+	
+	public function countGruppi()
+	{
+		return count($this->gruppi);
+	}
+	
+	public function countKeywords()
+	{
+		return count($this->keywords);
+	}
+	
+	public function countUrl()
+	{
+		return count($this->url);
+	}
+	
 	public function show()
 	{
 		foreach ($this->campagne as $row)
@@ -373,8 +414,50 @@ class WriteDBAdWords {
 					$msg=sprintf("	%s: %s",$key,$value);
 					$this->log->info($msg);
 				}
-					
+				
+				self::showKeyword($id_campagna,$row['api_adgroupid']);
+				self::showUrl($id_campagna,$row['api_adgroupid']);
+				
 				$this->log->info("");
+			}
+		}
+	}
+	
+	public function showKeyword($id_campagna,$id_gruppo)
+	{
+		foreach ($this->keywords as $row)
+		{
+				
+			if(($row['api_campaignid']==$id_campagna)&&($row['api_adgroupid']==$id_gruppo))
+			{
+				foreach ($row as $key => $value)
+				{
+					if($key=='api_keywordname')
+					{
+						$msg=sprintf("	  (KEY) %s: %s",$key,$value);
+						$this->log->info($msg);
+					}
+				}
+
+			}
+		}
+	}
+	
+	public function showUrl($id_campagna,$id_gruppo)
+	{
+		foreach ($this->url as $row)
+		{
+	
+			if(($row['api_campaignid']==$id_campagna)&&($row['api_adgroupid']==$id_gruppo))
+			{
+				foreach ($row as $key => $value)
+				{
+					if($key=='api_url')
+					{
+						$msg=sprintf("	  (URL) %s: %s",$key,$value);
+						$this->log->info($msg);
+					}
+				}
 			}
 		}
 	}

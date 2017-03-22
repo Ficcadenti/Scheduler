@@ -74,7 +74,7 @@ class DownloadAdWords
 	
 	private function getFields($repoType)
 	{
-		$this->log->info ( "getFields($repoType)" );
+		//$this->log->info ( "getFields($repoType)" );
 		$fields = array ();
 		
 		switch($repoType)
@@ -112,7 +112,7 @@ class DownloadAdWords
 					
 				while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
 					$msg=sprintf("... Enabled: %s",$row->Name);
-					$this->log->info($msg);
+					//$this->log->info($msg);
 					$fields[$row->Name]=$row->Name;
 				}
 	
@@ -217,8 +217,6 @@ class DownloadAdWords
 		$filePath = getenv ( 'CSV_PATH_FILE' ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 		$reportUtils = new \ReportUtils ();
 		$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
-		
-		
 		return $namefileCSV;
 	}
 	
@@ -278,7 +276,8 @@ class DownloadAdWords
 						}
 					}
 				}
-	
+				$msg=sprintf("Downloaded %d campagne...",$this->dbAdWord->countCampagne());
+				$this->log->info ( $msg );
 				// Advance the paging index.
 				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
@@ -286,9 +285,11 @@ class DownloadAdWords
 
 			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
 			
-			self::downloadAnagraficheKeywords($adwordsUser,1,1);
-			//$this->dbAdWord->show();
 			
+			//$this->dbAdWord->show();
+			//$this->dbAdWord->showKeyword(166120940,9082894940);
+			//$this->dbAdWord->showKeyword(213596180,15118173260);
+
 		}
 		catch(Exception $ex)
 		{
@@ -304,7 +305,7 @@ class DownloadAdWords
 	public function downloadAnagraficheAdGroups($adwordsUser,$all_campagne_id)
 	{
 		$page = null;
-		$adgroups = null;
+		$all_adgroups_id = null;
 		$clientCustomerId = $adwordsUser->GetClientCustomerId();
 		$ret=true;
 		
@@ -332,15 +333,18 @@ class DownloadAdWords
 				if (isset($page->entries)) {
 					foreach ($page->entries as $adgroup) 
 					{
-						if(!isset($adgroups[$adgroup->id . "-". $adgroup->campaignId])){
-
-							$adgroups[$adgroup->id . "-". $adgroup->campaignId]=$adgroup->id . "-". $adgroup->campaignId;
+						$key=$adgroup->id . "-". $adgroup->campaignId;
+	
+						if(!isset($all_adgroups_id[$key]))
+						{
 							$g = array("api_adgroupid"=>$adgroup->id,
 									"api_adgroupname"=>$adgroup->name,
 									"api_adgroupstatus"=>$adgroup->status,
 									"api_campaignid"=>$adgroup->campaignId,
 									"api_externalcustomerid"=>$clientCustomerId
 							);
+							
+							$all_adgroups_id[$key]=$adgroup->id;
 							$this->dbAdWord->insertGruppi($g);
 						}
 					} 
@@ -350,7 +354,13 @@ class DownloadAdWords
 				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
 	
+			
+			$msg=sprintf("Downloaded %d gruppi...",$this->dbAdWord->countGruppi());
+			$this->log->info ( $msg );
+			
 			$ret=true;
+			
+			$ret=$ret && self::downloadAnagraficheKeywordsAndUrl($adwordsUser,$all_adgroups_id);
 	
 		} catch (\Exception $ex) {
 	
@@ -362,29 +372,33 @@ class DownloadAdWords
 	
 	}
 	
-	public function downloadAnagraficheKeywords($adwordsUser,$all_campagne_id,$all_gruppi_id)
+	public function downloadAnagraficheKeywordsAndUrl($adwordsUser,$all_gruppi_id)
 	{
-		$page = null;
-		$adgroups = null;
-		$clientCustomerId = $adwordsUser->GetClientCustomerId();
-		$ret=true;
+		$page                    = null;
+		$all_gruppi_id_predicate = array();
+		$all_keywords_id         = array();
+		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
+		$ret                     = true;
 		
-		$all_gruppi_id=5503054340;
-	
+		//$all_gruppi_id =array(9082894940,15118173260); // per test
+				
+		/* traduzione per generare l'array dei predicati*/
+		foreach ($all_gruppi_id as $key => $value)
+		{
+			array_push($all_gruppi_id_predicate, $value);
+		}
 		
-		
+
 		try {
 	
 			$service = $adwordsUser->GetService('AdGroupCriterionService', ADWORDS_VERSION);
 	
 			// Create selector.
 			$selector = new \Selector();
-			$selector->fields = array('AdGroupId', 'Status','KeywordText');
-			$selector->ordering[] = new \OrderBy('AdGroupId', 'ASCENDING');
+			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'Status','KeywordText','PlacementUrl','CriteriaType');
+			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
+			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
 	
-			$selector->predicates[] = new \Predicate('AdGroupId', 'EQUALS',$all_gruppi_id);
-	
-			var_dump($selector->predicates);
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
 	
@@ -396,11 +410,33 @@ class DownloadAdWords
 	
 				// Display results.
 				if (isset($page->entries)) {
-					foreach ($page->entries as $keyword)
+					foreach ($page->entries as $element)
 					{
-						
-						$msg=sprintf("%s %s %s\n",$keyword->AdGroupId,$keyword->criterion->text,$keyword->userStatus);
-						$this->log->info( $msg );	
+						//$this->log->info(json_encode($keyword));
+						//if(!in_array($keyword->criterion->id,$all_keywords_id))
+						//array_push($all_keywords_id, $keyword->criterion->id);
+						if ($element->criterion->type=='KEYWORD')
+						{
+							$k = array("api_id"=>$element->criterion->id,
+									"api_qualityscore"=>0,
+									"api_keywordname"=>$element->criterion->text,
+									"api_keywordstatus"=>$element->userStatus,
+									"api_campaignid"=>$element->baseCampaignId,
+									"api_adgroupid"=>$element->adGroupId,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							$this->dbAdWord->insertKeywords($k);
+						}
+						else if ($element->criterion->type=='PLACEMENT')
+						{
+							$u = array("api_id"=>$element->criterion->id,
+									"api_url"=>$element->criterion->url,
+									"api_campaignid"=>$element->baseCampaignId,
+									"api_adgroupid"=>$element->adGroupId,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							$this->dbAdWord->insertUrl($u);
+						}
 					}
 				}
 	
@@ -409,6 +445,11 @@ class DownloadAdWords
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
 	
 			$ret=true;
+			
+			$msg=sprintf("Downloaded %d keywords...",$this->dbAdWord->countKeywords());
+			$this->log->info ( $msg );
+			$msg=sprintf("Downloaded %d url...",$this->dbAdWord->countUrl());
+			$this->log->info ( $msg );
 	
 		} catch (\Exception $ex) {
 	
@@ -459,10 +500,13 @@ class DownloadAdWords
 		}
 		
 		try {
-			$sql = "LOCK TABLES ".$table." WRITE";
+			$sql = "set foreign_key_checks=0";
 			$stmt = $conn->prepare ( $sql );
 			$stmt->execute ();
 			
+			$sql = "LOCK TABLES ".$table." WRITE";
+			$stmt = $conn->prepare ( $sql );
+			$stmt->execute ();
 			
 			$sql = "DELETE FROM ".$table." WHERE api_date >= :api_date AND api_externalcustomerid = :api_externalcustomerid";
 			$stmt = $conn->prepare ( $sql );
@@ -471,6 +515,10 @@ class DownloadAdWords
 			$stmt->execute (); // QUESTA RIGA PRENDE IL FILE DAL PERCORSO INDICATO E CARICA LA TABELLA*/
 	
 			$sql = "UNLOCK  TABLES";
+			$stmt = $conn->prepare ( $sql );
+			$stmt->execute ();
+			
+			$sql = "set foreign_key_checks=1";
 			$stmt = $conn->prepare ( $sql );
 			$stmt->execute ();
 			
@@ -570,7 +618,6 @@ class DownloadAdWords
 					TERMINATED BY '\n'
 					IGNORE 1 LINES
 					(" . $table_columns_for_insert . ")";
-					print_r($sql);
 					
 					$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 					$stmt = $conn->prepare ( $sql );
@@ -801,9 +848,7 @@ class DownloadAdWords
 				
 									$fileCSV_METRIC = self::downloadMetriche( $all_metrics[$i], $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
 									array_push($arrayReport, $fileCSV_METRIC);
-									
 									$i++;
-									
 								}
 							}
 						}
@@ -845,7 +890,7 @@ class DownloadAdWords
 		$path_csv=getenv ( 'CSV_PATH_FILE' );
 		$path_imp=getenv ( 'IMP_PATH_FILE' );
 		$imp_file=str_replace("csv","imp",$csv_file);
-		$this->log->info ( "... renameCSVtoIMP()" );
+		$this->log->info ( "renameCSVtoIMP()" );
 		$this->log->info ( "    ".$path_csv."/".$csv_file );
 		$this->log->info ( "    ".$path_imp."/".$imp_file );
 		$ok = rename($path_csv."/".$csv_file, $path_imp."/".$imp_file);
