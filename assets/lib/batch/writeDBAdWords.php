@@ -216,6 +216,8 @@ class WriteDBAdWords {
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute();
 						
+						$this->log->info("... Campagne ok !!");
+						
 						/* INSERT ANAGRAFICHE GRUPPI */
 						//$table[1]; // write anagrafiche Gruppi
 						$fields=self::getField(DOWNLOAD_ADGROUP,$conn);	
@@ -223,6 +225,8 @@ class WriteDBAdWords {
 						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute();
+						
+						$this->log->info("... Gruppi ok !!");
 						
 						/* INSERT ANAGRAFICHE KEYWORDS */
 						//$table[2]; // write anagrafiche keywords
@@ -232,6 +236,8 @@ class WriteDBAdWords {
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute();
 						
+						$this->log->info("... Keywords ok !!");
+						
 						/* INSERT ANAGRAFICHE KEYWORDS */
 						//$table[3]; // write anagrafiche url
 						$fields=self::getField(DOWNLOAD_URL,$conn);
@@ -239,6 +245,8 @@ class WriteDBAdWords {
 						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute();
+						
+						$this->log->info("... Url ok !!");
 						
 						
 						$sql = "set foreign_key_checks=1";
