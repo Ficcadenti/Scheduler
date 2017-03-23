@@ -103,12 +103,12 @@ class WriteDBAdWords {
 		array_push ($this->url,$u);
 	}
 	
-	public function save()
+	public function save($status)
 	{
 		$ret=true;
 		$this->log->info("save()");
 		
-		if(self::clearReportAnagrafiche($this->id_user,$this->id_account_adw))
+		if(self::clearReportAnagrafiche($this->id_user,$this->id_account_adw,$status))
 		{
 			$this->log->info("writeDBAnagrafiche()");
 			$ret=self::writeDBAnagrafiche($this->id_user,$this->id_account_adw);
@@ -187,7 +187,14 @@ class WriteDBAdWords {
 				foreach ($row as $key => $val)
 				{
 					$cont_key++;
-					$fieldsValues=$fieldsValues.$conn->quote(stripslashes($row[$key]));
+					if(($key=='api_status')&&($row[$key]==''))
+					{
+						$fieldsValues=$fieldsValues.$conn->quote(stripslashes("ENABLED"));
+					}
+					else 
+					{
+						$fieldsValues=$fieldsValues.$conn->quote(stripslashes($row[$key]));
+					}
 					if($cont_key<count($row))
 					{
 						$fieldsValues=$fieldsValues.",";
@@ -331,18 +338,27 @@ class WriteDBAdWords {
 		}
 	}
 	
-	private function clearReportAnagrafiche($id_user,$id_account_adw)
+	private function clearReportAnagrafiche($id_user,$id_account_adw,$status)
 	{
-		$ret   = true;
-		$table = array("cache_campaign_attributes",
-				"cache_adgroup_attributes",
-				"cache_keywords_attributes",
-				"cache_url_attributes");
+		$ret         = true;
+		$statusWhere = "";
+		$table       = array("cache_campaign_attributes",
+						"cache_adgroup_attributes",
+						"cache_keywords_attributes",
+						"cache_url_attributes");
 	
 	
-		$this->log->info ( "clearReportAnagrafiche per ID_user ".$id_user.", ID_ADW_Account: ".$id_account_adw);
+		$this->log->info ( "clearReportAnagrafiche per ID_user ".$id_user.", ID_ADW_Account: ".$id_account_adw." status: ".$status);
 	
 	
+		if($status=='ALL')
+		{
+			$statusWhere="";
+		}else
+		{
+			$statusWhere=" AND api_status='".$status."'";
+		}
+		
 		if($this->connetion==true)
 		{
 			$conn = self::getConnectionFromUserId ( $id_user );
@@ -359,10 +375,13 @@ class WriteDBAdWords {
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
 				
-						$sql = "DELETE FROM ".$table[$i]." WHERE api_externalcustomerid = :api_externalcustomerid";
+						$sql = "DELETE FROM ".$table[$i]." WHERE api_externalcustomerid = :api_externalcustomerid ".$statusWhere;
 						$stmt = $conn->prepare ( $sql );
 						$stmt->bindParam ( ':api_externalcustomerid', $id_account_adw );
 						$stmt->execute ();
+						
+						$this->log->info ( $sql );
+						
 				
 						$sql = "UNLOCK  TABLES";
 						$stmt = $conn->prepare ( $sql );
@@ -371,6 +390,8 @@ class WriteDBAdWords {
 						$sql = "set foreign_key_checks=1";
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
+						
+						
 					} 
 					catch ( \PDOException $ex ) {
 						$this->id_error = $ex->getCode();
@@ -462,7 +483,7 @@ class WriteDBAdWords {
 			{
 				foreach ($row as $key => $value)
 				{
-					if(($key=='api_keywordname') || ($key=='api_keywordstatus'))
+					if(($key=='api_keywordname') || ($key=='api_keywordstatus') || ($key=='api_qualityscore') ) 
 					{
 						$msg=sprintf("	  (KEY) %s: %s",$key,$value);
 						$this->log->info($msg);

@@ -301,7 +301,7 @@ class DownloadAdWords
 									"api_servingstatus"=>$campagna->servingStatus,
 									"api_startdate"=>$campagna->startDate,
 									"api_enddate"=>$campagna->endDate,
-									"api_campaignstatus"=>$campagna->status,
+									"api_status"=>$campagna->status,
 									"api_externalcustomerid"=>$clientCustomerId
 							);
 							
@@ -320,7 +320,7 @@ class DownloadAdWords
 			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
 			
 			
-			$this->dbAdWord->show();
+			//$this->dbAdWord->show();
 			//$this->dbAdWord->showKeyword(166120940,9082894940);
 			//$this->dbAdWord->showKeyword(213596180,15118173260);
 
@@ -376,7 +376,7 @@ class DownloadAdWords
 						{
 							$g = array("api_adgroupid"=>$adgroup->id,
 									"api_adgroupname"=>$adgroup->name,
-									"api_adgroupstatus"=>$adgroup->status,
+									"api_status"=>$adgroup->status,
 									"api_campaignid"=>$adgroup->campaignId,
 									"api_externalcustomerid"=>$clientCustomerId
 							);
@@ -416,6 +416,7 @@ class DownloadAdWords
 		$all_keywords_id         = array();
 		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
 		$ret                     = true;
+		$q                       = 0;
 		
 				
 		/* traduzione per generare l'array dei predicati*/
@@ -431,7 +432,7 @@ class DownloadAdWords
 	
 			// Create selector.
 			$selector = new \Selector();
-			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'Status','KeywordText','PlacementUrl','CriteriaType');
+			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'QualityScore', 'Status','KeywordText','PlacementUrl','CriteriaType');
 			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
 			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
 			if($this->param['status_anagrafiche']!='ALL')
@@ -453,10 +454,18 @@ class DownloadAdWords
 					{
 						if ($element->criterion->type=='KEYWORD')
 						{
+							if(is_null($element->qualityInfo))
+							{
+								$q=0;
+							}
+							else
+							{
+								$q=$element->qualityInfo->qualityScore;
+							}
 							$k = array("api_id"=>$element->criterion->id,
-									"api_qualityscore"=>0,
+									"api_qualityscore"=>$q,
 									"api_keywordname"=>$element->criterion->text,
-									"api_keywordstatus"=>$element->userStatus,
+									"api_status"=>$element->userStatus,
 									"api_campaignid"=>$element->baseCampaignId,
 									"api_adgroupid"=>$element->adGroupId,
 									"api_externalcustomerid"=>$clientCustomerId
@@ -849,7 +858,7 @@ class DownloadAdWords
 							if($ana==true)
 							{
 								$this->dbAdWord->connect();
-								$ret_save=$this->dbAdWord->save();
+								$ret_save=$this->dbAdWord->save($this->param['status_anagrafiche']);
 							}
 							else 
 							{
