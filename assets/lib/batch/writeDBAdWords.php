@@ -445,7 +445,7 @@ class WriteDBAdWords {
 					$this->log->info($msg);
 				}
 				
-				//self::showKeyword($id_campagna,$row['api_adgroupid']);
+				self::showKeyword($id_campagna,$row['api_adgroupid']);
 				//self::showUrl($id_campagna,$row['api_adgroupid']);
 				
 				$this->log->info("");
@@ -462,7 +462,7 @@ class WriteDBAdWords {
 			{
 				foreach ($row as $key => $value)
 				{
-					if($key=='api_keywordname')
+					if(($key=='api_keywordname') || ($key=='api_keywordstatus'))
 					{
 						$msg=sprintf("	  (KEY) %s: %s",$key,$value);
 						$this->log->info($msg);

@@ -95,14 +95,18 @@ $json_str='{
 	"type_schedulazione": 7,
 	"frequenza": 10800,
 	"stato_schedulazione": 6,
-	"download_batch_type": 1,
+	"download_report_type": 2,
+	"abilita_anagrafiche": 0,
+	"status_anagrafiche": "ENABLED",
+	"abilita_metriche": 1,
+	"status_metriche":  "ENABLED",
 	"time_start": "2017-03-14 16:40:00",
 	"dal": "20170212",
 	"al": "20170311"
 }';
 
 
-
+print_r("Try Inserimento");
 if($sm->setBatch($json_str))
 {
 	$sm->showParameter();
@@ -111,6 +115,7 @@ if($sm->setBatch($json_str))
 	{
 		case NEW_BATCH:
 			{
+				print_r("New Batch");
 				$newid=$sm->insert(); /* per creare un nuovo batch */
 				$sm->showParameter(); /* per prendere il nuovo id_schedulazione inserito */
 				$id = $sm->getIdSchedulazione();

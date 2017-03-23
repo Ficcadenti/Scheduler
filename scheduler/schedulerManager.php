@@ -140,9 +140,19 @@ class SchedulerManager {
 				$this->log->info("Non è definito il parametro 'abilita_anagrafiche' !!!");
 				return false;
 			}
+			if (! isset ( $this->param->status_anagrafiche ))
+			{
+				$this->log->info("Non è definito il parametro 'status_anagrafiche' !!!");
+				return false;
+			}
 			if (! isset ( $this->param->abilita_metriche ))
 			{
 				$this->log->info("Non è definito il parametro 'abilita_metriche' !!!");
+				return false;
+			}
+			if (! isset ( $this->param->status_metriche ))
+			{
+				$this->log->info("Non è definito il parametro 'status_metriche' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->time_start ))

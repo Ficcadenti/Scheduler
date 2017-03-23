@@ -22,12 +22,17 @@
     class CommonService
     {
 		private $log 		= null;
-
+		
+		function __construct() {
+		}
+		
+		function __destruct() {
+		}
+		
 		public function setLogger($log)
 		{
 			$this->log=$log;
 		}
-		
 		
 		public function strDade($t)
 		{

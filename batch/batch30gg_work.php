@@ -363,10 +363,10 @@ class Batch30gg_work implements BatchGlobal {
 		
 		$this->log->info ( $command );
 		exec ( escapeshellcmd ( $command ), $output );
-		
+		$this->log->info( json_encode($output) );
 		
 		foreach ( $output as $key => $value ) {
-			$this->log->info($key."=> ".$value);
+			//$this->log->info($key."=> ".$value);
 			$obj = json_decode ( $value );
 			$ret = $obj->failed;
 			if ($ret == 1) {

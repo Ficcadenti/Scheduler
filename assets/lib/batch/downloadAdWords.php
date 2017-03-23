@@ -27,11 +27,13 @@ class DownloadAdWords
 	private $dbAdwords          = null;
 	private $includi_CampagneId = array();
 	private $includi_GruppiId   = array();
+	
 
 	function __construct() {
 		$this->name_file = basename ( __FILE__, ".php" );
 		$this->pid=getmypid();
 		$this->batchType=new BatchDBType();
+		print_r(dirname(dirname(__FILE__)));
 	}
 	
 	function __destruct() {
@@ -274,7 +276,7 @@ class DownloadAdWords
 			$selector = new \Selector();
 			$selector->fields = array('Id', 'Name','Amount','ServingStatus','StartDate','EndDate','Status');
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
-			if($this->param['status_metriche']!='ALL')
+			if($this->param['status_anagrafiche']!='ALL')
 			{
 				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
 			}
@@ -318,7 +320,7 @@ class DownloadAdWords
 			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
 			
 			
-			//$this->dbAdWord->show();
+			$this->dbAdWord->show();
 			//$this->dbAdWord->showKeyword(166120940,9082894940);
 			//$this->dbAdWord->showKeyword(213596180,15118173260);
 
@@ -351,7 +353,7 @@ class DownloadAdWords
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
 
 			$selector->predicates[] = new \Predicate('CampaignId', 'IN',$all_campagne_id);
-			if($this->param['status_metriche']!='ALL')
+			if($this->param['status_anagrafiche']!='ALL')
 			{
 				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
 			}
@@ -415,7 +417,6 @@ class DownloadAdWords
 		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
 		$ret                     = true;
 		
-		//$all_gruppi_id =array(9082894940,15118173260); // per test
 				
 		/* traduzione per generare l'array dei predicati*/
 		foreach ($all_gruppi_id as $key => $value)
@@ -433,7 +434,7 @@ class DownloadAdWords
 			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'Status','KeywordText','PlacementUrl','CriteriaType');
 			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
 			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
-			if($this->param['status_metriche']!='ALL')
+			if($this->param['status_anagrafiche']!='ALL')
 			{
 				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
 			}
@@ -450,9 +451,6 @@ class DownloadAdWords
 				if (isset($page->entries)) {
 					foreach ($page->entries as $element)
 					{
-						//$this->log->info(json_encode($keyword));
-						//if(!in_array($keyword->criterion->id,$all_keywords_id))
-						//array_push($all_keywords_id, $keyword->criterion->id);
 						if ($element->criterion->type=='KEYWORD')
 						{
 							$k = array("api_id"=>$element->criterion->id,
@@ -501,8 +499,9 @@ class DownloadAdWords
 	
 	private function clearReportMetriche($conn,$id_account_adw,$repoType)
 	{
-		$ret=true;
-		$table = "";
+		$ret    = true;
+		$table  = "";
+		$status = "";
 		
 		$s=$this->param['dal'];
 		$str_dal = substr($s,0,4)."-".substr($s,4,2)."-".substr($s,6,2);
@@ -512,6 +511,10 @@ class DownloadAdWords
 		
 		$this->log->info ( "clearReportMetriche (dal: ".$str_dal." al: " .$str_al. ") per ADW Account: ".$id_account_adw." tipo report: ".$this->batchType->getDescrizione($repoType));
 		
+		if($this->param['status_metriche']!='ALL')
+		{
+			$status=$this->param['status_metriche'];
+		}
 		switch($repoType)
 		{
 	
