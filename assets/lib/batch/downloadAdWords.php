@@ -191,16 +191,22 @@ class DownloadAdWords
 				{
 					$reportDefinition->reportType = 'CAMPAIGN_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = true;
-					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					}
 				}break;
 				
 			case DOWNLOAD_ADGROUP:
 				{
 					$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = true;
-					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
-					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
-					
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					}
 				}break;
 			
 				
@@ -208,17 +214,23 @@ class DownloadAdWords
 				{
 					$reportDefinition->reportType = 'KEYWORDS_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = true;
-					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
-					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
-					$selector->predicates[] = new \Predicate('Status', 'EQUALS','ENABLED');
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_metriche']);
+					}
 				}break;
 				
 			case DOWNLOAD_URL:
 				{
 					$reportDefinition->reportType = 'URL_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = false;
-					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
-					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					}
 				}break;
 				
 		}
@@ -262,8 +274,10 @@ class DownloadAdWords
 			$selector = new \Selector();
 			$selector->fields = array('Id', 'Name','Amount','ServingStatus','StartDate','EndDate','Status');
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
-			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
-	
+			if($this->param['status_metriche']!='ALL')
+			{
+				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			}
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
 			do 
@@ -337,8 +351,10 @@ class DownloadAdWords
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
 
 			$selector->predicates[] = new \Predicate('CampaignId', 'IN',$all_campagne_id);
-			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
-			 
+			if($this->param['status_metriche']!='ALL')
+			{
+				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			}
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
 	
@@ -417,8 +433,10 @@ class DownloadAdWords
 			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'Status','KeywordText','PlacementUrl','CriteriaType');
 			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
 			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
-			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
-			
+			if($this->param['status_metriche']!='ALL')
+			{
+				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			}
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
 	

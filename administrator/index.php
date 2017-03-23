@@ -110,6 +110,22 @@ $result = $db_connection->query("SELECT id,name FROM users");
     
     <div class="form-group">
        <div class="row">
+        <div class="col-sm-3"><b>Stato Anagrafiche</b></div>
+        <select class="form-control" id="stato_anagrafiche" name="stato_anagrafiche">
+      <?php
+        $db_connection->select_db("adplify_scheduler");
+        $result = $db_connection->query("SELECT * FROM adword_status_lib");
+        while($row = $result->fetch_assoc())
+          {
+              echo  "<option value=\"".$row['status'] ."\">".$row['status']."(".$row['status'].")" ."</option><br>";
+          }
+      ?>
+      </select>
+          </div>
+    </div>
+    
+    <div class="form-group">
+       <div class="row">
         <div class="col-sm-3"><b>Abilita Metriche</b></div>
         <div class="col-sm-9">
       		<div class="btn-group" data-toggle="buttons">
@@ -121,6 +137,22 @@ $result = $db_connection->query("SELECT id,name FROM users");
                 </label> 
             </div>
           </div>
+          </div>
+    </div>
+    
+    <div class="form-group">
+       <div class="row">
+        <div class="col-sm-3"><b>Stato Metriche</b></div>
+        <select class="form-control" id="stato_metriche name="stato_metriche">
+      <?php
+        $db_connection->select_db("adplify_scheduler");
+        $result = $db_connection->query("SELECT * FROM adword_status_lib");
+        while($row = $result->fetch_assoc())
+          {
+              echo  "<option value=\"".$row['status'] ."\">".$row['status']."(".$row['status'].")" ."</option><br>";
+          }
+      ?>
+      </select>
           </div>
     </div>
     
