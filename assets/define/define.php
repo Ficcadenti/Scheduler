@@ -68,6 +68,8 @@
   define("NOME_CAMPI",0);
   define("VALORE_CAMPI",1);
   
+  define("INSERT_BLOCK_NUM",1000);
+  
   
   
   

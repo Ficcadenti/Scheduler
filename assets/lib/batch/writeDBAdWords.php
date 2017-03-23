@@ -110,7 +110,6 @@ class WriteDBAdWords {
 		
 		if(self::clearReportAnagrafiche($this->id_user,$this->id_account_adw,$status))
 		{
-			$this->log->info("writeDBAnagrafiche()");
 			$ret=self::writeDBAnagrafiche($this->id_user,$this->id_account_adw);
 		}
 		else 
@@ -121,7 +120,7 @@ class WriteDBAdWords {
 		return $ret;
 	}
 	
-	private function getField($repoType,$conn)
+	private function getField($repoType,$conn,$start,$len)
 	{
 		$fields       = "";
 		$fieldsValues = "";
@@ -137,7 +136,7 @@ class WriteDBAdWords {
 					if(count($this->campagne)>0)
 					{
 						$a = array_keys($this->campagne[0]);
-						$values = ($this->campagne);
+						$values = array_slice(($this->campagne),$start,$len);
 					}
 				}break;
 				
@@ -145,8 +144,8 @@ class WriteDBAdWords {
 				{
 					if(count($this->gruppi)>0)
 					{
-						$a = array_keys($this->gruppi[0]);
-						$values = ($this->gruppi);
+						$a =  array_keys($this->gruppi[0]);
+						$values = array_slice(($this->gruppi),$start,$len);
 					}
 				}break;
 		
@@ -154,8 +153,8 @@ class WriteDBAdWords {
 				{
 					if(count($this->keywords)>0)
 					{
-						$a = array_keys($this->keywords[0]);
-						$values = ($this->keywords);
+						$a =  array_keys($this->keywords[0]);
+						$values = array_slice(($this->keywords),$start,$len);
 					}
 				}break;
 					
@@ -163,8 +162,8 @@ class WriteDBAdWords {
 				{
 					if(count($this->url)>0)
 					{
-						$a = array_keys($this->url[0]);
-						$values = ($this->url);
+						$a =  array_keys($this->url[0]);
+						$values = array_slice(($this->url),$start,$len);
 					}
 				}break;	
 		}
@@ -212,13 +211,21 @@ class WriteDBAdWords {
 	
 	private function writeDBAnagrafiche($id_user,$id_account_adw)
 	{
-		$ret      = true;
+		$ret           = true;
+		$numIterazioni = 0;
+		$resto         = 0;
+		$start         = 0;
+		$c             = 0;
+		$tstart        = 0;
+		$tstop         = 0;
+		$delta         = 0;
+		$table         = array(	"cache_campaign_attributes",
+							"cache_adgroup_attributes",
+							"cache_keywords_attributes",
+							"cache_url_attributes");
 		
-		$table    = array(	"cache_campaign_attributes",
-						"cache_adgroup_attributes",
-						"cache_keywords_attributes",
-						"cache_url_attributes");
-	
+		$this->log->info("writeDBAnagrafiche()");
+		
 		if($this->connetion==true)
 		{
 			$conn = self::getConnectionFromUserId ( $id_user );
@@ -230,52 +237,94 @@ class WriteDBAdWords {
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
 						
-						if(count($this->campagne)>0)
+						
+						$c=count($this->campagne);
+						if($c>0)
 						{
+							$tstart=time();
 							/* INSERT ANAGRAFICHE CAMPAGNE */
-							$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn);
+							$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn,0,$c);
 							$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
 							
-							$this->log->info("... Campagne ok !!");
+							$tstop=time();
+							$delta=($tstop-$tstart);
+							$this->log->info("... writed $c campagne !!! $delta msec");
 						}
 						
-						if(count($this->gruppi)>0)
+						$c=count($this->gruppi);
+						if($c>0)
 						{
 							/* INSERT ANAGRAFICHE GRUPPI */
-							$fields=self::getField(DOWNLOAD_ADGROUP,$conn);	
+							$tstart=time();
+							$fields=self::getField(DOWNLOAD_ADGROUP,$conn,0,$c);	
 							$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
 							
-							$this->log->info("... Gruppi ok !!");
+							$tstop=time();
+							$delta=($tstop-$tstart);
+							$this->log->info("... writed $c gruppi !!! $delta msec");
 						}
 						
-						if(count($this->keywords)>0)
+						$c=count($this->keywords);
+						if($c>0)
 						{
-							/* INSERT ANAGRAFICHE KEYWORDS */
-							$fields=self::getField(DOWNLOAD_KEYWORDS,$conn);
+							$tstart=time();
+							$numIterazioni=(int)($c/INSERT_BLOCK_NUM);
+							$resto=($c%INSERT_BLOCK_NUM);
+							$start=0;
+							for($i=0;$i<$numIterazioni;$i++)
+							{
+								// INSERT ANAGRAFICHE KEYWORDS
+								$fields=self::getField(DOWNLOAD_KEYWORDS,$conn,$start,INSERT_BLOCK_NUM);
+								$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+								$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+								$stmt = $conn->prepare ( $sql );
+								$stmt->execute();
+								
+								$this->log->info("... writed ".INSERT_BLOCK_NUM." keyword (".$start.",".($start+INSERT_BLOCK_NUM-1).") !!!");
+								$start=$start+INSERT_BLOCK_NUM;
+							}
+							if($resto!=0)
+							{
+								$fields=self::getField(DOWNLOAD_KEYWORDS,$conn,$start,$resto);
+								$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+								$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+								$stmt = $conn->prepare ( $sql );
+								$stmt->execute();
+								
+								$this->log->info("... writed ".INSERT_BLOCK_NUM." keyword (".$start.",".($start+$resto-1).") !!!");
+							}
+							/*
+							$fields=self::getField(DOWNLOAD_KEYWORDS,$conn,$start,$c);
 							$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
-							
-							$this->log->info("... Keywords ok !!");
+							*/
+							$tstop=time();
+							$delta=($tstop-$tstart);
+							$this->log->info("... writed all keywords !!! $delta msec");
 						}
 						
-						if(count($this->url)>0)
+						$c=count($this->url);
+						if($c>0)
 						{
+							$tstart=time();
 							/* INSERT ANAGRAFICHE KEYWORDS */
-							$fields=self::getField(DOWNLOAD_URL,$conn);
+							$fields=self::getField(DOWNLOAD_URL,$conn,0,$c);
 							$sql = "INSERT INTO ".$table[3]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
 							
-							$this->log->info("... Url ok !!");
+							$tstop=time();
+							$delta=($tstop-$tstart);
+							$this->log->info("... writed $c url!! $delta msec");
 						}
 						
 						$sql = "set foreign_key_checks=1";
