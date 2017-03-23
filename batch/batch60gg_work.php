@@ -184,6 +184,26 @@ class Batch60gg_work implements BatchGlobal {
 				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
 				return false;
 			}
+			if (! isset ( $this->JSONparam->abilita_anagrafiche ))
+			{
+				$this->log->info("Non è definito il parametro 'abilita_anagrafiche' !!!");
+				return false;
+			}
+			if (! isset ( $this->JSONparam->status_anagrafiche ))
+			{
+				$this->log->info("Non è definito il parametro 'status_anagrafiche' !!!");
+				return false;
+			}
+			if (! isset ( $this->JSONparam->abilita_metriche ))
+			{
+				$this->log->info("Non è definito il parametro 'abilita_metriche' !!!");
+				return false;
+			}
+			if (! isset ( $this->JSONparam->status_metriche ))
+			{
+				$this->log->info("Non è definito il parametro 'status_metriche' !!!");
+				return false;
+			}
 			
 			if($this->typeBatch==USER_DEFINED)
 			{
@@ -319,6 +339,18 @@ class Batch60gg_work implements BatchGlobal {
 		
 		$msg = sprintf ( "	--download_report_type: %s", $this->JSONparam->download_report_type );
 		$this->log->info ( $msg );
+		
+		$msg = sprintf ( "	--abilita_anagrafiche: %s", $this->JSONparam->abilita_anagrafiche );
+		$this->log->info ( $msg );
+		
+		$msg = sprintf ( "	--status_anagrafiche: %s", $this->JSONparam->status_anagrafiche );
+		$this->log->info ( $msg );
+		
+		$msg = sprintf ( "	--abilita_metriche: %s", $this->JSONparam->abilita_metriche );
+		$this->log->info ( $msg );
+		
+		$msg = sprintf ( "	--status_metriche: %s", $this->JSONparam->status_metriche );
+		$this->log->info ( $msg );
 
 		$msg = sprintf ( "------------------------------------------------" );
 		$this->log->info ( $msg );
@@ -363,6 +395,10 @@ class Batch60gg_work implements BatchGlobal {
 		$param=array(
 				'id_account_adw' => $this->JSONparam->id_account_adw,
 				'download_report_type' => $this->JSONparam->download_report_type,
+				'abilita_anagrafiche' => $this->JSONparam->abilita_anagrafiche,
+				'status_anagrafiche' => $this->JSONparam->status_anagrafiche,
+				'abilita_metriche' => $this->JSONparam->abilita_metriche,
+				'status_metriche' => $this->JSONparam->status_metriche,
 				'dal' => $this->lista_parametri ['--dal'],
 				'al' => $this->lista_parametri ['--al']
 		);

@@ -14,17 +14,19 @@ date_default_timezone_set ( 'Europe/Rome' );
 
 class DownloadAdWords
 {
-	private $log = null;
-	private $dbh = null;
-	private $name_file = "";
-	private $lista_parametri = array ();
-	private $id_error = BATCH_WITHOUT_ERROR;
-	private $descr_error = "";
-	private $connetion=false;
-	private $param=array();
-	private $pid=-1;
-	private $batchType = null;
-	private $dbAdwords=null;
+	private $log                = null;
+	private $dbh                = null;
+	private $name_file          = "";
+	private $lista_parametri    = array ();
+	private $id_error           = BATCH_WITHOUT_ERROR;
+	private $descr_error        = "";
+	private $connetion          = false;
+	private $param              = array();
+	private $pid                = -1;
+	private $batchType          = null;
+	private $dbAdwords          = null;
+	private $includi_CampagneId = array();
+	private $includi_GruppiId   = array();
 
 	function __construct() {
 		$this->name_file = basename ( __FILE__, ".php" );
@@ -157,9 +159,10 @@ class DownloadAdWords
 		$selector = new \Selector ();
 		$selector->fields = array_keys ( $fields ); // CAMPI DA CHIEDERE A GOOGLE
 		$selector->dateRange = new \DateRange ( $date_min, $date_max ); // INTERVALLO TEMPORALE
+		
 	
 		$reportDefinition = new \ReportDefinition ();
-		$reportDefinition->selector = $selector;
+		
 	
 		$reportDefinition->reportName = 'Criteria performance report #' . uniqid ();
 		// TIPO DI INTERVALLO TEMPORALE
@@ -184,31 +187,43 @@ class DownloadAdWords
 		switch($repoType)
 		{		
 			
-			case DOWNLOAD_ADGROUP:
-				{
-					$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
-					$options ['includeZeroImpressions'] = true;
-				}break;
-			
 			case DOWNLOAD_CAMPAGNE:
 				{
 					$reportDefinition->reportType = 'CAMPAIGN_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = true;
+					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
 				}break;
-						
+				
+			case DOWNLOAD_ADGROUP:
+				{
+					$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
+					$options ['includeZeroImpressions'] = true;
+					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					
+				}break;
+			
+				
 			case DOWNLOAD_KEYWORDS:
 				{
 					$reportDefinition->reportType = 'KEYWORDS_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = true;
+					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					$selector->predicates[] = new \Predicate('Status', 'EQUALS','ENABLED');
 				}break;
 				
 			case DOWNLOAD_URL:
 				{
 					$reportDefinition->reportType = 'URL_PERFORMANCE_REPORT';
 					$options ['includeZeroImpressions'] = false;
+					$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+					$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
 				}break;
 				
 		}
+		
+		$reportDefinition->selector = $selector;
 		
 		$reportDefinition->downloadFormat = 'CSV'; // FORMATO EXPORT ALTRI VALORI : XML
 	
@@ -217,8 +232,10 @@ class DownloadAdWords
 		$filePath = getenv ( 'CSV_PATH_FILE' ) . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
 		$reportUtils = new \ReportUtils ();
 		$reportUtils->DownloadReport ( $reportDefinition, $filePath, $user, $options );
+		
 		return $namefileCSV;
 	}
+	
 	
 	private function downloadAnagrafiche($user_id, $settings, $access_token, $clientCustomerId)
 	{
@@ -245,6 +262,7 @@ class DownloadAdWords
 			$selector = new \Selector();
 			$selector->fields = array('Id', 'Name','Amount','ServingStatus','StartDate','EndDate','Status');
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
+			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
 	
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
@@ -319,6 +337,7 @@ class DownloadAdWords
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
 
 			$selector->predicates[] = new \Predicate('CampaignId', 'IN',$all_campagne_id);
+			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
 			 
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
@@ -398,7 +417,8 @@ class DownloadAdWords
 			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'Status','KeywordText','PlacementUrl','CriteriaType');
 			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
 			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
-	
+			$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			
 			// Create paging controls.
 			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
 	

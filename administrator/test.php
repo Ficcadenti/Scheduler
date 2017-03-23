@@ -101,7 +101,9 @@ $json_str='{
 	"stato_schedulazione": '.$_POST['stato_schedulazione'].',
 	"download_report_type": '.$_POST['download_report_type'].',
 	"abilita_anagrafiche": '.$_POST['abilita_anagrafiche'].',
+	"status_anagrafiche": '.$_POST['status_anagrafiche'].',
 	"abilita_metriche": '.$_POST['abilita_metriche'].',
+	"status_metriche": '.$_POST['status_metriche'].'
 	"time_start": "'.$_POST['time_start'].'",
 	"dal": "20170212",
 	"al": "20170311"

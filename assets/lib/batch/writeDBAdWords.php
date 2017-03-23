@@ -127,64 +127,79 @@ class WriteDBAdWords {
 		$fieldsValues = "";
 		$cont_row     = 0;
 		$cont_key     = 0;
+		$values		  = array();
 		
 		switch($repoType)
 		{
 		
 			case DOWNLOAD_CAMPAGNE:
 				{
-					$a = array_keys($this->campagne[0]);
-					$values = ($this->campagne);
+					if(count($this->campagne)>0)
+					{
+						$a = array_keys($this->campagne[0]);
+						$values = ($this->campagne);
+					}
 				}break;
 				
 			case DOWNLOAD_ADGROUP:
 				{
-					$a = array_keys($this->gruppi[0]);
-					$values = ($this->gruppi);
+					if(count($this->gruppi)>0)
+					{
+						$a = array_keys($this->gruppi[0]);
+						$values = ($this->gruppi);
+					}
 				}break;
 		
 			case DOWNLOAD_KEYWORDS:
 				{
-					$a = array_keys($this->keywords[0]);
-					$values = ($this->keywords);
+					if(count($this->keywords)>0)
+					{
+						$a = array_keys($this->keywords[0]);
+						$values = ($this->keywords);
+					}
 				}break;
 					
 			case DOWNLOAD_URL:
 				{
-					$a = array_keys($this->url[0]);
-					$values = ($this->url);
+					if(count($this->url)>0)
+					{
+						$a = array_keys($this->url[0]);
+						$values = ($this->url);
+					}
 				}break;	
 		}
 		
-		$fields=sprintf("`%s`",$a[0]);	
-		
-		for($i=1;$i<count($a);$i++)
+		if(count($values)>0)
 		{
-			$fields=$fields.",".sprintf("`%s`",$a[$i]);	
-		}
-		
-		foreach ($values as $row)
-		{
-			$cont_key=0;$cont_row++;
-				
-			$fieldsValues=$fieldsValues."(";
-			$keys = array_keys($row);
-			foreach ($row as $key => $val)
+			$fields=sprintf("`%s`",$a[0]);	
+			
+			for($i=1;$i<count($a);$i++)
 			{
-				$cont_key++;
-				$fieldsValues=$fieldsValues.$conn->quote(stripslashes($row[$key]));
-				if($cont_key<count($row))
+				$fields=$fields.",".sprintf("`%s`",$a[$i]);	
+			}
+			
+			foreach ($values as $row)
+			{
+				$cont_key=0;$cont_row++;
+					
+				$fieldsValues=$fieldsValues."(";
+				$keys = array_keys($row);
+				foreach ($row as $key => $val)
+				{
+					$cont_key++;
+					$fieldsValues=$fieldsValues.$conn->quote(stripslashes($row[$key]));
+					if($cont_key<count($row))
+					{
+						$fieldsValues=$fieldsValues.",";
+					}
+				}
+				$fieldsValues=$fieldsValues.")";
+				if($cont_row<count($values))
 				{
 					$fieldsValues=$fieldsValues.",";
 				}
 			}
-			$fieldsValues=$fieldsValues.")";
-			if($cont_row<count($values))
-			{
-				$fieldsValues=$fieldsValues.",";
-			}
 		}
-
 		return array($fields,$fieldsValues);		
 	}
 	
@@ -208,46 +223,53 @@ class WriteDBAdWords {
 						$stmt = $conn->prepare ( $sql );
 						$stmt->execute ();
 						
-						/* INSERT ANAGRAFICHE CAMPAGNE */
-						$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn);
-						//$table[0]; // write anagrafiche campagne
-						$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute();
+						if(count($this->campagne)>0)
+						{
+							/* INSERT ANAGRAFICHE CAMPAGNE */
+							$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn);
+							$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							$stmt = $conn->prepare ( $sql );
+							$stmt->execute();
+							
+							$this->log->info("... Campagne ok !!");
+						}
 						
-						$this->log->info("... Campagne ok !!");
+						if(count($this->gruppi)>0)
+						{
+							/* INSERT ANAGRAFICHE GRUPPI */
+							$fields=self::getField(DOWNLOAD_ADGROUP,$conn);	
+							$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							$stmt = $conn->prepare ( $sql );
+							$stmt->execute();
+							
+							$this->log->info("... Gruppi ok !!");
+						}
 						
-						/* INSERT ANAGRAFICHE GRUPPI */
-						//$table[1]; // write anagrafiche Gruppi
-						$fields=self::getField(DOWNLOAD_ADGROUP,$conn);	
-						$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute();
+						if(count($this->keywords)>0)
+						{
+							/* INSERT ANAGRAFICHE KEYWORDS */
+							$fields=self::getField(DOWNLOAD_KEYWORDS,$conn);
+							$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							$stmt = $conn->prepare ( $sql );
+							$stmt->execute();
+							
+							$this->log->info("... Keywords ok !!");
+						}
 						
-						$this->log->info("... Gruppi ok !!");
-						
-						/* INSERT ANAGRAFICHE KEYWORDS */
-						//$table[2]; // write anagrafiche keywords
-						$fields=self::getField(DOWNLOAD_KEYWORDS,$conn);
-						$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute();
-						
-						$this->log->info("... Keywords ok !!");
-						
-						/* INSERT ANAGRAFICHE KEYWORDS */
-						//$table[3]; // write anagrafiche url
-						$fields=self::getField(DOWNLOAD_URL,$conn);
-						$sql = "INSERT INTO ".$table[3]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-						$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute();
-						
-						$this->log->info("... Url ok !!");
-						
+						if(count($this->url)>0)
+						{
+							/* INSERT ANAGRAFICHE KEYWORDS */
+							$fields=self::getField(DOWNLOAD_URL,$conn);
+							$sql = "INSERT INTO ".$table[3]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							$stmt = $conn->prepare ( $sql );
+							$stmt->execute();
+							
+							$this->log->info("... Url ok !!");
+						}
 						
 						$sql = "set foreign_key_checks=1";
 						$stmt = $conn->prepare ( $sql );
@@ -423,8 +445,8 @@ class WriteDBAdWords {
 					$this->log->info($msg);
 				}
 				
-				self::showKeyword($id_campagna,$row['api_adgroupid']);
-				self::showUrl($id_campagna,$row['api_adgroupid']);
+				//self::showKeyword($id_campagna,$row['api_adgroupid']);
+				//self::showUrl($id_campagna,$row['api_adgroupid']);
 				
 				$this->log->info("");
 			}
