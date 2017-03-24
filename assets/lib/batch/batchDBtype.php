@@ -55,7 +55,6 @@ class BatchDBType {
 		if ($this->connetion==true) {
 			unset ( $this->batch_type_lib );
 			$this->batch_type_lib = array ();
-			$this->log->info ( "Loading batch_type_lib..." );
 			
 			try {
 				

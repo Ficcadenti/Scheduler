@@ -251,7 +251,7 @@ class WriteDBAdWords {
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c campagne !!! $delta msec");
+							$this->log->info("... writed $c campagne in $delta msec !!!");
 						}
 						
 						$c=count($this->gruppi);
@@ -267,7 +267,7 @@ class WriteDBAdWords {
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c gruppi !!! $delta msec");
+							$this->log->info("... writed $c gruppi in $delta msec !!!");
 						}
 						
 						$c=count($this->keywords);
@@ -308,7 +308,7 @@ class WriteDBAdWords {
 							*/
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed all keywords !!! $delta msec");
+							$this->log->info("... writed $c keywords in $delta msec !!!");
 						}
 						
 						$c=count($this->url);
@@ -324,7 +324,7 @@ class WriteDBAdWords {
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c url!! $delta msec");
+							$this->log->info("... writed $c url in $delta msec !!!");
 						}
 						
 						$sql = "set foreign_key_checks=1";

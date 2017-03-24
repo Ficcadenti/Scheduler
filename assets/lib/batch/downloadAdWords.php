@@ -257,6 +257,9 @@ class DownloadAdWords
 		$all_campagne_id    = array();
 		$adwordsUser        = new \AdWordsUser ();
 		$ret                = false;
+		$tstart             = 0;
+		$tstop              = 0;
+		$delta              = 0;
 		
 		$adwordsUser->SetOAuth2Info ( array (
 				'client_id' => $settings->client_id,
@@ -269,7 +272,7 @@ class DownloadAdWords
 		$adwordsUser->SetDeveloperToken ( $settings->dev_key );
 	
 		try {
-			
+			$tstart=time();
 			$all_campagneervice = $adwordsUser->GetService('CampaignService', ADWORDS_VERSION);
 		
 			// Create selector.
@@ -310,15 +313,17 @@ class DownloadAdWords
 						}
 					}
 				}
-				$msg=sprintf("Downloaded %d campagne...",$this->dbAdWord->countCampagne());
-				$this->log->info ( $msg );
 				// Advance the paging index.
 				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
 			$ret=true;
 
-			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
+			$tstop=time();
+			$delta=($tstop-$tstart);
+			$msg=sprintf("Downloaded %d campagne in %d msec !!!",$this->dbAdWord->countCampagne(),$delta);
+			$this->log->info ( $msg );
 			
+			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
 			
 			//$this->dbAdWord->show();
 			//$this->dbAdWord->showKeyword(166120940,9082894940);
@@ -342,9 +347,13 @@ class DownloadAdWords
 		$all_adgroups_id = null;
 		$clientCustomerId = $adwordsUser->GetClientCustomerId();
 		$ret=true;
+		$tstart             = 0;
+		$tstop              = 0;
+		$delta              = 0;
 		
 		try {
 	
+			$tstart=time();
 			$service = $adwordsUser->GetService('AdGroupService', ADWORDS_VERSION);
 	
 			// Create selector.
@@ -390,12 +399,12 @@ class DownloadAdWords
 				// Advance the paging index.
 				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
 			} while ($page->totalNumEntries > $selector->paging->startIndex);
-	
-			
-			$msg=sprintf("Downloaded %d gruppi...",$this->dbAdWord->countGruppi());
-			$this->log->info ( $msg );
-			
 			$ret=true;
+			
+			$tstop=time();
+			$delta=($tstop-$tstart);
+			$msg=sprintf("Downloaded %d gruppi in %d msec !!!",$this->dbAdWord->countGruppi(),$delta);
+			$this->log->info ( $msg );
 			
 			$ret=$ret && self::downloadAnagraficheKeywordsAndUrl($adwordsUser,$all_adgroups_id);
 	
@@ -417,6 +426,9 @@ class DownloadAdWords
 		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
 		$ret                     = true;
 		$q                       = 0;
+		$tstart                  = 0;
+		$tstop                   = 0;
+		$delta                   = 0;
 		
 				
 		/* traduzione per generare l'array dei predicati*/
@@ -428,6 +440,7 @@ class DownloadAdWords
 
 		try {
 	
+			$tstart=time();
 			$service = $adwordsUser->GetService('AdGroupCriterionService', ADWORDS_VERSION);
 	
 			// Create selector.
@@ -491,9 +504,12 @@ class DownloadAdWords
 	
 			$ret=true;
 			
-			$msg=sprintf("Downloaded %d keywords...",$this->dbAdWord->countKeywords());
+			$tstop=time();
+			$delta=($tstop-$tstart);
+			
+			$msg=sprintf("Downloaded %d keywords ",$this->dbAdWord->countKeywords()." and");
 			$this->log->info ( $msg );
-			$msg=sprintf("Downloaded %d url...",$this->dbAdWord->countUrl());
+			$msg=sprintf("Downloaded %d url in %d msec !!!",$this->dbAdWord->countUrl(),$delta);
 			$this->log->info ( $msg );
 	
 		} catch (\Exception $ex) {
@@ -511,14 +527,18 @@ class DownloadAdWords
 		$ret    = true;
 		$table  = "";
 		$status = "";
+		$tstart = 0;
+		$tstop  = 0;
+		$delta  = 0;
 		
+		$tstart=time();
 		$s=$this->param['dal'];
 		$str_dal = substr($s,0,4)."-".substr($s,4,2)."-".substr($s,6,2);
 		$s=$this->param['al'];
 		$str_al = substr($s,0,4)."-".substr($s,4,2)."-".substr($s,6,2);
 		
 		
-		$this->log->info ( "clearReportMetriche (dal: ".$str_dal." al: " .$str_al. ") per ADW Account: ".$id_account_adw." tipo report: ".$this->batchType->getDescrizione($repoType));
+		$this->log->info ( "... clearReportMetriche (dal: ".$str_dal." al: " .$str_al. ") per ADW Account: ".$id_account_adw." tipo report: ".$this->batchType->getDescrizione($repoType));
 		
 		if($this->param['status_metriche']!='ALL')
 		{
@@ -580,6 +600,9 @@ class DownloadAdWords
 			$this->log->info ( $this->descr_error );
 		}
 		
+		$tstop=time();
+		$delta=($tstop-$tstart);
+		$this->log->info ( "... clear in $delta msec !!!" );
 		return $ret;
 	}
 	
@@ -587,7 +610,6 @@ class DownloadAdWords
 	public function writeDB($user_id,$id_account_adw,$repoType,$fileCSV)
 	{
 		$ret=true;
-		
 		if(self::writeDBMetriche($user_id,$id_account_adw,$repoType,$fileCSV))
 		{
 			/** da mandare un codice di errore per capire dove o fallito: metriche o anagrafiche */
@@ -605,10 +627,12 @@ class DownloadAdWords
 	
 	private function writeDBMetriche($user_id,$id_account_adw,$repoType,$fileCSV)
 	{
-		$ret=true;
-		$table = "";
+		$ret              = true;
+		$table            = "";
 		$complete_fileCSV = getenv ( 'CSV_PATH_FILE' ) . '/' .$fileCSV;
-	
+		$tstart           = 0;
+		$tstop            = 0;
+		$delta            = 0;
 		
 		switch($repoType)
 		{
@@ -653,8 +677,12 @@ class DownloadAdWords
 			/*clear data */
 			if(self::clearReportMetriche($conn,$id_account_adw,$repoType))
 			{
+				
 				try 
 				{
+					$this->log->info ("... writeDBMetriche (".$this->batchType->getSuffisso($repoType).") CSV file '".$fileCSV."'");
+					$tstart = time();
+					
 					$sql = "set foreign_key_checks=0";
 					$stmt = $conn->prepare ( $sql );
 					$stmt->execute ();
@@ -677,6 +705,10 @@ class DownloadAdWords
 					$stmt = $conn->prepare ( $sql );
 					$stmt->execute ();
 					$ret=true;
+					
+					$tstop=time();
+					$delta=($tstop-$tstart);
+					$this->log->info ( "... writeDBMetriche in $delta msec !!!" );
 				}
 				catch (\Exception $ex) {
 				
@@ -694,6 +726,8 @@ class DownloadAdWords
 		{
 			$ret=false;
 		}
+		
+		
 		
 		return $ret;
 
@@ -819,6 +853,9 @@ class DownloadAdWords
 		$arrayReport       = array ();
 		$this->param       = $param;
 		$repoType          = $this->param['download_report_type'];
+		$tstart            = 0;
+		$tstop             = 0;
+		$delta             = 0;
 		
 		
 		$this->batchType->connect();
@@ -895,9 +932,12 @@ class DownloadAdWords
 									$this->log->info("... downloading report type (".
 															$this->batchType->getSuffisso($all_metrics[$i]).") sul file '".$namefileCSV."'");
 									
-				
+									$tstart=time();
 									$fileCSV_METRIC = self::downloadMetriche( $all_metrics[$i], $user_id, $namefileCSV, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
 									array_push($arrayReport, $fileCSV_METRIC);
+									$tstop=time();
+									$delte=($tstop-$tstart);
+									$this->log->info("... downloaded $delte msec !!!");
 									$i++;
 								}
 							}
@@ -940,9 +980,9 @@ class DownloadAdWords
 		$path_csv=getenv ( 'CSV_PATH_FILE' );
 		$path_imp=getenv ( 'IMP_PATH_FILE' );
 		$imp_file=str_replace("csv","imp",$csv_file);
-		$this->log->info ( "renameCSVtoIMP()" );
-		$this->log->info ( "    ".$path_csv."/".$csv_file );
-		$this->log->info ( "    ".$path_imp."/".$imp_file );
+		$this->log->info ( "... renameCSVtoIMP()" );
+		$this->log->info ( "      ".$path_csv."/".$csv_file );
+		$this->log->info ( "      ".$path_imp."/".$imp_file );
 		$ok = rename($path_csv."/".$csv_file, $path_imp."/".$imp_file);
 		if($ok==false)
 		{
