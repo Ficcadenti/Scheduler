@@ -88,6 +88,10 @@
 		      $p=0;
 		      $num_int=1;
 		     
+		      /*print_r("run_time_unix=".CommonService::strDade($run_time_unix));
+		      print_r("\n");
+		      print_r("ts_batch_unix=".CommonService::strDade($ts_batch_unix));
+		      print_r("\n");*/
 		      switch($id_type)
 		      {
 			      case BATCH_ORARIO: /* ORARIO */
@@ -112,6 +116,8 @@
 			      }break;
 		      }
 		      
+		      $val = ( int ) ($ts_batch_unix / (ROUND_TIME));
+		      $ts_batch_unix = (ROUND_TIME) * $val;
 		      /* calcolo in next time start */
 		      $t=$ts_batch_unix+($num_int*$p);
 		      $str_t=CommonService::strDade($t);

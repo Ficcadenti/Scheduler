@@ -18,6 +18,7 @@
 *.lock
 *.csv
 *.imp
+.metadata
 .settings
 .project
 .buildpath
