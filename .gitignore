@@ -1,15 +1,15 @@
 #   |--------------------------------------------------------------------------
 #   | Application Scheduler
 #   | AUTHORS:
-#	| Author Name		Raffaele Ficcadenti
-#	| Author email		raffaele.ficcadenti@gmail.com
+#   | Author Name		Raffaele Ficcadenti
+#   | Author email		raffaele.ficcadenti@gmail.com
 #   |
 #   | FILE
-#   | scheduler.php
+#   | .gitignore
 #   |
-#	| HISTORY:
-#	| -[Date]-      -[Who]-               -[What]-
-#	| 01-03-2017    Ficcadenti Raffaele   Versione 1.0 
+#   | HISTORY:
+#   | -[Date]-      -[Who]-               -[What]-
+#   | 01-03-2017    Ficcadenti Raffaele   Versione 1.0 
 #   |--------------------------------------------------------------------------
 #   |
 #   | 
@@ -22,7 +22,6 @@
 .settings
 .project
 .buildpath
-adplify_be
-adplify_fe
 AdwordsAPIExample
 vendor
+/nbproject

@@ -1,1 +1,1 @@
-Directory dei log dello schedulatore
+Directory log scheduler

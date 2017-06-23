@@ -104,6 +104,18 @@
 			      	}	
 	
 			      }break;
+                              
+                              case BATCH_GIORNALIERO: /* GIORNALIERO */
+			      {
+			      	$p=(60*60)*24;
+			      	if($run_time_unix > $ts_batch_unix)
+			      	{
+			      		$num_int=(int)(($run_time_unix-$ts_batch_unix)/$p);
+			      		$num_int++;
+			      	}	
+	
+			      }break;
+                              
 			      
 			      case BATCH_PERIODICO: /* ORARIO */
 			      {

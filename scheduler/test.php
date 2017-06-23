@@ -28,6 +28,24 @@ date_default_timezone_set ( 'Europe/Rome' );
 
 /* START SchedulerManager */
 
+
+        function test($val) 
+        {
+//            if($val==1)
+//                return "TEST";
+//            else
+                printf("errore");
+	}
+        
+        $type=test(1);
+        
+        $str = sprintf ( "TEST: %s",$type);
+        
+        printf("%s",$str);
+        exit(1);
+        
+       
+        
 $sm=new SchedulerManager();
 
 /* stato_schedulazione sono definiti nella tabella adplify_scheduler.sc_stato_schedulazione_lib 
@@ -86,7 +104,7 @@ $sm=new SchedulerManager();
 
 /* NB: id_schedulazione=-1 indica un nuovo batch schedulato.*/
 $json_str='{
-	"id_schedulazione": -1,   
+	"id_schedulazione": 800,    
 	"hostname": "devadplify",
 	"id_user": 20,
 	"id_account_adw": -1,

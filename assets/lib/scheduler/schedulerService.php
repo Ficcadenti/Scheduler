@@ -32,6 +32,7 @@ class SchedulerService {
 		);
 	
 		$proc = proc_open($cmd, $descriptorspec, $pipes);
+                return $proc;
 	}
 	
 	public function setLogger($log) {

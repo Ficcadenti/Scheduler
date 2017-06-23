@@ -85,89 +85,94 @@ class SchedulerManager {
 			$this->param = json_decode ( $parameter );
 
 			/* check parameter */
+                        if (! isset ( $this->param->tag )) 
+			{
+				$this->log->info("Non ï¿½ definito il parametro 'tag' !!!");
+				return false;	
+			}
 			if (! isset ( $this->param->id_schedulazione )) 
 			{
-				$this->log->info("Non è definito il parametro 'id_schedulazione' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'id_schedulazione' !!!");
 				return false;	
 			}
 			if (! isset ( $this->param->hostname ))
 			{
-				$this->log->info("Non è definito il parametro 'hostname' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'hostname' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->id_user ))
 			{
-				$this->log->info("Non è definito il parametro 'id_user' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'id_user' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->id_account_adw ))
 			{
-				$this->log->info("Non è definito il parametro 'id_account_adw' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'id_account_adw' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->id_batch ))
 			{
-				$this->log->info("Non è definito il parametro 'id_batch' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'id_batch' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->descr_schedulazione ))
 			{
-				$this->log->info("Non è definito il parametro 'descr_schedulazione' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'descr_schedulazione' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->type_schedulazione ))
 			{
-				$this->log->info("Non è definito il parametro 'type_schedulazione' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'type_schedulazione' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->frequenza ))
 			{
-				$this->log->info("Non è definito il parametro 'frequenza' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'frequenza' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->stato_schedulazione ))
 			{
-				$this->log->info("Non è definito il parametro 'stato_schedulazione' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'stato_schedulazione' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->download_report_type ))
 			{
-				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'download_report_type' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->abilita_anagrafiche ))
 			{
-				$this->log->info("Non è definito il parametro 'abilita_anagrafiche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'abilita_anagrafiche' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->status_anagrafiche ))
 			{
-				$this->log->info("Non è definito il parametro 'status_anagrafiche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'status_anagrafiche' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->abilita_metriche ))
 			{
-				$this->log->info("Non è definito il parametro 'abilita_metriche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'abilita_metriche' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->status_metriche ))
 			{
-				$this->log->info("Non è definito il parametro 'status_metriche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'status_metriche' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->time_start ))
 			{
-				$this->log->info("Non è definito il parametro 'time_start' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'time_start' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->dal ))
 			{
-				$this->log->info("Non è definito il parametro 'dal' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'dal' !!!");
 				return false;
 			}
 			if (! isset ( $this->param->al ))
 			{
-				$this->log->info("Non è definito il parametro 'al' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'al' !!!");
 				return false;
 			}
 		}
@@ -193,7 +198,7 @@ class SchedulerManager {
 		{
 			try {
 				$sql = "INSERT INTO sc_config (hostname,id_user,id_batch,descr_schedulazione,parametri_batch,type_schedulazione,frequenza,stato_schedulazione,time_start,creation_time) 
-						VALUES (:hostname,:id_user,:id_batch,:id_batch,:parametri_batch,:type_schedulazione,:frequenza,:stato_schedulazione,:time_start,:creation_time)";
+						VALUES (:hostname,:id_user,:id_batch,:descr_schedulazione,:parametri_batch,:type_schedulazione,:frequenza,:stato_schedulazione,:time_start,:creation_time)";
 						
 						//id_user,id_batch,descr_schedulazione,parametri_batch,type_schedulazione,frequenza,stato_schedulazione,time_start,last_time_start,creation_time) VALUES (:hostname,:id_user,:id_batch,:descr_schedulazione,:parametri_batch,:type_schedulazione,:frequenza,:stato_schedulazione,:time_start,:last_time_start,:creation_time) ";
 

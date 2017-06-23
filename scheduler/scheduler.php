@@ -104,12 +104,12 @@ if($common->isWindows())
 try {
 	/* sincronizazione al minuto successivo */
 	$log->info ( "Syncronizazione Scheduler" );
-	/*do {
+	do {
 		$run_time_unix = time ();
 		$resto = ($run_time_unix % ROUND_TIME);
 		$log->info ( "Wait... " . (ROUND_TIME - $resto) );
 		sleep ( 1 );
-	} while ( (ROUND_TIME - $resto) != 1 );*/
+	} while ( (ROUND_TIME - $resto) != 1 );
 	
 	$log->info ( "START Scheduler" );
 	$dt_start = date ( 'Ymd' ); /* data utilizzata per cambio giorno */
@@ -162,7 +162,11 @@ try {
 			$log->info ( $str );
 			
 			/* controllo lo stato dei batch */
-			if (($batch ['stato_schedulazione'] == TO_BE_SUBMITTED) && ($batch ['id_error'] == BATCH_WITHOUT_ERROR)) {
+                        if (($batch ['stato_schedulazione'] == PAUESED))
+                        {
+                            $log->info ( "	in pausa " );
+                        }
+                        else if (($batch ['stato_schedulazione'] == TO_BE_SUBMITTED) && ($batch ['id_error'] == BATCH_WITHOUT_ERROR)) {
 				/* controllo se è ora di far partire il batch */
 				if ($run_time_unix >= $ts_batch_unix) {
 					
@@ -174,7 +178,13 @@ try {
 						" &";
 					
 					$log->info ( $cmd );
-					$service->exec_background (  $cmd  );
+					$proc=$service->exec_background (  $cmd  );
+                                        if($proc)
+                                        {
+                                            $exit=proc_close($proc);
+                                        }
+                                        //exec( "$cmd > /dev/null &");
+                                        
 					
 					/* aggiorna parametri batch */
 					$st_config->setStatus ( $id_schedulazione, SUBMITTED );

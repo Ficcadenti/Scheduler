@@ -1,1 +1,1 @@
-Directory dei log dello Scheduler Manager
+log scheduler manager

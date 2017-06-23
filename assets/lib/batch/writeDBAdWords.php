@@ -31,13 +31,22 @@ class WriteDBAdWords {
 	private $id_user=-1;
 	private $id_account_adw=-1;
 	
-	private $campagne = array();
-	private $gruppi   = array();
-	private $keywords = array();
-	private $url      = array();
+	private $campagne   = array();
+	private $gruppi     = array();
+	private $keywords   = array();
+        private $keywordsQS = array();
+	private $url        = array();
 	
 	
 	function __construct() {
+	}
+        
+        public function init() {
+            $campagne   = array();
+            $gruppi     = array();
+            $keywords   = array();
+            $keywordsQS = array();
+            $url        = array();
 	}
 	
 	function __destruct() {
@@ -97,18 +106,24 @@ class WriteDBAdWords {
 	{
 		array_push ($this->keywords,$k);
 	}
+        
+        public function insertKeywordsQS($qs)
+	{
+		array_push ($this->keywordsQS,$qs);
+	}
 	
 	public function insertUrl($u)
 	{
 		array_push ($this->url,$u);
 	}
 	
-	public function save($status)
+	public function save($all_anagrafiche,$repoType,$status)
 	{
+            
 		$ret=true;
-		$this->log->info("save()");
+		$this->log->info("save(reportType=".$repoType.")");
 		
-		if(self::clearReportAnagrafiche($this->id_user,$this->id_account_adw,$status))
+		if(self::clearReportAnagrafiche($all_anagrafiche,$repoType,$this->id_user,$this->id_account_adw,$status))
 		{
 			$ret=self::writeDBAnagrafiche($this->id_user,$this->id_account_adw);
 		}
@@ -158,7 +173,19 @@ class WriteDBAdWords {
 					}
 				}break;
 					
-			case DOWNLOAD_URL:
+			case DOWNLOAD_FINAL_URL:
+				{}break;	
+                        
+                        case DOWNLOAD_QS:
+				{
+					if(count($this->keywordsQS)>0)
+					{
+						$a =  array_keys($this->keywordsQS[0]);
+						$values = array_slice(($this->keywordsQS),$start,$len);
+					}
+				}break;	
+                                
+                        case DOWNLOAD_URL:
 				{
 					if(count($this->url)>0)
 					{
@@ -222,7 +249,8 @@ class WriteDBAdWords {
 		$table         = array(	"cache_campaign_attributes",
 							"cache_adgroup_attributes",
 							"cache_keywords_attributes",
-							"cache_url_attributes");
+							"cache_url_attributes",
+                                                        "cache_qs");
 		
 		$this->log->info("writeDBAnagrafiche()");
 		
@@ -242,32 +270,39 @@ class WriteDBAdWords {
 						if($c>0)
 						{
 							$tstart=time();
+                                                        $this->log->info("INSERT ANAGRAFICHE CAMPAGNE");
 							/* INSERT ANAGRAFICHE CAMPAGNE */
 							$fields=self::getField(DOWNLOAD_CAMPAGNE,$conn,0,$c);
 							$sql = "INSERT INTO ".$table[0]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							//$this->log->info($sql );
+                                                        $conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
+                                                        
+                                                        
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c campagne in $delta msec !!!");
+							$this->log->info("... writed $c campagne in $delta sec !!!");
 						}
 						
 						$c=count($this->gruppi);
 						if($c>0)
 						{
 							/* INSERT ANAGRAFICHE GRUPPI */
+                                                        $this->log->info("INSERT ANAGRAFICHE GRUPPI");
 							$tstart=time();
 							$fields=self::getField(DOWNLOAD_ADGROUP,$conn,0,$c);	
 							$sql = "INSERT INTO ".$table[1]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
-							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+							//$this->log->info($sql );
+                                                        $conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 							$stmt = $conn->prepare ( $sql );
 							$stmt->execute();
+                                                        
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c gruppi in $delta msec !!!");
+							$this->log->info("... writed $c gruppi in $delta sec !!!");
 						}
 						
 						$c=count($this->keywords);
@@ -280,11 +315,13 @@ class WriteDBAdWords {
 							for($i=0;$i<$numIterazioni;$i++)
 							{
 								// INSERT ANAGRAFICHE KEYWORDS
+                                                                $this->log->info("INSERT ANAGRAFICHE KEYWORDS");
 								$fields=self::getField(DOWNLOAD_KEYWORDS,$conn,$start,INSERT_BLOCK_NUM);
 								$sql = "INSERT INTO ".$table[2]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 								$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
 								$stmt = $conn->prepare ( $sql );
-								$stmt->execute();
+								//$this->log->info($sql );
+                                                                $stmt->execute();
 								
 								$this->log->info("... writed ".INSERT_BLOCK_NUM." keyword (".$start.",".($start+INSERT_BLOCK_NUM-1).") !!!");
 								$start=$start+INSERT_BLOCK_NUM;
@@ -308,14 +345,15 @@ class WriteDBAdWords {
 							*/
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c keywords in $delta msec !!!");
+							$this->log->info("... writed $c keywords in $delta sec !!!");
 						}
 						
 						$c=count($this->url);
 						if($c>0)
 						{
 							$tstart=time();
-							/* INSERT ANAGRAFICHE KEYWORDS */
+							/* INSERT ANAGRAFICHE URL */
+                                                        $this->log->info("INSERT ANAGRAFICHE URL");
 							$fields=self::getField(DOWNLOAD_URL,$conn,0,$c);
 							$sql = "INSERT INTO ".$table[3]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
 							$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
@@ -324,8 +362,46 @@ class WriteDBAdWords {
 							
 							$tstop=time();
 							$delta=($tstop-$tstart);
-							$this->log->info("... writed $c url in $delta msec !!!");
+							$this->log->info("... writed $c url in $delta sec !!!");
 						}
+                                                
+                                                $c=count($this->keywordsQS);
+                                                if($c>0)
+						{
+							$tstart=time();
+							$numIterazioni=(int)($c/INSERT_BLOCK_NUM);
+							$resto=($c%INSERT_BLOCK_NUM);
+							$start=0;
+							for($i=0;$i<$numIterazioni;$i++)
+							{
+								// INSERT KEYWORDS QUALITY SCORE
+                                                                $this->log->info("INSERT KEYWORDS QUALITY SCORE");
+								$fields=self::getField(DOWNLOAD_QS,$conn,$start,INSERT_BLOCK_NUM);
+								$sql = "INSERT INTO ".$table[4]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+								$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+								$stmt = $conn->prepare ( $sql );
+								//$this->log->info($sql );
+                                                                $stmt->execute();
+								
+								$this->log->info("... writed ".INSERT_BLOCK_NUM." keywordQS (".$start.",".($start+INSERT_BLOCK_NUM-1).") !!!");
+								$start=$start+INSERT_BLOCK_NUM;
+							}
+							if($resto!=0)
+							{
+								$fields=self::getField(DOWNLOAD_QS,$conn,$start,$resto);
+								$sql = "INSERT INTO ".$table[4]." (".$fields[NOME_CAMPI].") VALUES ".$fields[VALORE_CAMPI];
+								$conn->setAttribute ( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+								$stmt = $conn->prepare ( $sql );
+								$stmt->execute();
+								
+								$this->log->info("... writed ".INSERT_BLOCK_NUM." keywordQS (".$start.",".($start+$resto-1).") !!!");
+							}
+							$tstop=time();
+							$delta=($tstop-$tstart);
+							$this->log->info("... writed $c keywordsQS in $delta sec !!!");
+						}
+
+						
 						
 						$sql = "set foreign_key_checks=1";
 						$stmt = $conn->prepare ( $sql );
@@ -387,18 +463,73 @@ class WriteDBAdWords {
 		}
 	}
 	
-	private function clearReportAnagrafiche($id_user,$id_account_adw,$status)
+        private function clearReportAnagrafiche($all_anagrafiche,$repoType,$id_user,$id_account_adw,$status)
+	{
+            $ret   = true;
+            $table = "";
+            $i     = 0;
+            
+            while( ($i<count($all_anagrafiche)) && ($all_anagrafiche[$i]<=$repoType) )
+            {
+                    if($all_anagrafiche[$i]==DOWNLOAD_ALL)
+                    {
+                            $i++;
+                            continue;
+                    }
+
+                    switch($all_anagrafiche[$i])
+                    {
+
+                        case DOWNLOAD_CAMPAGNE:
+                                {
+                                    $this->log->info ( "Clear Campagne");
+                                    $table = "cache_campaign_attributes";
+                                }break;
+
+                        case DOWNLOAD_ADGROUP:
+                                {
+                                    $this->log->info ( "Clear Gruppi");
+                                    $table = "cache_adgroup_attributes";                              
+                                }break;
+
+                        case DOWNLOAD_KEYWORDS:
+                                {
+                                    $this->log->info ( "Clear Keywords");
+                                    $table = "cache_keywords_attributes";
+                                }break;
+                            
+                        case DOWNLOAD_URL:
+                                {
+                                    $this->log->info ( "Clear Url");
+                                    $table = "cache_url_attributes";
+                                }break;
+                            
+                         case DOWNLOAD_QS:
+                                {
+                                    $this->log->info ( "Clear Keywords Quality Score");
+                                    $table = "cache_qs";
+                                }break;
+                    }
+                    
+                    $ret = $ret && self::clearReport($repoType,$table,$id_user,$id_account_adw,$status);
+                    $i++;
+            }
+            
+            return $ret;
+            
+        }
+        
+	private function clearReport($repoType,$table,$id_user,$id_account_adw,$status)
 	{
 		$ret         = true;
 		$statusWhere = "";
-		$table       = array("cache_campaign_attributes",
-						"cache_adgroup_attributes",
-						"cache_keywords_attributes",
-						"cache_url_attributes");
-	
-	
-		$this->log->info ( "clearReportAnagrafiche per ID_user ".$id_user.", ID_ADW_Account: ".$id_account_adw." status: ".$status);
-	
+                
+                if($table=="") /* non devo cancellare nulla, es.: nel caso del qualityscore*/
+                {
+                    return $ret;
+                }
+		
+		$this->log->info ( "clearReport per ID_user ".$id_user.", ID_ADW_Account: ".$id_account_adw.", status: ".$status.", tabella=".$table);
 	
 		if($status=='ALL')
 		{
@@ -407,49 +538,53 @@ class WriteDBAdWords {
 		{
 			$statusWhere=" AND api_status='".$status."'";
 		}
+                
+                if($repoType==DOWNLOAD_QS) /* condizioni particolari */
+                {
+                    $date_str= date('Y-m-d');
+                    $statusWhere=$statusWhere." AND api_date='".$date_str."'";
+                }
 		
 		if($this->connetion==true)
 		{
 			$conn = self::getConnectionFromUserId ( $id_user );
 			if($conn!=null)
 			{
-				for($i=0;$i<count($table);$i++)
-				{
-					try {
-						$sql = "set foreign_key_checks=0";
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute ();
-						
-						$sql = "LOCK TABLES ".$table[$i]." WRITE";
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute ();
 				
-						$sql = "DELETE FROM ".$table[$i]." WHERE api_externalcustomerid = :api_externalcustomerid ".$statusWhere;
-						$stmt = $conn->prepare ( $sql );
-						$stmt->bindParam ( ':api_externalcustomerid', $id_account_adw );
-						$stmt->execute ();
-						
-						$this->log->info ( $sql );
-						
-				
-						$sql = "UNLOCK  TABLES";
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute ();
-						
-						$sql = "set foreign_key_checks=1";
-						$stmt = $conn->prepare ( $sql );
-						$stmt->execute ();
-						
-						
-					} 
-					catch ( \PDOException $ex ) {
-						$this->id_error = $ex->getCode();
-						$this->descr_error = "[".$this->name_file."] clearReportAnagrafiche: ".$ex->getMessage ();
-						$this->log->info ($this->descr_error);
-						$ret=false;
-					}
-				}
-				$ret=true;
+                            try {
+                                    $sql = "set foreign_key_checks=0";
+                                    $stmt = $conn->prepare ( $sql );
+                                    $stmt->execute ();
+
+                                    $sql = "LOCK TABLES ".$table." WRITE";
+                                    $stmt = $conn->prepare ( $sql );
+                                    $stmt->execute ();
+
+                                    $sql = "DELETE FROM ".$table." WHERE api_externalcustomerid = :api_externalcustomerid ".$statusWhere;
+                                    $stmt = $conn->prepare ( $sql );
+                                    $stmt->bindParam ( ':api_externalcustomerid', $id_account_adw );
+                                    $stmt->execute ();
+
+                                    $this->log->info ( $sql );
+
+
+                                    $sql = "UNLOCK  TABLES";
+                                    $stmt = $conn->prepare ( $sql );
+                                    $stmt->execute ();
+
+                                    $sql = "set foreign_key_checks=1";
+                                    $stmt = $conn->prepare ( $sql );
+                                    $stmt->execute ();
+
+
+                            } 
+                            catch ( \PDOException $ex ) {
+                                    $this->id_error = $ex->getCode();
+                                    $this->descr_error = "[".$this->name_file."] clearReport: ".$ex->getMessage ();
+                                    $this->log->info ($this->descr_error);
+                                    $ret=false;
+                            }
+                            $ret=true;
 			}
 			else 
 			{
@@ -478,6 +613,11 @@ class WriteDBAdWords {
 	public function countKeywords()
 	{
 		return count($this->keywords);
+	}
+        
+        public function countKeywordsQS()
+	{
+		return count($this->keywordsQS);
 	}
 	
 	public function countUrl()

@@ -22,7 +22,7 @@
 DEV_NULL                       = pippo.log   
 
 /* Dir di base del progetto  */
-BASE_DIR                       = D:\Sviluppo\Progetti\Eclipse\Neon\PHP\Scheduler
+BASE_DIR                       = D:\Sviluppo\wamp64\www\exolab\Scheduler\
 
 /* Sezione per parametri Scheduler */
 SCHEDULER_DIR                  = ${BASE_DIR}\scheduler
@@ -52,7 +52,7 @@ BATCH_LOG_CLEAR_GG             = 15
 
 
 /* Refresh token */
-REFRESH_TOKEN_CMD              = ${BASE_DIR}\adplify_be\batch_refresh_tokens_by_user_id.sh
+REFRESH_TOKEN_CMD              = ${BASE_DIR}\..\adplify_be\batch_refresh_tokens_by_user_id.sh
 
 
 /* Path per file csv/imp scaricati da google AdWords */
@@ -66,3 +66,8 @@ DB_NAME_SCHEDULER              = adplify_scheduler
 DB_NAME_ADPMANAGER             = adplify_manager
 DB_USER                        = root
 DB_PASS                        = raffo
+
+/* sezione per parametri e-mail */
+MAIL_HOST                      = 192.168.1.250
+MAIL_SUPPORT                   = support@adplify.com
+ADPLIFY_LINK     

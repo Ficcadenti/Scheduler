@@ -97,14 +97,25 @@ class DownloadAdWords
 				{
 					$table = "api_keywords-performance-report"; // TABELLA DA ALIMENTARE
 				}break;
+                        
+                        case DOWNLOAD_QUERY:
+				{
+					$table = "api_search-query-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
 				
-			case DOWNLOAD_URL:
+			case DOWNLOAD_FINAL_URL:
+				{
+					$table = "api_finalurl-performance-report"; // TABELLA DA ALIMENTARE
+				}break;
+                        case DOWNLOAD_QS:
+				{
+					$table = "api_keywords-qs-report"; // TABELLA DA ALIMENTARE
+				}break;
+                        case DOWNLOAD_URL:
 				{
 					$table = "api_url-performance-report"; // TABELLA DA ALIMENTARE
 				}break;
-					
-			
-					
+							
 		}
 		
 		if($this->connetion==true)
@@ -192,7 +203,7 @@ class DownloadAdWords
 			case DOWNLOAD_CAMPAGNE:
 				{
 					$reportDefinition->reportType = 'CAMPAIGN_PERFORMANCE_REPORT';
-					$options ['includeZeroImpressions'] = true;
+					//$options ['includeZeroImpressions'] = true;
 					
 					if($this->param['status_metriche']!='ALL')
 					{
@@ -203,7 +214,7 @@ class DownloadAdWords
 			case DOWNLOAD_ADGROUP:
 				{
 					$reportDefinition->reportType = 'ADGROUP_PERFORMANCE_REPORT';
-					$options ['includeZeroImpressions'] = true;
+					//$options ['includeZeroImpressions'] = true;
 					if($this->param['status_metriche']!='ALL')
 					{
 						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
@@ -215,7 +226,19 @@ class DownloadAdWords
 			case DOWNLOAD_KEYWORDS:
 				{
 					$reportDefinition->reportType = 'KEYWORDS_PERFORMANCE_REPORT';
-					$options ['includeZeroImpressions'] = true;
+					//$options ['includeZeroImpressions'] = true;
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_metriche']);
+					}
+				}break;
+                                
+                        case DOWNLOAD_QUERY:
+				{
+					$reportDefinition->reportType = 'SEARCH_QUERY_PERFORMANCE_REPORT';
+					//$options ['includeZeroImpressions'] = true;
 					if($this->param['status_metriche']!='ALL')
 					{
 						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
@@ -224,10 +247,25 @@ class DownloadAdWords
 					}
 				}break;
 				
-			case DOWNLOAD_URL:
+			case DOWNLOAD_FINAL_URL:
+				{
+					$reportDefinition->reportType = 'FINAL_URL_REPORT';
+					//$options ['includeZeroImpressions'] = false;
+					if($this->param['status_metriche']!='ALL')
+					{
+						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
+						$selector->predicates[] = new \Predicate('CampaignStatus', 'EQUALS',$this->param['status_metriche']);
+					}
+				}break;
+                        case DOWNLOAD_QS:
+                        {
+                            /* Per il quality score l'unica metrica la scarichiamo con le anagrafiche */
+                        }break;
+                    
+                        case DOWNLOAD_URL:
 				{
 					$reportDefinition->reportType = 'URL_PERFORMANCE_REPORT';
-					$options ['includeZeroImpressions'] = false;
+					//$options ['includeZeroImpressions'] = false;
 					if($this->param['status_metriche']!='ALL')
 					{
 						$selector->predicates[] = new \Predicate('AdGroupStatus', 'EQUALS',$this->param['status_metriche']);
@@ -250,26 +288,16 @@ class DownloadAdWords
 		return $namefileCSV;
 	}
 	
-	
-	private function downloadAnagrafiche($user_id, $settings, $access_token, $clientCustomerId)
+
+	private function downloadAnagraficheCampagne($adwordsUser)
 	{
+                $clientCustomerId        = $adwordsUser->GetClientCustomerId();
 		$all_campagneervice = null;
 		$all_campagne_id    = array();
-		$adwordsUser        = new \AdWordsUser ();
 		$ret                = false;
 		$tstart             = 0;
 		$tstop              = 0;
 		$delta              = 0;
-		
-		$adwordsUser->SetOAuth2Info ( array (
-				'client_id' => $settings->client_id,
-				'client_secret' => $settings->client_secret,
-				'refresh_token' => $settings->refresh_token,
-				'access_token' => $access_token
-		) );
-	
-		$adwordsUser->SetClientCustomerId ( $clientCustomerId );
-		$adwordsUser->SetDeveloperToken ( $settings->dev_key );
 	
 		try {
 			$tstart=time();
@@ -277,7 +305,7 @@ class DownloadAdWords
 		
 			// Create selector.
 			$selector = new \Selector();
-			$selector->fields = array('Id', 'Name','Amount','ServingStatus','StartDate','EndDate','Status');
+			$selector->fields = array('Id', 'Name','Amount','AdvertisingChannelType','ServingStatus','StartDate','EndDate','Status','BiddingStrategyType');
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
 			if($this->param['status_anagrafiche']!='ALL')
 			{
@@ -294,23 +322,32 @@ class DownloadAdWords
 				if (isset($page->entries)) {
 					foreach ($page->entries as $campagna) 
 					{
-						if(!in_array($campagna->id,$all_campagne_id))
-						{
-							$amount = ($campagna->budget->amount->microAmount)/(GOOGLE_MONEY_UNIT);
-							
-							$c = array("api_campaignid"=>$campagna->id,
-									"api_campaignname"=>$campagna->name,
-									"api_amount"=>$amount,
-									"api_servingstatus"=>$campagna->servingStatus,
-									"api_startdate"=>$campagna->startDate,
-									"api_enddate"=>$campagna->endDate,
-									"api_status"=>$campagna->status,
-									"api_externalcustomerid"=>$clientCustomerId
-							);
-							
-							array_push($all_campagne_id, $campagna->id);
-							$this->dbAdWord->insertCampagna($c);
-						}
+						
+                                            $amount = ($campagna->budget->amount->microAmount)/(GOOGLE_MONEY_UNIT);
+                                            if(is_null($campagna->biddingStrategyConfiguration))
+                                            {
+                                                $target="";
+                                            }
+                                            else
+                                            {
+                                                $target = $campagna->biddingStrategyConfiguration->biddingStrategyType;
+                                            }
+                                            
+                                            
+                                            $c = array("api_campaignid"=>$campagna->id,
+                                                            "api_campaignname"=>$campagna->name,
+                                                            "api_amount"=>$amount,
+                                                            "api_servingstatus"=>$campagna->servingStatus,
+                                                            "api_chaneltype"=>$campagna->advertisingChannelType,
+                                                            "api_startdate"=>$campagna->startDate,
+                                                            "api_enddate"=>$campagna->endDate,
+                                                            "api_status"=>$campagna->status,
+                                                            "api_biddingstrategytype"=>$target,
+                                                            "api_externalcustomerid"=>$clientCustomerId
+                                            );
+
+                                            $this->dbAdWord->insertCampagna($c);
+						
 					}
 				}
 				// Advance the paging index.
@@ -320,17 +357,10 @@ class DownloadAdWords
 
 			$tstop=time();
 			$delta=($tstop-$tstart);
-			$msg=sprintf("Downloaded %d campagne in %d msec !!!",$this->dbAdWord->countCampagne(),$delta);
+			$msg=sprintf("Downloaded %d campagne in %d sec !!!",$this->dbAdWord->countCampagne(),$delta);
 			$this->log->info ( $msg );
-			
-			$ret  = $ret  && self::downloadAnagraficheAdGroups($adwordsUser, $all_campagne_id);
-			
-			//$this->dbAdWord->show();
-			//$this->dbAdWord->showKeyword(166120940,9082894940);
-			//$this->dbAdWord->showKeyword(213596180,15118173260);
-
 		}
-		catch(Exception $ex)
+		catch(\Exception $ex)
 		{
 			$this->id_error = $ex->getCode();
 			$this->descr_error = "[".$this->name_file."] downloadAnagrafiche: ".$ex->getMessage ();
@@ -341,7 +371,7 @@ class DownloadAdWords
 		return $ret;
 	}
 	
-	public function downloadAnagraficheAdGroups($adwordsUser,$all_campagne_id)
+	public function downloadAnagraficheAdGroups($adwordsUser)
 	{
 		$page = null;
 		$all_adgroups_id = null;
@@ -361,7 +391,6 @@ class DownloadAdWords
 			$selector->fields = array('Id', 'Name','CampaignId','Status');
 			$selector->ordering[] = new \OrderBy('Name', 'ASCENDING');
 
-			$selector->predicates[] = new \Predicate('CampaignId', 'IN',$all_campagne_id);
 			if($this->param['status_anagrafiche']!='ALL')
 			{
 				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
@@ -403,10 +432,9 @@ class DownloadAdWords
 			
 			$tstop=time();
 			$delta=($tstop-$tstart);
-			$msg=sprintf("Downloaded %d gruppi in %d msec !!!",$this->dbAdWord->countGruppi(),$delta);
+			$msg=sprintf("Downloaded %d gruppi in %d sec !!!",$this->dbAdWord->countGruppi(),$delta);
 			$this->log->info ( $msg );
 			
-			$ret=$ret && self::downloadAnagraficheKeywordsAndUrl($adwordsUser,$all_adgroups_id);
 	
 		} catch (\Exception $ex) {
 	
@@ -418,7 +446,7 @@ class DownloadAdWords
 	
 	}
 	
-	public function downloadAnagraficheKeywordsAndUrl($adwordsUser,$all_gruppi_id)
+	public function downloadAnagraficheKeywords($adwordsUser)
 	{
 		$page                    = null;
 		$all_gruppi_id_predicate = array();
@@ -430,14 +458,117 @@ class DownloadAdWords
 		$tstop                   = 0;
 		$delta                   = 0;
 		
-				
-		/* traduzione per generare l'array dei predicati*/
-		foreach ($all_gruppi_id as $key => $value)
-		{
-			array_push($all_gruppi_id_predicate, $value);
-		}
-		
+		try {
+	
+			$tstart=time();
+			$service = $adwordsUser->GetService('AdGroupCriterionService', ADWORDS_VERSION);
+	
+			// Create selector.
+			$selector = new \Selector();
+			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'QualityScore', 'Status','KeywordText','PlacementUrl','CriteriaType','BiddingStrategyType');
+			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
 
+			if($this->param['status_anagrafiche']!='ALL')
+			{
+				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			}
+			// Create paging controls.
+			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
+	
+			$adgroups = array();
+	
+			do {
+				// Make the get request.
+				$page = $service->get($selector);
+	
+				// Display results.
+				if (isset($page->entries)) {
+					foreach ($page->entries as $element)
+					{
+						if ($element->criterion->type=='KEYWORD')
+						{
+							if(is_null($element->qualityInfo))
+							{
+								$q=0;
+							}
+							else
+							{
+								$q=$element->qualityInfo->qualityScore;
+							}
+                                                        if(is_null($element->biddingStrategyConfiguration))
+                                                        {
+                                                            $target="";
+                                                        }
+                                                        else
+                                                        {
+                                                            $target = $element->biddingStrategyConfiguration->biddingStrategyType;
+                                                        }
+                                                        
+							$k = array("api_id"=>$element->criterion->id,
+									"api_qualityscore"=>$q,
+									"api_keywordname"=>$element->criterion->text,
+									"api_status"=>$element->userStatus,
+									"api_campaignid"=>$element->baseCampaignId,
+									"api_adgroupid"=>$element->adGroupId,
+                                                                        "api_biddingstrategytype"=>$target,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							$this->dbAdWord->insertKeywords($k);
+						}
+//                                              else if ($element->criterion->type=='PLACEMENT')
+//						{
+//							$u = array("api_id"=>$element->criterion->id,
+//									"api_url"=>$element->criterion->url,
+//									"api_campaignid"=>$element->baseCampaignId,
+//									"api_adgroupid"=>$element->adGroupId,
+//									"api_externalcustomerid"=>$clientCustomerId
+//							);
+//							$this->dbAdWord->insertUrl($u);
+//						}
+					}
+				}
+	
+				// Advance the paging index.
+				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
+			} while ($page->totalNumEntries > $selector->paging->startIndex);
+	
+			$ret=true;
+			
+			$tstop=time();
+			$delta=($tstop-$tstart);
+			
+			$msg=sprintf("Downloaded %d keywords and ",$this->dbAdWord->countKeywords());
+			$this->log->info ( $msg );
+			$msg=sprintf("Downloaded %d url in %d sec !!!",$this->dbAdWord->countUrl(),$delta);
+			$this->log->info ( $msg );
+	
+		} catch (\Exception $ex) {
+	
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] downloadAnagraficheAdGroups: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
+		}
+		return $ret;
+	
+	}
+        
+        public function downloadAnagraficheQuery($adwordsUser)
+	{
+		return true;
+	}
+        
+        public function downloadAnagraficheUrl($adwordsUser)
+	{
+		$page                    = null;
+		$all_gruppi_id_predicate = array();
+		$all_keywords_id         = array();
+		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
+		$ret                     = true;
+		$q                       = 0;
+		$tstart                  = 0;
+		$tstop                   = 0;
+		$delta                   = 0;
+		
 		try {
 	
 			$tstart=time();
@@ -447,7 +578,86 @@ class DownloadAdWords
 			$selector = new \Selector();
 			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'QualityScore', 'Status','KeywordText','PlacementUrl','CriteriaType');
 			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
-			$selector->predicates[] = new \Predicate('AdGroupId', 'IN',$all_gruppi_id_predicate);
+
+			if($this->param['status_anagrafiche']!='ALL')
+			{
+				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
+			}
+			// Create paging controls.
+			$selector->paging = new \Paging(0, \AdWordsConstants::RECOMMENDED_PAGE_SIZE);
+	
+			$adgroups = array();
+	
+			do {
+				// Make the get request.
+				$page = $service->get($selector);
+	
+				// Display results.
+				if (isset($page->entries)) {
+					foreach ($page->entries as $element)
+					{
+						if ($element->criterion->type=='PLACEMENT')
+						{
+							$u = array("api_id"=>$element->criterion->id,
+									"api_url"=>$element->criterion->url,
+									"api_campaignid"=>$element->baseCampaignId,
+									"api_adgroupid"=>$element->adGroupId,
+									"api_externalcustomerid"=>$clientCustomerId
+							);
+							$this->dbAdWord->insertUrl($u);
+						}
+					}
+				}
+	
+				// Advance the paging index.
+				$selector->paging->startIndex += \AdWordsConstants::RECOMMENDED_PAGE_SIZE;
+			} while ($page->totalNumEntries > $selector->paging->startIndex);
+	
+			$ret=true;
+			
+			$tstop=time();
+			$delta=($tstop-$tstart);
+			
+			$msg=sprintf("Downloaded %d keywords and ",$this->dbAdWord->countKeywords());
+			$this->log->info ( $msg );
+			$msg=sprintf("Downloaded %d url in %d sec !!!",$this->dbAdWord->countUrl(),$delta);
+			$this->log->info ( $msg );
+	
+		} catch (\Exception $ex) {
+	
+			$this->id_error = $ex->getCode();
+			$this->descr_error = "[".$this->name_file."] downloadAnagraficheAdGroups: ".$ex->getMessage ();
+			$this->log->info ( $this->descr_error );
+		}
+		return $ret;
+	
+	}
+        
+        public function downloadAnagraficheKeywordsQS($adwordsUser)
+	{
+		$page                    = null;
+		$all_gruppi_id_predicate = array();
+		$all_keywords_id         = array();
+		$clientCustomerId        = $adwordsUser->GetClientCustomerId();
+		$ret                     = true;
+		$q                       = 0;
+		$tstart                  = 0;
+		$tstop                   = 0;
+		$delta                   = 0;
+		
+		try {
+	
+			$tstart=time();
+                        $api_date=$this->param['dal'];
+                        $str_api_date = substr($api_date,0,4)."-".substr($api_date,4,2)."-".substr($api_date,6,2);
+                        
+			$service = $adwordsUser->GetService('AdGroupCriterionService', ADWORDS_VERSION);
+	
+			// Create selector.
+			$selector = new \Selector();
+			$selector->fields = array('Id','AdGroupId', 'BaseCampaignId', 'QualityScore', 'Status','KeywordText','PlacementUrl','CriteriaType');
+			$selector->ordering[] = new \OrderBy('KeywordText', 'ASCENDING');
+
 			if($this->param['status_anagrafiche']!='ALL')
 			{
 				$selector->predicates[] = new \Predicate('Status', 'EQUALS',$this->param['status_anagrafiche']);
@@ -476,6 +686,7 @@ class DownloadAdWords
 								$q=$element->qualityInfo->qualityScore;
 							}
 							$k = array("api_id"=>$element->criterion->id,
+                                                                        "api_date"=>$str_api_date,
 									"api_qualityscore"=>$q,
 									"api_keywordname"=>$element->criterion->text,
 									"api_status"=>$element->userStatus,
@@ -483,17 +694,7 @@ class DownloadAdWords
 									"api_adgroupid"=>$element->adGroupId,
 									"api_externalcustomerid"=>$clientCustomerId
 							);
-							$this->dbAdWord->insertKeywords($k);
-						}
-						else if ($element->criterion->type=='PLACEMENT')
-						{
-							$u = array("api_id"=>$element->criterion->id,
-									"api_url"=>$element->criterion->url,
-									"api_campaignid"=>$element->baseCampaignId,
-									"api_adgroupid"=>$element->adGroupId,
-									"api_externalcustomerid"=>$clientCustomerId
-							);
-							$this->dbAdWord->insertUrl($u);
+							$this->dbAdWord->insertKeywordsQS($k);
 						}
 					}
 				}
@@ -506,21 +707,93 @@ class DownloadAdWords
 			
 			$tstop=time();
 			$delta=($tstop-$tstart);
-			
-			$msg=sprintf("Downloaded %d keywords ",$this->dbAdWord->countKeywords()." and");
-			$this->log->info ( $msg );
-			$msg=sprintf("Downloaded %d url in %d msec !!!",$this->dbAdWord->countUrl(),$delta);
+
+			$msg=sprintf("Downloaded %d keywordQS in %d sec !!!",$this->dbAdWord->countKeywordsQS(),$delta);
 			$this->log->info ( $msg );
 	
 		} catch (\Exception $ex) {
 	
 			$this->id_error = $ex->getCode();
-			$this->descr_error = "[".$this->name_file."] downloadAnagraficheAdGroups: ".$ex->getMessage ();
+			$this->descr_error = "[".$this->name_file."] downloadAnagraficheKeywordsQS: ".$ex->getMessage ();
 			$this->log->info ( $this->descr_error );
 		}
 		return $ret;
 	
 	}
+        
+        private function downloadAnagrafiche($all_anagrafiche,$settings, $access_token, $clientCustomerId)
+	{
+            $i        = 0;
+            $ret      = true;
+            $repoType = $this->param['download_report_type'];
+            
+
+            $adwordsUser = new \AdWordsUser ();
+            $adwordsUser->SetOAuth2Info ( array (
+				'client_id' => $settings->client_id,
+				'client_secret' => $settings->client_secret,
+				'refresh_token' => $settings->refresh_token,
+				'access_token' => $access_token
+		) );
+            
+            $adwordsUser->SetClientCustomerId ( $clientCustomerId );
+            $adwordsUser->SetDeveloperToken ( $settings->dev_key );
+            
+            while( ($i<count($all_anagrafiche)) && ($all_anagrafiche[$i]<=$repoType) )
+            {
+                    if($all_anagrafiche[$i]==DOWNLOAD_ALL) /* DOWNLOAD_ALL esclude tutti gli ID > di DOWNLOAD_ALL */
+                    {
+                            $i++;
+                            continue;
+                    }
+
+                    switch($all_anagrafiche[$i])
+                    {
+
+                        case DOWNLOAD_CAMPAGNE:
+                                {
+                                    $this->log->info ( "DOWNLOAD_CAMPAGNE");
+                                    $ret = $ret && self::downloadAnagraficheCampagne($adwordsUser);
+                                }break;
+
+                        case DOWNLOAD_ADGROUP:
+                                {
+                                    $this->log->info ( "DOWNLOAD_ADGROUP");
+                                    $ret = $ret && self::downloadAnagraficheAdGroups($adwordsUser);
+                                }break;
+
+                        case DOWNLOAD_KEYWORDS:
+                                {
+                                    $this->log->info ( "DOWNLOAD_KEYWORDS");
+                                    $ret = $ret && self::downloadAnagraficheKeywords($adwordsUser);
+                                }break;
+                            
+                        case DOWNLOAD_QUERY:
+                                {
+                                    $this->log->info ( "DOWNLOAD_QUERY");
+                                    $ret = $ret && self::downloadAnagraficheQuery($adwordsUser);
+                                }break;
+                            
+                        case DOWNLOAD_FINAL_URL:
+                                {
+                                    
+                                }break;
+                        case DOWNLOAD_QS:
+                                {
+                                    $this->log->info ( "DOWNLOAD_QUALITYSCORE");
+                                    $ret = $ret && self::downloadAnagraficheKeywordsQS($adwordsUser);
+                                }break;
+                        case DOWNLOAD_URL:
+                                {
+                                    $this->log->info ( "DOWNLOAD_URL");
+                                    $ret = $ret && self::downloadAnagraficheUrl($adwordsUser);
+                                }break;
+                    }
+                    $i++;
+            }
+            return $ret;
+            
+        }
 	
 	private function clearReportMetriche($conn,$id_account_adw,$repoType)
 	{
@@ -561,12 +834,24 @@ class DownloadAdWords
 				{
 					$table = "cache_keywords_metrics"; // TABELLA DA ALIMENTARE
 				}break;				
-					
-			case DOWNLOAD_URL:
+			
+                        case DOWNLOAD_QUERY:
+				{
+					$table = "cache_search_query_metrics"; // TABELLA DA ALIMENTARE
+				}break;	
+                            
+			case DOWNLOAD_FINAL_URL:
+				{
+					$table = "cache_finalurl_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+                            
+                        case DOWNLOAD_QS:
+				{}break;
+                        
+                        case DOWNLOAD_URL:
 				{
 					$table = "cache_url_metrics"; // TABELLA DA ALIMENTARE
 				}break;
-					
 		}
 		
 		try {
@@ -602,7 +887,7 @@ class DownloadAdWords
 		
 		$tstop=time();
 		$delta=($tstop-$tstart);
-		$this->log->info ( "... clear in $delta msec !!!" );
+		$this->log->info ( "... clear in $delta sec !!!" );
 		return $ret;
 	}
 	
@@ -645,13 +930,26 @@ class DownloadAdWords
 				{
 					$table = "cache_campaign_metrics"; // TABELLA DA ALIMENTARE
 				}break;
-					
+					  
 			case DOWNLOAD_KEYWORDS:
 				{
 					$table = "cache_keywords_metrics"; // TABELLA DA ALIMENTARE
 				}break;
-					
-			case DOWNLOAD_URL:
+                        
+                        case DOWNLOAD_QUERY:
+				{
+					$table = "cache_search_query_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+                            
+			case DOWNLOAD_FINAL_URL:
+				{
+					$table = "cache_finalurl_metrics"; // TABELLA DA ALIMENTARE
+				}break;
+                        
+                        case DOWNLOAD_QS:
+				{}break;
+                            
+                        case DOWNLOAD_URL:
 				{
 					$table = "cache_url_metrics"; // TABELLA DA ALIMENTARE
 				}break;
@@ -669,7 +967,7 @@ class DownloadAdWords
 			$table_columns_for_insert = $table_columns_for_insert == "" ? $field_4_insert : $table_columns_for_insert . "," . $field_4_insert;
 			$table_columns_for_select [] = $field_4_select;
 		}
-		
+                
 		$conn = self::getConnectionFromUserId ( $user_id );
 		
 		if($conn!=null)
@@ -708,7 +1006,7 @@ class DownloadAdWords
 					
 					$tstop=time();
 					$delta=($tstop-$tstart);
-					$this->log->info ( "... writeDBMetriche in $delta msec !!!" );
+					$this->log->info ( "... writeDBMetriche in $delta sec !!!" );
 				}
 				catch (\Exception $ex) {
 				
@@ -804,6 +1102,62 @@ class DownloadAdWords
 			return null;
 		}
 	}
+        public function logicaAnagrafiche($repoType) 
+	{
+		$all_metrics = array();
+		
+		switch($repoType)
+		{
+			
+			case DOWNLOAD_CAMPAGNE:
+				{
+					$all_metrics = array(DOWNLOAD_CAMPAGNE);
+				}break;
+				
+			case DOWNLOAD_ADGROUP:
+				{
+					$all_metrics = array(DOWNLOAD_CAMPAGNE,DOWNLOAD_ADGROUP);
+				}break;
+		
+			case DOWNLOAD_KEYWORDS:
+				{
+					$all_metrics = array(DOWNLOAD_KEYWORDS);
+				}break;
+			
+                        case DOWNLOAD_QUERY:
+				{
+					$all_metrics = array(DOWNLOAD_QUERY);
+				}break;
+                         
+			case DOWNLOAD_FINAL_URL:
+				{
+					$all_metrics  = array(DOWNLOAD_FINAL_URL);
+				}break;
+				
+			case DOWNLOAD_ALL:
+				{
+					$all_metrics = array(DOWNLOAD_CAMPAGNE,
+										DOWNLOAD_ADGROUP,
+										DOWNLOAD_ALL);
+				}break;
+                            
+                        case DOWNLOAD_QS:
+				{
+					$all_metrics  = array(DOWNLOAD_QS);
+				}break;
+                        
+                        case DOWNLOAD_URL:
+				{
+					$all_metrics  = array(DOWNLOAD_URL);
+				}break;
+					
+		}
+		
+		return $all_metrics;
+		
+	}
+	
+        
 	
 	public function logicaMetriche($repoType) 
 	{
@@ -819,27 +1173,39 @@ class DownloadAdWords
 				
 			case DOWNLOAD_ADGROUP:
 				{
-					$all_metrics = array(DOWNLOAD_CAMPAGNE,
-										DOWNLOAD_ADGROUP);
+					$all_metrics = array(DOWNLOAD_CAMPAGNE,DOWNLOAD_ADGROUP);
 				}break;
 		
 			case DOWNLOAD_KEYWORDS:
 				{
 					$all_metrics = array(DOWNLOAD_KEYWORDS);
 				}break;
-					
-			case DOWNLOAD_URL:
+                            
+			case DOWNLOAD_QUERY:
 				{
-					$all_metrics  = array(DOWNLOAD_URL);
+					$all_metrics = array(DOWNLOAD_QUERY);
+				}break;
+                            
+			case DOWNLOAD_FINAL_URL:
+				{
+					$all_metrics  = array(DOWNLOAD_FINAL_URL);
 				}break;
 				
 			case DOWNLOAD_ALL:
 				{
 					$all_metrics = array(DOWNLOAD_CAMPAGNE,
-										DOWNLOAD_ADGROUP,
-										DOWNLOAD_KEYWORDS,
-										DOWNLOAD_URL,
-										DOWNLOAD_ALL);
+                                                                DOWNLOAD_ADGROUP,
+                                                                DOWNLOAD_ALL);
+				}break;
+                        
+                        case DOWNLOAD_QS:
+				{
+					$all_metrics  = array(DOWNLOAD_QS);
+				}break;
+                            
+                        case DOWNLOAD_URL:
+				{
+					$all_metrics  = array(DOWNLOAD_URL);
 				}break;
 					
 		}
@@ -850,7 +1216,9 @@ class DownloadAdWords
 	
 	public function downloadAllReportsFromUserdId($user_id,$param) {
 		$ret               = true;
-		$arrayReport       = array ();
+		$arrayReport       = array();
+                $all_metrics       = array();
+                $all_anagrafiche   = array();
 		$this->param       = $param;
 		$repoType          = $this->param['download_report_type'];
 		$tstart            = 0;
@@ -872,7 +1240,8 @@ class DownloadAdWords
 			else 
 			{
 				$all_metrics = self::logicaMetriche($repoType);
-				
+                                $all_anagrafiche = self::logicaAnagrafiche($repoType);
+       
 				if($this->connetion==true)
 				{
 					$settings = self::getSettings ();
@@ -886,21 +1255,25 @@ class DownloadAdWords
 
 						if($this->param['abilita_anagrafiche']==ANAGRAFICHE_ABILITATE)
 						{	
-							$this->dbAdWord=new WriteDBAdWords();
-							$this->dbAdWord->setLogger($this->log);
-							$this->dbAdWord->setIdAccountAdw($google_account ['id_account_adw']);
-							$this->dbAdWord->setIdUser($user_id);
-
-							$ana=self::downloadAnagrafiche($user_id, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
-							if($ana==true)
-							{
-								$this->dbAdWord->connect();
-								$ret_save=$this->dbAdWord->save($this->param['status_anagrafiche']);
-							}
-							else 
-							{
-								$ret=false;
-							}
+                                                    $this->dbAdWord=new WriteDBAdWords();
+                                                    $this->dbAdWord->init();
+                                                    $this->dbAdWord->setLogger($this->log);
+                                                    $this->dbAdWord->setIdAccountAdw($google_account ['id_account_adw']);
+                                                    $this->dbAdWord->setIdUser($user_id);
+                                                    
+                                                    
+                                                    
+                                                    $ana=self::downloadAnagrafiche($all_anagrafiche, $settings, $google_account ['access_token'], $google_account ['id_account_adw'] );
+                                                    if($ana==true)
+                                                    {
+                                                            $this->dbAdWord->connect();
+                                                            $ret_save=$this->dbAdWord->save($all_anagrafiche,$repoType,$this->param['status_anagrafiche']);
+                                                    }
+                                                    else 
+                                                    {
+                                                            $ret=false;
+                                                    }
+                                                        
 						}
 						else 
 						{
@@ -937,7 +1310,7 @@ class DownloadAdWords
 									array_push($arrayReport, $fileCSV_METRIC);
 									$tstop=time();
 									$delte=($tstop-$tstart);
-									$this->log->info("... downloaded $delte msec !!!");
+									$this->log->info("... downloaded $delte sec !!!");
 									$i++;
 								}
 							}

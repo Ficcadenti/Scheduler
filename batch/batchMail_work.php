@@ -8,7 +8,7 @@
  * | Author email raffaele.ficcadenti@gmail.com
  * |
  * | FILE
- * | batchClear_work.php
+ * | batchMail_work.php
  * |
  * | HISTORY:
  * | -[Date]- -[Who]- -[What]-
@@ -20,16 +20,22 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
+
+use Mail\lib\MailBlock;
+use Mail\lib\Allegato;
+use Mail\lib\Email;
+
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
+require '../assets/lib/mail/myMail.php';
 require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
+
 require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 
-
-class BatchClear_work implements BatchGlobal {
+class BatchMail_work implements BatchGlobal {
 	
-	
+        private $lang = null;
 	private $log = null;
 	private $dbh = null;
 	private $name_file = "";
@@ -38,8 +44,28 @@ class BatchClear_work implements BatchGlobal {
 	private $descr_error = "";
 	private $connetion=false;
 	private $JSONparam = null;
-	
-	
+        private $deltaDay = BATCH_MAIL_DELTA_GG;
+       
+	function translate($key)
+	{
+            if($this->lang==null)
+            {
+                $str=$key;
+            }
+            else
+            {
+                if (array_key_exists($key,$this->lang))
+                {
+                    $str=$this->lang[strtolower($key)];
+                }
+                else
+                {
+                    $str=$key;
+                }
+            }
+            return $str;
+	}
+        
 	function __construct() {
 		$this->name_file = basename ( __FILE__, ".php" );
 	}
@@ -66,8 +92,8 @@ class BatchClear_work implements BatchGlobal {
 		$this->log = $log;
 	}
 	public function init() {
-		
 		$this->log->info ( "init()" );
+                ini_set('SMTP', getenv('MAIL_HOST'));
 		self::connect ();
 		if ($this->connetion == true) {
 			return $this->connetion;
@@ -77,10 +103,28 @@ class BatchClear_work implements BatchGlobal {
 			return $this->connetion;
 		}
 	}
-	
-	
-	
-	
+        
+        public function setUserLang($preferred_language)
+        {
+            switch($preferred_language)
+            {	
+                case 'it':
+                {
+                    $this->lang=include '../resources/lang/it/etichette.php';
+                }break;
+            
+                case 'en':
+                {
+                    $this->lang=include '../resources/lang/en/etichette.php';
+                }break;
+                
+                default:
+                {
+                    $this->lang=include '../resources/lang/en/etichette.php';
+                }break;
+            }
+        }
+
 	public function getParam($argv) {
 		$this->log->info ( "getParam()" );
 		array_shift ( $argv );
@@ -155,65 +199,88 @@ class BatchClear_work implements BatchGlobal {
 	
 	public function run()
 	{
-		$ret=true;
+		$ret        = false;
+                $db_manager = null;
+                $stmt       = null;
 		$this->log->info ( "run()" );
+                
 		if ($this->connetion==true) 
 		{
-			$ret=true;
-			/* Elenco i BATCH di tipo UNA_TANTUM nello stato FINISCHED */
-			try 
-			{
-				$sql = "SELECT a.id_schedulazione,b.descr_batch,c.descr_stato_schedulazione,d.descr_type_schedulazione
-						FROM sc_config a, batch_lib b, sc_stato_schedulazione_lib c, sc_type_schedulazione_lib d
-						WHERE a.type_schedulazione=d.id_type_schedulazione 
-							AND a.stato_schedulazione=c.id_stato_schedulazione 
-							AND a.id_batch=b.id_batch 
-							AND type_schedulazione = :type_schedulazione 
-							AND stato_schedulazione = :stato_schedulazione";
-				$stmt = $this->dbh->prepare($sql);
-				$type_schedulazione=BATCH_UNA_TANTUM;
-				$stato_schedulazione=FINISCHED;
-				$stmt->bindParam ( ':type_schedulazione', $type_schedulazione , \PDO::PARAM_INT );
-				$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione , \PDO::PARAM_INT );
-				$stmt->execute ();
-				
-				while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) {
-					$msg=sprintf("... Delete => %s(%d): %s - %s",$row->descr_batch,$row->id_schedulazione,$row->descr_type_schedulazione,$row->descr_stato_schedulazione);
-					$this->log->info ( $msg );
+                    try {
+                        $db_manager = new \PDO ( 'mysql:host=' . getenv ( 'DB_HOST' ) . ';dbname=' . getenv ( 'DB_NAME_ADPMANAGER' ), getenv ( 'DB_USER' ), getenv ( 'DB_PASS' ) );
+                        $db_manager->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-				}
-			
-				$ret=true;
-			}
-			catch ( \PDOException $ex ) 
-			{
-				$this->id_error = $ex->getCode();
-				$this->descr_error = $ex->getMessage ();
-				$this->log->info ($this->descr_error);
-			}
-			
-			/* cancello i BATCH di tipo UNA_TANTUM nello stato FINISCHED */
-			try
-			{
-				$sql = "DELETE FROM sc_config WHERE
-								 type_schedulazione = :type_schedulazione
-								AND stato_schedulazione = :stato_schedulazione";
-				$stmt = $this->dbh->prepare($sql);
-				$type_schedulazione=BATCH_UNA_TANTUM;
-				$stato_schedulazione=FINISCHED;
-				$stmt->bindParam ( ':type_schedulazione', $type_schedulazione , \PDO::PARAM_INT );
-				$stmt->bindParam ( ':stato_schedulazione', $stato_schedulazione , \PDO::PARAM_INT );
-				$stmt->execute ();
-			}
-			catch ( \PDOException $ex )
-			{
-				$this->id_error = $ex->getCode();
-				$this->descr_error = $ex->getMessage ();
-				$this->log->info ($this->descr_error);
-			}
+   
+                        /* controllo i piani scaduti */
+                        $sql = "SELECT preferred_language,user_id, name, surname, service_profile_type_id,email, expire_date, DATEDIFF(expire_date,now()) AS DiffDate
+                                    FROM `user_service_profile_types` a,  `users` b, `service_profile_types` c
+                                    where flag_current=1 
+                                    and a.service_profile_type_id=c.id
+                                    and b.id=a.user_id 
+                                    and expire_date is not null 
+                                    and DATEDIFF(expire_date,now())<=:deltaDay
+                                    and DATEDIFF(expire_date,now())>=-:deltaDay";
+                        $stmt = $db_manager->prepare($sql);
+                        $stmt->bindParam ( ':deltaDay', $this->deltaDay , \PDO::PARAM_INT );
+                        $stmt->execute ();
+
+                        while ( $row = $stmt->fetch ( \PDO::FETCH_OBJ ) ) 
+                        {
+                            $this->setUserLang($row->preferred_language);
+                            $msg=sprintf("... Piani in scadenza per utente(%s)=%d:%s => data scadenza=%s, giorni rimasti=%d",
+                                    $row->preferred_language,
+                                    $row->user_id,
+                                    $row->email,
+                                    $row->expire_date,
+                                    $row->DiffDate);
+                            $this->log->info ( $msg );
+                            $this->inviaEmail($row->name,$row->surname,$row->email,$row->expire_date,$row->DiffDate);
+                        }
+
+                        $ret=true;
+                    }catch ( \PDOException $ex ) {
+                        $this->id_error = $ex->getCode();
+                        $this->descr_error = $ex->getMessage ();
+                        $this->connetion=false;
+                        $ret=false;
+                    }
 		}
 		return $ret;
 	}
+        public function inviaEmail($name,$surname,$email,$expire_date,$DiffDate)
+        {
+            $mail=null;
+            if( ($DiffDate==-5) || ($DiffDate==0) )
+            {
+                $str_body=str_replace("__LINK__", getenv ('ADPLIFY_LINK'), $this->translate('mail.body_0'));
+                $str_oggetto=$this->translate('mail.oggetto_0');
+            }
+            else if( ($DiffDate==5)||($DiffDate==1) )
+            {
+                $str_body=str_replace("__LINK__", getenv ('ADPLIFY_LINK'), $this->translate('mail.body_5'));
+                $str_oggetto=$this->translate('mail.oggetto_5')." (-".$DiffDate.")";
+            }
+
+            $mail = new Email($str_oggetto, getMIME("MULTI"));
+            $mail->setLogger ( $this->log );
+            $mail->destinatario($name." ".$surname." <".$email.">");
+            $mail->from("Supporto Adplify <".getenv('MAIL_SUPPORT').">");
+            $mail->replyTo("Supporto Adplify <".getenv('MAIL_SUPPORT').">");
+            $mail->blocco(getMIME("HTML"), $str_body);
+//            $mail->stampa();
+            $inviata = $mail->invia();
+            if ($inviata) 
+            {
+                    $msg=sprintf("... Email inviata con successo");
+                    $this->log->info ( $msg );
+            }
+            else
+            {
+                    $msg=sprintf("Errore durante l'invio dell'email");
+                    $this->log->info ( $msg );
+            }
+            
+        }
 	
 	public function finish() {
 		$this->log->info ( "finish()" );

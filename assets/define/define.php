@@ -24,6 +24,7 @@
   define("UNDEFINED",5);
   define("TO_BE_SUBMITTED",6);
   define("SUBMITTED",7);
+  define("PAUESED",8);
  
   
   define("BATCH_WITHOUT_ERROR",0);
@@ -52,14 +53,20 @@
   define("GIORNI_60",1);
   define("ANNI_2",2);
   define("USER_DEFINED",3);
+  define("QUALITY_SCORE",4);
   
   /* gli ID dei download devono essere crescenti */
   define("DOWNLOAD_UNDEFINED",-1);
   define("DOWNLOAD_CAMPAGNE",1);
   define("DOWNLOAD_ADGROUP",2);
-  define("DOWNLOAD_KEYWORDS",3);
-  define("DOWNLOAD_URL",4);
+  
+  define("DOWNLOAD_FINAL_URL",4);
   define("DOWNLOAD_ALL",5);
+  define("DOWNLOAD_QS",6);
+  define("DOWNLOAD_KEYWORDS",7);
+  define("DOWNLOAD_QUERY",8);
+  define("DOWNLOAD_URL",9);
+  
   
   define("GOOGLE_MONEY_UNIT",1000000);
   define("ANAGRAFICHE_ABILITATE",1);
@@ -69,6 +76,9 @@
   define("VALORE_CAMPI",1);
   
   define("INSERT_BLOCK_NUM",1000);
+  
+  /* Costanti per Batch EMAIL */
+  define("BATCH_MAIL_DELTA_GG",5);
   
   
   

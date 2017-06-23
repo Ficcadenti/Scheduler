@@ -411,6 +411,7 @@ class Batch30gg_work implements BatchGlobal {
 		$this->log->info ( "run()" );
 		
 		$ret = self::refreshToken();
+		sleep(2);
 		if($ret==true)
 		{
 			$this->downAdWords->connect();

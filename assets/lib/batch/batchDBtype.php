@@ -59,7 +59,6 @@ class BatchDBType {
 			try {
 				
 				$statement = $this->dbh->query ( 'SELECT * FROM '.$this->name_tabella );
-				
 				foreach ( $statement as $row ) {
 					$this->batch_type_lib [$row ['id_download_report_type']] = array(
 															'descrizione'=>$row ['descrizione'],

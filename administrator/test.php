@@ -91,6 +91,7 @@ var_dump($_SERVER["REQUEST_METHOD"]);
 
 $json_str='{
 	"id_schedulazione": '.$_POST['id_schedulazione'].',
+        "tag": "'.$_POST['tag'].'",
 	"hostname": "'.$_POST['hostname'].'",
 	"id_user": '.$_POST['id_user'].',
 	"id_account_adw": 2,
