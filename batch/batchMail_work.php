@@ -252,20 +252,20 @@ class BatchMail_work implements BatchGlobal {
             $mail=null;
             if( ($DiffDate==-5) || ($DiffDate==0) )
             {
-                $str_body=str_replace("__LINK__", getenv ('ADPLIFY_LINK'), $this->translate('mail.body_0'));
+                $str_body=str_replace("__LINK__", getenv ('RFICCADNTI_LINK'), $this->translate('mail.body_0'));
                 $str_oggetto=$this->translate('mail.oggetto_0');
             }
             else if( ($DiffDate==5)||($DiffDate==1) )
             {
-                $str_body=str_replace("__LINK__", getenv ('ADPLIFY_LINK'), $this->translate('mail.body_5'));
+                $str_body=str_replace("__LINK__", getenv ('RFICCADNTI_LINK'), $this->translate('mail.body_5'));
                 $str_oggetto=$this->translate('mail.oggetto_5')." (-".$DiffDate.")";
             }
 
             $mail = new Email($str_oggetto, getMIME("MULTI"));
             $mail->setLogger ( $this->log );
             $mail->destinatario($name." ".$surname." <".$email.">");
-            $mail->from("Supporto Adplify <".getenv('MAIL_SUPPORT').">");
-            $mail->replyTo("Supporto Adplify <".getenv('MAIL_SUPPORT').">");
+            $mail->from("Supporto  <".getenv('MAIL_SUPPORT').">");
+            $mail->replyTo("Supporto  <".getenv('MAIL_SUPPORT').">");
             $mail->blocco(getMIME("HTML"), $str_body);
 //            $mail->stampa();
             $inviata = $mail->invia();
