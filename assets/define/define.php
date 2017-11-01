@@ -80,6 +80,9 @@
   /* Costanti per Batch EMAIL */
   define("BATCH_MAIL_DELTA_GG",5);
   
+  /* Google AdWords*/
+  define ("RECOMMENDED_PAGE_SIZE",500);
+  
   
   
   
