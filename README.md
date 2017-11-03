@@ -28,6 +28,5 @@
 		<li>Per scaricare le dipendenze: <b> php composer.phar install</b></li>
 		<li>Per lanciare lo schedulatore: <b> php scheduler.php</b></li>
 		<li>Il file <b>config.xml</b> contine la configurazione del log</b></li>
-		<li>Il file <b>config.xml</b> contine la configurazione del log</b></li>
 	</ul>
 </p>

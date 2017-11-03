@@ -28,9 +28,6 @@ use Common\lib\Error;
 require '../assets/lib/batch/batchGlobal.php';
 require '../assets/lib/batch/downloadAdWords.php';
 
-//require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
-//require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
-
 
 class Batch30gg_work implements BatchGlobal {
 

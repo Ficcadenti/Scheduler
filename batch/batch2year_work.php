@@ -20,16 +20,12 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
-
 use Common\lib\CommonService;
 use Batch\DownloadAdWords;
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
 require '../assets/lib/batch/downloadAdWords.php';
-
-require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
-require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 
 
 class Batch2year_work implements BatchGlobal {
@@ -410,14 +406,14 @@ class Batch2year_work implements BatchGlobal {
 		$ret=true;
 		$this->log->info ( "run()" );
 		
-		$ret = self::refreshToken();
-		sleep(2);
+//		$ret = self::refreshToken();
+//		sleep(2);
 		if($ret==true)
 		{
 			$this->downAdWords->connect();
 			if ($this->downAdWords->getIdError()==BATCH_WITHOUT_ERROR)
 			{
-                            /*if(self::getReport()==true)
+                            if(self::getReport()==true)
                             {
                                     $ret=true;
                             }
@@ -426,9 +422,7 @@ class Batch2year_work implements BatchGlobal {
                                     $this->id_error = $this->downAdWords->getIdError();
                                     $this->descr_error = $this->downAdWords->getDescError();
                                     $ret=false;
-                            }*/
-                            
-                            $this->log->info ( "run() - getReport() v201710 ... in progress" );
+                            }
 			}
 			else 
 			{

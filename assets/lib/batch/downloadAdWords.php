@@ -22,10 +22,15 @@ use Google\AdsApi\AdWords\v201710\cm\Predicate;
 use Google\AdsApi\AdWords\v201710\cm\PredicateOperator;
 use Google\AdsApi\AdWords\v201710\cm\Selector;
 use Google\AdsApi\AdWords\v201710\cm\SortOrder;
+use Google\AdsApi\AdWords\v201710\cm\DateRange;
 use Google\AdsApi\AdWords\Reporting\v201710\ReportDownloader;
 use Google\AdsApi\AdWords\Reporting\v201710\DownloadFormat;
 use Google\AdsApi\AdWords\Reporting\v201710\ReportDefinition;
 use Google\AdsApi\AdWords\Reporting\v201710\ReportDefinitionDateRangeType;
+use Monolog\Handler\NullHandler;
+use Monolog\Logger;
+
+
 
 require 'batchDBtype.php';
 require 'writeDBAdWords.php';
@@ -272,6 +277,138 @@ class DownloadAdWords {
         return $namefileCSV;
     }
 
+    private function downloadMetricheV201710($session, $repoType, $user_id, $namefileCSV, $settings) {
+       
+        
+        /*->withReportDownloaderLogger($this->log)*/
+        $adWordsServices = new AdWordsServices();
+
+        
+        // CAMPI DA PRENDERE PER SCARICARE ADGROUP
+        $fields = self::getFields($repoType);
+
+        // RAPPRESENTA L'INTERVALLO TEMPORALE NEL QUALE PRENDERE I DATI
+        $date_min = $this->param['dal']; // "20150301"; // PRENDI DA DATA
+        $date_max = $this->param['al']; // "20170228"; // ...A DATA
+
+        
+            // Create selector.
+        $selector = new Selector();
+        $selector->setFields(array_keys($fields));
+        
+        // RAPPRESENTA L'INTERVALLO TEMPORALE NEL QUALE PRENDERE I DATI
+        $date_min  = $this->param['dal']; // "20150301"; // PRENDI DA DATA
+        $date_max  = $this->param['al']; // "20170228"; // ...A DATA
+        $dateRange = new DateRange($date_min, $date_max);
+        $selector->setDateRange($dateRange);
+
+            // Create report definition.
+        $reportDefinition = new ReportDefinition();
+        
+        $reportDefinition->setReportName('Criteria performance report #' . uniqid());
+        $reportDefinition->setDateRangeType(ReportDefinitionDateRangeType::CUSTOM_DATE);
+
+        switch ($repoType) {
+
+            case DOWNLOAD_CAMPAGNE: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::CRITERIA_PERFORMANCE_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+
+                    if ($this->param['status_metriche'] != 'ALL') {
+                        $selector->setPredicates([new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']])]);
+                    }
+                }break;
+
+            case DOWNLOAD_ADGROUP: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::ADGROUP_PERFORMANCE_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+                    if ($this->param['status_metriche'] != 'ALL') 
+                    {
+                        $selector->setPredicates([
+                            new Predicate('AdGroupStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']])
+                            ]);
+                    }
+                }break;
+
+
+            case DOWNLOAD_KEYWORDS: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::KEYWORDS_PERFORMANCE_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+                    if ($this->param['status_metriche'] != 'ALL') 
+                    {
+                        $selector->setPredicates([
+                            new Predicate('AdGroupStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('Status', PredicateOperator::EQUALS, [$this->param['status_metriche']])
+                            ]);
+                    }
+                    
+                }break;
+
+            case DOWNLOAD_QUERY: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::SEARCH_QUERY_PERFORMANCE_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+                    if ($this->param['status_metriche'] != 'ALL') 
+                    {
+                        $selector->setPredicates([
+                            new Predicate('AdGroupStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('Status', PredicateOperator::EQUALS, [$this->param['status_metriche']])
+                            ]);
+                    }
+                }break;
+
+            case DOWNLOAD_FINAL_URL: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::FINAL_URL_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+                    if ($this->param['status_metriche'] != 'ALL') 
+                    {
+                        $selector->setPredicates([
+                            new Predicate('AdGroupStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']])
+                            ]);
+                    }
+                }break;
+            case DOWNLOAD_QS: {
+                    /* Per il quality score l'unica metrica la scarichiamo con le anagrafiche */
+                }break;
+
+            case DOWNLOAD_URL: {
+                    $reportDefinition->setReportType(ReportDefinitionReportType::URL_PERFORMANCE_REPORT);
+                    //$options ['includeZeroImpressions'] = true;
+                    if ($this->param['status_metriche'] != 'ALL') 
+                    {
+                        $selector->setPredicates([
+                            new Predicate('AdGroupStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']]),
+                            new Predicate('CampaignStatus', PredicateOperator::EQUALS, [$this->param['status_metriche']])
+                            ]);
+                    }
+                }break;
+        }
+
+        $reportDefinition->setSelector($selector);
+        $reportDefinition->setDownloadFormat(DownloadFormat::CSV);
+         
+        
+        // Download report.
+        $reportDownloader = new ReportDownloader($session);
+        
+        $reportSettingsOverride = (new ReportSettingsBuilder())
+        ->includeZeroImpressions(false)
+        ->skipReportHeader(true)
+        ->skipReportSummary(true)
+        ->build();
+        
+        $filePath = getenv('CSV_PATH_FILE') . '/' . $namefileCSV; // PERCORSO FILE DA CREARE CON I DATI DEL REPORT
+        
+        $reportDownloadResult = $reportDownloader->downloadReport($reportDefinition, $reportSettingsOverride);
+        $reportDownloadResult->saveToFile($filePath);
+        
+
+        return $namefileCSV;
+    }
+
     public function downloadAnagraficheCampagneV201710($session) {
         $clientCustomerId = $session->getClientCustomerId();
         $all_campagneervice = null;
@@ -347,7 +484,7 @@ class DownloadAdWords {
 
         return $ret;
     }
-
+    
     public function downloadAnagraficheAdGroupsV201710($session) {
         $page = null;
         $all_adgroups_id = array();
@@ -461,7 +598,7 @@ class DownloadAdWords {
                     foreach ($page->getEntries() as $element) {
 
                         if ($element->getCriterion()->getType() == 'KEYWORD') {
-                            if (method_exists(get_class($element), "getBiddingStrategyConfiguration")) {
+                            if (method_exists(get_class($element), "getQualityInfo")) {
                                 if (is_null($element->getQualityInfo())) {
                                     $q = 0;
                                 } else {
@@ -470,8 +607,7 @@ class DownloadAdWords {
                             } else {
                                 $q = 0;
                             }
-
-
+                            
                             if (method_exists(get_class($element), "getBiddingStrategyConfiguration")) {
                                 if (is_null($element->getBiddingStrategyConfiguration())) {
                                     $target = "";
@@ -701,21 +837,12 @@ class DownloadAdWords {
         return $ret;
     }
 
-    public function downloadAnagraficheV201710($all_anagrafiche, $settings, $refresh_token, $clientCustomerId) {
+    public function downloadAnagraficheV201710($session,$all_anagrafiche, $settings) {
         $i = 0;
         $ret = true;
         $repoType = $this->param['download_report_type'];
 
-        $oAuth2Credential = (new OAuth2TokenBuilder())
-                ->withClientId($settings->client_id)
-                ->withClientSecret($settings->client_secret)
-                ->withRefreshToken($refresh_token)
-                ->build();
-        $session = (new AdWordsSessionBuilder())
-                ->withDeveloperToken($settings->dev_key)
-                ->withClientCustomerId($clientCustomerId)
-                ->withOAuth2Credential($oAuth2Credential)
-                ->build();
+        
 
         while (($i < count($all_anagrafiche)) && ($all_anagrafiche[$i] <= $repoType)) {
             if ($all_anagrafiche[$i] == DOWNLOAD_ALL) /* DOWNLOAD_ALL esclude tutti gli ID > di DOWNLOAD_ALL */ {
@@ -1151,6 +1278,19 @@ class DownloadAdWords {
                         $i = 0;
                         $ana = true;
 
+                        $oAuth2Credential = (new OAuth2TokenBuilder())
+                            ->withClientId($settings->client_id)
+                            ->withClientSecret($settings->client_secret)
+                            ->withRefreshToken($google_account ['refresh_token'])
+                            ->build();
+                        $session = (new AdWordsSessionBuilder())
+                            ->withDeveloperToken($settings->dev_key)
+                            ->withClientCustomerId($google_account ['id_account_adw'])
+                            ->withOAuth2Credential($oAuth2Credential)
+                            ->withReportDownloaderLogger(new Logger('', [new NullHandler()]))
+                            ->withSoapLogger(new Logger('', [new NullHandler()]))
+                            ->build();
+                    
 
                         if ($this->param['abilita_anagrafiche'] == ANAGRAFICHE_ABILITATE) {
                             $this->dbAdWord = new WriteDBAdWords();
@@ -1159,7 +1299,7 @@ class DownloadAdWords {
                             $this->dbAdWord->setIdAccountAdw($google_account ['id_account_adw']);
                             $this->dbAdWord->setIdUser($user_id);
 
-                            $ana = self::downloadAnagraficheV201710($all_anagrafiche, $settings, $google_account ['refresh_token'], $google_account ['id_account_adw']);
+                            $ana = self::downloadAnagraficheV201710($session, $all_anagrafiche, $settings);
                             if ($ana == true) {
                                 $this->dbAdWord->connect();
                                 $ret_save = $this->dbAdWord->save($all_anagrafiche, $repoType, $this->param['status_anagrafiche']);
@@ -1192,7 +1332,7 @@ class DownloadAdWords {
                                             $this->batchType->getSuffisso($all_metrics[$i]) . ") sul file '" . $namefileCSV . "'");
 
                                     $tstart = time();
-                                    $fileCSV_METRIC = self::downloadMetriche($all_metrics[$i], $user_id, $namefileCSV, $settings, $google_account ['refresh_token'], $google_account ['id_account_adw']);
+                                    $fileCSV_METRIC = self::downloadMetricheV201710($session, $all_metrics[$i], $user_id, $namefileCSV, $settings);
                                     array_push($arrayReport, $fileCSV_METRIC);
                                     $tstop = time();
                                     $delte = ($tstop - $tstart);
