@@ -20,16 +20,12 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
-
 use Common\lib\CommonService;
 use Batch\DownloadAdWords;
 use Common\lib\Error;
 
 require '../assets/lib/batch/batchGlobal.php';
 require '../assets/lib/batch/downloadAdWords.php';
-
-require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
-require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 
 
 class Batch60gg_work implements BatchGlobal {
@@ -108,7 +104,7 @@ class Batch60gg_work implements BatchGlobal {
 						$this->log->info ( $this->descr_error );
 					} else {
 						$this->id_error = ERROR;
-						$this->descr_error = "Ci sono più schedulazioni con lo stesso id_schedulazione=" . $id_schedulazione;
+						$this->descr_error = "Ci sono piï¿½ schedulazioni con lo stesso id_schedulazione=" . $id_schedulazione;
 						$this->log->info ( $this->descr_error );
 					}
 					return false;
@@ -153,7 +149,7 @@ class Batch60gg_work implements BatchGlobal {
 						$this->log->info ( $this->descr_error );
 					} else {
 						$this->id_error = ERROR;
-						$this->descr_error = "Ci sono più schedulazioni con lo stesso id_schedulazione=" . $id_schedulazione;
+						$this->descr_error = "Ci sono piï¿½ schedulazioni con lo stesso id_schedulazione=" . $id_schedulazione;
 						$this->log->info ( $this->descr_error );
 					}
 					return false;
@@ -176,32 +172,32 @@ class Batch60gg_work implements BatchGlobal {
 			/* check parameter */
 			if (! isset ( $this->JSONparam->id_account_adw ))
 			{
-				$this->log->info("Non è definito il parametro 'id_account_adw' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'id_account_adw' !!!");
 				return false;
 			}
 			if (! isset ( $this->JSONparam->download_report_type ))
 			{
-				$this->log->info("Non è definito il parametro 'download_report_type' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'download_report_type' !!!");
 				return false;
 			}
 			if (! isset ( $this->JSONparam->abilita_anagrafiche ))
 			{
-				$this->log->info("Non è definito il parametro 'abilita_anagrafiche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'abilita_anagrafiche' !!!");
 				return false;
 			}
 			if (! isset ( $this->JSONparam->status_anagrafiche ))
 			{
-				$this->log->info("Non è definito il parametro 'status_anagrafiche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'status_anagrafiche' !!!");
 				return false;
 			}
 			if (! isset ( $this->JSONparam->abilita_metriche ))
 			{
-				$this->log->info("Non è definito il parametro 'abilita_metriche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'abilita_metriche' !!!");
 				return false;
 			}
 			if (! isset ( $this->JSONparam->status_metriche ))
 			{
-				$this->log->info("Non è definito il parametro 'status_metriche' !!!");
+				$this->log->info("Non ï¿½ definito il parametro 'status_metriche' !!!");
 				return false;
 			}
 			
@@ -209,12 +205,12 @@ class Batch60gg_work implements BatchGlobal {
 			{
 				if (! isset ( $this->JSONparam->dal ))
 				{
-					$this->log->info("Non è definito il parametro 'dal' !!!");
+					$this->log->info("Non ï¿½ definito il parametro 'dal' !!!");
 					return false;
 				}
 				if (! isset ( $this->JSONparam->al ))
 				{
-					$this->log->info("Non è definito il parametro 'al' !!!");
+					$this->log->info("Non ï¿½ definito il parametro 'al' !!!");
 					return false;
 				}
 			}
@@ -260,7 +256,7 @@ class Batch60gg_work implements BatchGlobal {
 		
 		if (count ( $argv ) == 0) {
 			$this->id_error = ERROR;
-			$this->descr_error = "Il Batch è stato invocato senza parametri.";
+			$this->descr_error = "Il Batch ï¿½ stato invocato senza parametri.";
 			return false;
 		}
 		
@@ -285,18 +281,18 @@ class Batch60gg_work implements BatchGlobal {
 					}
 				} else {
 					$this->id_error = ERROR;
-					$this->descr_error = "Il Batch è stato invocato senza parametro --type";
+					$this->descr_error = "Il Batch ï¿½ stato invocato senza parametro --type";
 					return false;
 				}
 			} else {
 				
 				$this->id_error = ERROR;
-				$this->descr_error = "Il Batch è stato invocato senza parametro --run_time";
+				$this->descr_error = "Il Batch ï¿½ stato invocato senza parametro --run_time";
 				return false;
 			}
 		} else {
 			$this->id_error = ERROR;
-			$this->descr_error = "Il Batch è stato invocato senza parametro --id_batch";
+			$this->descr_error = "Il Batch ï¿½ stato invocato senza parametro --id_batch";
 			return false;
 		}
 	}
@@ -305,7 +301,7 @@ class Batch60gg_work implements BatchGlobal {
 		array_shift ( $argv );
 		
 		if (count ( $argv ) == 0) {
-			$msg = "-Il Batch è stato invocato senza parametri.";
+			$msg = "-Il Batch ï¿½ stato invocato senza parametri.";
 			printf ( "%s\n", $msg );
 			return - 1;
 		}
@@ -315,7 +311,7 @@ class Batch60gg_work implements BatchGlobal {
 		if (array_key_exists ( strtolower ( "--id_schedulazione" ), $this->lista_parametri )) {
 			return $this->lista_parametri ['--id_schedulazione'];
 		} else {
-			$msg = "-Il Batch è stato invocato senza parametro --id_schedulazione";
+			$msg = "-Il Batch ï¿½ stato invocato senza parametro --id_schedulazione";
 			printf ( "%s\n", $msg );
 			return - 1;
 		}
@@ -410,7 +406,8 @@ class Batch60gg_work implements BatchGlobal {
 		$ret=true;
 		$this->log->info ( "run()" );
 		
-		$ret = self::refreshToken();
+		//$ret = self::refreshToken();
+                //sleep(2);
 		if($ret==true)
 		{
 			$this->downAdWords->connect();

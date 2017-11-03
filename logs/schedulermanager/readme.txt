@@ -1,1 +1,1 @@
-log scheduler manager
+Directory per lo schedulermanager

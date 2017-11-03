@@ -20,7 +20,6 @@
 namespace Batch;
 
 use Batch\lib\BatchGlobal;
-
 use Common\lib\CommonService;
 use Batch\DownloadAdWords;
 use Common\lib\Error;
@@ -28,8 +27,6 @@ use Common\lib\Error;
 require '../assets/lib/batch/batchGlobal.php';
 require '../assets/lib/batch/downloadAdWords.php';
 
-require_once "../assets/lib/googleads-php-lib/examples/AdWords/v201609/init.php";
-require_once ADWORDS_UTIL_VERSION_PATH . '/ReportUtils.php';
 
 
 class BatchQS_work implements BatchGlobal {
@@ -416,8 +413,8 @@ class BatchQS_work implements BatchGlobal {
 		$ret=true;
 		$this->log->info ( "run()" );
 		
-		$ret = self::refreshToken();
-		sleep(2);
+//		$ret = self::refreshToken();
+//		sleep(2);
 		if($ret==true)
 		{
 			$this->downAdWords->connect();

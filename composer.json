@@ -1,6 +1,8 @@
 {
     "require": {
         "apache/log4php": "2.3.0",
-        "vlucas/phpdotenv": "^2.0"
+        "vlucas/phpdotenv": "^2.0",
+        "googleads/googleads-php-lib": "^31.0",
+        "google/apiclient": "^2.0"
     }
 }

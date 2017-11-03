@@ -28,6 +28,7 @@ date_default_timezone_set ( 'Europe/Rome' );
 
 /* START SchedulerManager */
 
+
 $sm=new SchedulerManager();
 
 /* stato_schedulazione sono definiti nella tabella adplify_scheduler.sc_stato_schedulazione_lib 
@@ -94,7 +95,7 @@ $json_str='{
         "tag": "'.$_POST['tag'].'",
 	"hostname": "'.$_POST['hostname'].'",
 	"id_user": '.$_POST['id_user'].',
-	"id_account_adw": 2,
+	"id_account_adw": '.$_POST['customer_id'].',
 	"id_batch": '.$_POST['id_batch'].',
 	"descr_schedulazione": "BATCH a 30 giorni",
 	"type_schedulazione": '.$_POST['type_schedulazione'].',
